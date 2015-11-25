@@ -14,6 +14,7 @@ using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Extensions;
 using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitions;
 using Microsoft.SharePoint.Client.Taxonomy;
 using System.Text.RegularExpressions;
+using OfficeDevPnP.Core.Enums;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 {
@@ -1044,7 +1045,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             foreach (var ct in siteList.ContentTypes)
             {
-                web.Context.Load(ct, c => c.Parent);
+                web.Context.Load(ct, c => c.Parent, c=>c.Parent.StringId);
                 web.Context.ExecuteQueryRetry();
 
                 if (ct.Parent != null)
@@ -1082,7 +1083,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             web.Context.Load(siteColumns, scs => scs.Include(sc => sc.Id));
             web.Context.ExecuteQueryRetry();
 
-            foreach (var field in siteList.Fields.AsEnumerable().Where(field => !field.Hidden))
+            var allowedFields = siteList.Fields.Where(field => !(BuiltInFieldId.Contains(field.Id) && field.Hidden));
+            foreach (var field in allowedFields)
             {
                 if (siteColumns.FirstOrDefault(sc => sc.Id == field.Id) != null)
                 {
