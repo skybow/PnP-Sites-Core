@@ -931,7 +931,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 }
 
                 // Retrieve all not hidden lists and the Workflow History Lists, just in case there are active workflow subscriptions
-                foreach (var siteList in lists.AsEnumerable().Where(l => (l.Hidden == false || ((workflowSubscriptions != null && workflowSubscriptions.Length > 0) && l.BaseTemplate == 140))))
+                var includeWorkflowSubscriptions = workflowSubscriptions != null && workflowSubscriptions.Length > 0;
+               // var allowedLists = lists.Where(l => !l.Hidden || includeWorkflowSubscriptions && l.BaseTemplate == 140);
+
+                foreach (var siteList in lists)
                 {
                     ListInstance baseTemplateList = null;
                     if (creationInfo.BaseTemplate != null)
@@ -942,6 +945,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         if (index != -1)
                         {
                             baseTemplateList = creationInfo.BaseTemplate.Lists[index];
+                            if (siteList.Hidden && !(includeWorkflowSubscriptions && siteList.BaseTemplate == 140))
+                            {
+                                continue;
+                            }
                         }
                     }
 
@@ -1045,7 +1052,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             foreach (var ct in siteList.ContentTypes)
             {
-                web.Context.Load(ct, c => c.Parent, c=>c.Parent.StringId);
+                web.Context.Load(ct, c => c.Parent, c => c.Parent.StringId);
                 web.Context.ExecuteQueryRetry();
 
                 if (ct.Parent != null)
@@ -1054,7 +1061,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     // We are taking parent - VesaJ.
                     //if (!BuiltInContentTypeId.Contains(ct.Parent.StringId)) 
                     //{
-                        list.ContentTypeBindings.Add(new ContentTypeBinding { ContentTypeId = ct.Parent.StringId, Default = count == 0 });
+                    list.ContentTypeBindings.Add(new ContentTypeBinding { ContentTypeId = ct.Parent.StringId, Default = count == 0 });
                     //}
                 }
                 else
