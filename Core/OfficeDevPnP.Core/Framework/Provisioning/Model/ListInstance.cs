@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.SharePoint.Client;
 using OfficeDevPnP.Core.Extensions;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.Model
@@ -12,16 +13,20 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
     {
         #region Constructors
 
-        public ListInstance() { }
+        public ListInstance()
+        {
+            Forms = new List<Form>();
+        }
 
         public ListInstance(IEnumerable<ContentTypeBinding> contentTypeBindings,
             IEnumerable<View> views, IEnumerable<Field> fields, IEnumerable<FieldRef> fieldRefs, List<DataRow> dataRows) :
-                this(contentTypeBindings, views, fields, fieldRefs, dataRows, null, null)
+            this(contentTypeBindings, views, fields, fieldRefs, dataRows, null, null)
         {
         }
 
         public ListInstance(IEnumerable<ContentTypeBinding> contentTypeBindings,
             IEnumerable<View> views, IEnumerable<Field> fields, IEnumerable<FieldRef> fieldRefs, List<DataRow> dataRows, Dictionary<String, String> fieldDefaults, ObjectSecurity security)
+            : this()
         {
             if (contentTypeBindings != null)
             {
@@ -54,6 +59,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
             {
                 this._security = security;
             }
+           
         }
 
         #endregion
@@ -206,6 +212,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
             get { return this._dataRows; }
             private set { this._dataRows = value; }
         }
+
+        public List<Form> Forms { get; set; }
 
         /// <summary>
         /// Defines a list of default values for the Fields of the List Instance

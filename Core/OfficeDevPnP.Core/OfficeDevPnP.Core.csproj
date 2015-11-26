@@ -11,6 +11,8 @@
     <AssemblyName>OfficeDevPnP.Core</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\..\..\Desktop\Test\Provisioning.Framework.Console\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -333,6 +335,7 @@
     <Compile Include="Framework\Provisioning\Connectors\FileConnectorBase.cs" />
     <Compile Include="Framework\Provisioning\Connectors\FileSystemConnector.cs" />
     <Compile Include="Framework\Provisioning\Connectors\SharePointConnector.cs" />
+    <Compile Include="Framework\Provisioning\Definitions\WebPartXmlDefinitions.cs" />
     <Compile Include="Framework\Provisioning\Deprecated\Model\ContentType.deprecated.cs" />
     <Compile Include="Framework\Provisioning\Deprecated\Model\ContentTypeBinding.deprecated.cs" />
     <Compile Include="Framework\Provisioning\Deprecated\Model\Feature.deprecated.cs" />
@@ -362,6 +365,7 @@
     <Compile Include="Framework\Provisioning\Model\Features.cs" />
     <Compile Include="Framework\Provisioning\Model\FieldRef.cs" />
     <Compile Include="Framework\Provisioning\Model\Field.cs" />
+    <Compile Include="Framework\Provisioning\Model\Form.cs" />
     <Compile Include="Framework\Provisioning\Model\ObjectSecurity.cs" />
     <Compile Include="Framework\Provisioning\Model\PageLayout.cs" />
     <Compile Include="Framework\Provisioning\Model\Publishing.cs" />
@@ -635,7 +639,9 @@
     <EmbeddedResource Include="Framework\Provisioning\BaseTemplates\v15\BICENTERSITE0Template.xml" />
     <EmbeddedResource Include="Framework\Provisioning\BaseTemplates\v15\BLANKINTERNET0Template.xml" />
     <EmbeddedResource Include="Framework\Provisioning\BaseTemplates\v15\BLOG0Template.xml" />
-    <EmbeddedResource Include="Framework\Provisioning\BaseTemplates\v15\COMMUNITY0Template.xml" />
+    <EmbeddedResource Include="Framework\Provisioning\BaseTemplates\v15\COMMUNITY0Template.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Framework\Provisioning\BaseTemplates\v15\COMMUNITYPORTAL0Template.xml" />
     <EmbeddedResource Include="Framework\Provisioning\BaseTemplates\v15\DEV0Template.xml" />
     <EmbeddedResource Include="Framework\Provisioning\BaseTemplates\v15\ENTERWIKI0Template.xml" />
@@ -660,6 +666,13 @@
   <Target Name="BeforeBuild" DependsOnTargets="">
   </Target>
   <Target Name="AfterBuild" DependsOnTargets="">
+  </Target>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

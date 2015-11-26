@@ -14,7 +14,11 @@ using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Extensions;
 using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitions;
 using Microsoft.SharePoint.Client.Taxonomy;
 using System.Text.RegularExpressions;
+using Microsoft.SharePoint.Client.WebParts;
+using OfficeDevPnP.Core.Entities;
 using OfficeDevPnP.Core.Enums;
+using OfficeDevPnP.Core.Framework.Provisioning.Definitions;
+using Form = OfficeDevPnP.Core.Framework.Provisioning.Model.Form;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 {
@@ -258,6 +262,31 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                     #endregion
 
+                    #region Forms
+
+                    foreach (var listInfo in processedLists)
+                    {
+                        var targetForms = listInfo.SiteList.Forms;
+                        foreach (var templateForm in listInfo.TemplateList.Forms)
+                        {
+                            var formName = templateForm.ServerRelativeUrl.Split('/').Last();
+                            var form = targetForms.FirstOrDefault(x => GetFormName(x.ServerRelativeUrl).EndsWith(formName));
+                            try
+                            {
+                                if (form != null)
+                                {
+                                    DeleteForm(form.ServerRelativeUrl, web);
+                                }
+                                CreateForm(templateForm.FormType, formName, templateForm.IsDefault, listInfo.SiteList);
+                            }
+                            catch (Exception exception)
+                            {
+                                var message = string.Format("Problem with form exporting: {0}", templateForm.ServerRelativeUrl);
+                                scope.LogError(exception, message);
+                            }
+                        }
+                    }
+                    #endregion
 
                     // If an existing view is updated, and the list is to be listed on the QuickLaunch, it is removed because the existing view will be deleted and recreated from scratch. 
                     foreach (var listInfo in processedLists)
@@ -266,10 +295,38 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         listInfo.SiteList.Update();
                     }
                     web.Context.ExecuteQueryRetry();
-
                 }
             }
             return parser;
+        }
+
+        private string GetFormName(string relativeUrl)
+        {
+            return relativeUrl.Split('/').Last();
+        }
+
+        //TODO: create data access layer, move it
+        private void CreateForm(PageType formType, string formName, bool defaultForm, List list)
+        {
+            var isDocLibrary = list.IsDocumentLibrary();
+            var serverRelativeUrl = list.RootFolder.ServerRelativeUrl;
+            var fileName = String.Format("{0}/{1}{2}", serverRelativeUrl, isDocLibrary ? "Forms/" : "", formName);
+            var root = list.RootFolder;
+            var file = root.Files.AddTemplateFile(fileName, TemplateFileType.FormPage);
+            var formTypeName = Form.GetNameByType(formType);
+            var xml = WebPartXmlDefinitions.GetListFormWebPartXml(formTypeName, list.Id.ToString(), list.Title, setDefaultForm: defaultForm);
+            var manager = file.GetLimitedWebPartManager(PersonalizationScope.Shared);
+            var definition = manager.ImportWebPart(xml);
+            var webPart = definition.WebPart;
+            manager.AddWebPart(webPart, "Main", 1);
+            list.Context.ExecuteQuery();
+        }
+
+        private void DeleteForm(string formUrl, Web web)
+        {
+            var file = web.GetFileByServerRelativeUrl(formUrl);
+            file.Recycle();
+            web.Context.ExecuteQuery();
         }
 
         private void CreateView(Web web, View view, ViewCollection existingViews, List createdList, PnPMonitoredScope monitoredScope)
@@ -575,7 +632,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 l => l.EnableFolderCreation,
                 l => l.EnableMinorVersions,
                 l => l.DraftVersionVisibility,
-                l => l.Views
+                l => l.Views,
+                l => l.Forms
 #if !CLIENTSDKV15
 , l => l.MajorWithMinorVersionsLimit
 #endif
@@ -828,6 +886,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             createdList.Update();
 
             web.Context.Load(createdList.Views);
+            web.Context.Load(createdList.Forms);
             web.Context.Load(createdList, l => l.Id);
             web.Context.Load(createdList, l => l.RootFolder.ServerRelativeUrl);
             web.Context.Load(createdList.ContentTypes);
@@ -882,14 +941,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return Tuple.Create(createdList, parser);
         }
 
-
         private class ListInfo
         {
             public List SiteList { get; set; }
             public ListInstance TemplateList { get; set; }
         }
-
-
 
         public override ProvisioningTemplate ExtractObjects(Web web, ProvisioningTemplate template, ProvisioningTemplateCreationInformation creationInfo)
         {
@@ -906,6 +962,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     lc => lc.IncludeWithDefaultProperties(
                         l => l.ContentTypes,
                         l => l.Views,
+                        l => l.Forms,
+                        l => l.DefaultNewFormUrl,
+                        l => l.DefaultDisplayFormUrl,
+                        l => l.DefaultEditFormUrl,
                         l => l.BaseTemplate,
                         l => l.OnQuickLaunch,
                         l => l.RootFolder.ServerRelativeUrl,
@@ -932,7 +992,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                 // Retrieve all not hidden lists and the Workflow History Lists, just in case there are active workflow subscriptions
                 var includeWorkflowSubscriptions = workflowSubscriptions != null && workflowSubscriptions.Length > 0;
-               // var allowedLists = lists.Where(l => !l.Hidden || includeWorkflowSubscriptions && l.BaseTemplate == 140);
+                // var allowedLists = lists.Where(l => !l.Hidden || includeWorkflowSubscriptions && l.BaseTemplate == 140);
 
                 foreach (var siteList in lists)
                 {
@@ -976,6 +1036,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 : 0
                     };
 
+                    list = ExtractForms(siteList, list);
 
                     list = ExtractContentTypes(web, siteList, contentTypeFields, list);
 
@@ -1017,6 +1078,23 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             }
             return template;
+        }
+
+        private static ListInstance ExtractForms(List siteList, ListInstance list)
+        {
+            var defaultForms = new[] { siteList.DefaultDisplayFormUrl, siteList.DefaultEditFormUrl, siteList.DefaultNewFormUrl };
+
+            foreach (var form in siteList.Forms)
+            {
+                var model = new Model.Form
+                {
+                    FormType = form.FormType,
+                    ServerRelativeUrl = form.ServerRelativeUrl,
+                    IsDefault = defaultForms.Contains(form.ServerRelativeUrl)
+                };
+                list.Forms.Add(model);
+            }
+            return list;
         }
 
         private static ListInstance ExtractViews(List siteList, ListInstance list)

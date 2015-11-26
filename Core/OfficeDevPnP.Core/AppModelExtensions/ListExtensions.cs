@@ -1281,5 +1281,25 @@ namespace Microsoft.SharePoint.Client
             }
             list.SetPropertyBagValue(reIndexKey, searchversion + 1);
         }
+
+        /// <summary>
+        /// Iterate throught all library types to and compare with current base template
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns>true if list is document library, false otherwise</returns>
+        public static bool IsDocumentLibrary(this List list)
+        {
+            var libraryTypes = GetLibrariesTypes();
+            return libraryTypes.Contains((ListTemplateType) list.BaseTemplate);
+        }
+
+        private static List<ListTemplateType> GetLibrariesTypes()
+        {
+            return new List<ListTemplateType>
+            {
+                 ListTemplateType.DataConnectionLibrary, ListTemplateType.DocumentLibrary, ListTemplateType.HelpLibrary, ListTemplateType.HomePageLibrary,
+                ListTemplateType.MySiteDocumentLibrary, ListTemplateType.PictureLibrary, ListTemplateType.WebPageLibrary
+            };
+        }
     }
 }
