@@ -38,9 +38,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         public TokenParser(Web web, ProvisioningTemplate template)
         {
             web.EnsureProperties(w => w.ServerRelativeUrl);
-            
-            _web = web;
 
+            _web = web;
             _tokens = new List<TokenDefinition>();
 
             _tokens.Add(new SiteCollectionToken(web));
@@ -66,6 +65,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             {
                 _tokens.Add(new ListIdToken(web, list.Title, list.Id));
                 _tokens.Add(new ListUrlToken(web, list.Title, list.RootFolder.ServerRelativeUrl.Substring(web.ServerRelativeUrl.Length + 1)));
+                var templateList = template.Lists.FirstOrDefault(x => x.ServerRelativeUrl != null &&list.RootFolder.ServerRelativeUrl.EndsWith(x.Url));
+                if (templateList != null)
+                {
+                    _tokens.Add(new ListIdProvisionToken(web, list.Id, templateList.ID));
+                    _tokens.Add(new ListNameProvisionToken(web, list.Id, templateList.ID));
+                }
+
             }
 
             // Add parameters

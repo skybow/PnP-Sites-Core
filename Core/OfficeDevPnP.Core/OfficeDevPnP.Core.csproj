@@ -335,7 +335,6 @@
     <Compile Include="Framework\Provisioning\Connectors\FileConnectorBase.cs" />
     <Compile Include="Framework\Provisioning\Connectors\FileSystemConnector.cs" />
     <Compile Include="Framework\Provisioning\Connectors\SharePointConnector.cs" />
-    <Compile Include="Framework\Provisioning\Definitions\WebPartXmlDefinitions.cs" />
     <Compile Include="Framework\Provisioning\Deprecated\Model\ContentType.deprecated.cs" />
     <Compile Include="Framework\Provisioning\Deprecated\Model\ContentTypeBinding.deprecated.cs" />
     <Compile Include="Framework\Provisioning\Deprecated\Model\Feature.deprecated.cs" />
@@ -366,6 +365,7 @@
     <Compile Include="Framework\Provisioning\Model\FieldRef.cs" />
     <Compile Include="Framework\Provisioning\Model\Field.cs" />
     <Compile Include="Framework\Provisioning\Model\Form.cs" />
+    <Compile Include="Framework\Provisioning\Model\ListPage.cs" />
     <Compile Include="Framework\Provisioning\Model\ObjectSecurity.cs" />
     <Compile Include="Framework\Provisioning\Model\PageLayout.cs" />
     <Compile Include="Framework\Provisioning\Model\Publishing.cs" />
@@ -394,6 +394,7 @@
     <Compile Include="Framework\Provisioning\Model\WorkflowDefinition.cs" />
     <Compile Include="Framework\Provisioning\Model\Workflows.cs" />
     <Compile Include="Framework\Provisioning\Model\WorkflowSubscription.cs" />
+    <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\WebPartsEntityProvider.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Extensions\PnPMonitoredScopeExtensions.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Extensions\SecurableObjectExtensions.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\ObjectSupportedUILanguages.cs" />
@@ -421,14 +422,18 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Framework\Provisioning\ObjectHandlers\ObjectTermGroups.cs" />
+    <Compile Include="Framework\Provisioning\ObjectHandlers\ObjectWebParts.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\ObjectWorkflows.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\ProvisioningMessageType.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\ProvisioningTemplateApplyingInformation.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\ProvisioningTemplateCreationInformation.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\SiteToTemplateConversion.cs" />
+    <Compile Include="Framework\Provisioning\ObjectHandlers\TokenDefinitions\BaseListProvisionToken.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\TokenDefinitions\CurrentUserFullNameToken.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\TokenDefinitions\CurrentUserLoginNameToken.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\TokenDefinitions\KeywordsTermStoreIdToken.cs" />
+    <Compile Include="Framework\Provisioning\ObjectHandlers\TokenDefinitions\ListIdProvisionToken.cs" />
+    <Compile Include="Framework\Provisioning\ObjectHandlers\TokenDefinitions\ListNameProvisionToken.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\TokenDefinitions\SiteCollectionTermGroupNameToken.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\TokenDefinitions\SiteCollectionTermGroupId.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\TokenDefinitions\AssociatedGroupToken.cs" />
@@ -653,7 +658,9 @@
     <EmbeddedResource Include="Framework\Provisioning\BaseTemplates\v15\VISPRUS0Template.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Framework\Provisioning\BaseTemplates\v16\CMSPUBLISHING0Template.xml" />
+    <EmbeddedResource Include="Framework\Provisioning\BaseTemplates\v16\CMSPUBLISHING0Template.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Framework\Provisioning\BaseTemplates\v15\CMSPUBLISHING0Template.xml" />

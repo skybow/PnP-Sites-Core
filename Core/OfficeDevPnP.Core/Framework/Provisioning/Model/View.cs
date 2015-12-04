@@ -20,6 +20,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
             set { this._schemaXml = value; }
         }
 
+        public string PageUrl { get; set; }
+
+        
         #endregion
 
         #region Comparison code

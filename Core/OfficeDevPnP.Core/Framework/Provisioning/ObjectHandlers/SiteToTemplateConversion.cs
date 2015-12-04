@@ -73,6 +73,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 objectHandlers.Add(new ObjectFeatures());
                 objectHandlers.Add(new ObjectComposedLook());
                 objectHandlers.Add(new ObjectSearchSettings());
+                objectHandlers.Add(new ObjectWebParts());
                 objectHandlers.Add(new ObjectFiles());
                 objectHandlers.Add(new ObjectPages());
                 objectHandlers.Add(new ObjectPropertyBagEntry());
@@ -148,6 +149,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 objectHandlers.Add(new ObjectListInstance());
                 objectHandlers.Add(new ObjectLookupFields());
                 objectHandlers.Add(new ObjectListInstanceDataRows());
+                objectHandlers.Add(new ObjectWebParts());
                 objectHandlers.Add(new ObjectFiles());
                 objectHandlers.Add(new ObjectPages());
                 objectHandlers.Add(new ObjectCustomActions());
@@ -158,7 +160,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 objectHandlers.Add(new ObjectPropertyBagEntry());
                 objectHandlers.Add(new ObjectExtensibilityProviders());
                 objectHandlers.Add(new ObjectPersistTemplateInfo());
-
+                
                 var tokenParser = new TokenParser(web, template);
 
                 int step = 1;

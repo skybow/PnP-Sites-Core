@@ -4,7 +4,7 @@ using Microsoft.SharePoint.Client;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitions
 {
-    internal abstract class TokenDefinition
+    public abstract class TokenDefinition
     {
         protected string CacheValue;
         private readonly string[] _tokens;
@@ -28,14 +28,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitio
             var regexs = new Regex[this._tokens.Length];
             for (var q = 0; q < this._tokens.Length; q++)
             {
-                regexs[q] = new Regex(this._tokens[q], RegexOptions.IgnoreCase);
+                regexs[q] = new Regex(this._tokens[q], RegexOptions.IgnoreCase | RegexOptions.Singleline);
             }
             return regexs;
         }
 
         public Regex GetRegexForToken(string token)
         {
-            return new Regex(token, RegexOptions.IgnoreCase);
+            return new Regex(token, RegexOptions.IgnoreCase | RegexOptions.Singleline);
         }
 
         public int GetTokenLength()

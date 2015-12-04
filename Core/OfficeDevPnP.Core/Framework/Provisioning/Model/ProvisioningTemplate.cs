@@ -5,7 +5,6 @@ using OfficeDevPnP.Core.Extensions;
 using OfficeDevPnP.Core.Framework.Provisioning.Connectors;
 using OfficeDevPnP.Core.Framework.Provisioning.Providers;
 using OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml;
-using System.IO;
 using System.Xml.Linq;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.Model
@@ -40,6 +39,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         private List<AddIn> _addins = new List<AddIn>();
         private Publishing _publishing = null;
         private Dictionary<String, String> _properties = new Dictionary<string, string>();
+        private List<ListPage> _listPages = new List<ListPage>(); 
 
         #endregion
 
@@ -277,6 +277,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
             {
                 this.connector = value;
             }
+        }
+
+        public List<ListPage> ListPages
+        {
+            get { return _listPages; }
+            set { _listPages = value; }
         }
 
         #endregion

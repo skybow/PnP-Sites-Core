@@ -14,17 +14,13 @@ using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Extensions;
 using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitions;
 using Microsoft.SharePoint.Client.Taxonomy;
 using System.Text.RegularExpressions;
-using Microsoft.SharePoint.Client.WebParts;
-using OfficeDevPnP.Core.Entities;
 using OfficeDevPnP.Core.Enums;
-using OfficeDevPnP.Core.Framework.Provisioning.Definitions;
 using Form = OfficeDevPnP.Core.Framework.Provisioning.Model.Form;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 {
     internal class ObjectListInstance : ObjectHandlerBase
     {
-
         public override string Name
         {
             get { return "List instances"; }
@@ -240,13 +236,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         }
 
                         var existingViews = createdList.Views;
-                        web.Context.Load(existingViews, vs => vs.Include(v => v.Title, v => v.Id));
+                        web.Context.Load(existingViews, vs => vs.Include(v => v.Title, v => v.Id, v => v.ServerRelativeUrl));
                         web.Context.ExecuteQueryRetry();
                         foreach (var view in list.Views)
                         {
-
                             CreateView(web, view, existingViews, createdList, scope);
-
                         }
 
                         //// Removing existing views set the OnQuickLaunch option to false and need to be re-set.
@@ -267,17 +261,18 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     foreach (var listInfo in processedLists)
                     {
                         var targetForms = listInfo.SiteList.Forms;
-                        foreach (var templateForm in listInfo.TemplateList.Forms)
+                        var templateForms = listInfo.TemplateList.Forms.OrderByDescending(x => x.IsDefault).ToArray();//create default first
+                        foreach (var templateForm in templateForms)
                         {
-                            var formName = templateForm.ServerRelativeUrl.Split('/').Last();
-                            var form = targetForms.FirstOrDefault(x => GetFormName(x.ServerRelativeUrl).EndsWith(formName));
+                            var formName = GetPageName(templateForm.ServerRelativeUrl);
+                            var form = targetForms.FirstOrDefault(x => GetPageName(x.ServerRelativeUrl).EndsWith(formName));
                             try
                             {
                                 if (form != null)
                                 {
-                                    DeleteForm(form.ServerRelativeUrl, web);
+                                    DeletePage(form.ServerRelativeUrl, web);
                                 }
-                                CreateForm(templateForm.FormType, formName, templateForm.IsDefault, listInfo.SiteList);
+                                CreateForm(templateForm, listInfo);
                             }
                             catch (Exception exception)
                             {
@@ -300,29 +295,40 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return parser;
         }
 
-        private string GetFormName(string relativeUrl)
+        private string GetPageName(string relativeUrl)
         {
-            return relativeUrl.Split('/').Last();
+            return string.IsNullOrEmpty(relativeUrl) ? relativeUrl : relativeUrl.Split('/').Last();
         }
 
         //TODO: create data access layer, move it
-        private void CreateForm(PageType formType, string formName, bool defaultForm, List list)
+        private void CreateForm(Form templateForm, ListInfo info)
         {
+            var list = info.SiteList;
             var isDocLibrary = list.IsDocumentLibrary();
             var serverRelativeUrl = list.RootFolder.ServerRelativeUrl;
-            var fileName = String.Format("{0}/{1}{2}", serverRelativeUrl, isDocLibrary ? "Forms/" : "", formName);
+            var fileName = string.Format("{0}/{1}{2}", serverRelativeUrl, isDocLibrary ? "Forms/" : "", GetPageName(templateForm.ServerRelativeUrl));
             var root = list.RootFolder;
-            var file = root.Files.AddTemplateFile(fileName, TemplateFileType.FormPage);
-            var formTypeName = Form.GetNameByType(formType);
-            var xml = WebPartXmlDefinitions.GetListFormWebPartXml(formTypeName, list.Id.ToString(), list.Title, setDefaultForm: defaultForm);
-            var manager = file.GetLimitedWebPartManager(PersonalizationScope.Shared);
-            var definition = manager.ImportWebPart(xml);
-            var webPart = definition.WebPart;
-            manager.AddWebPart(webPart, "Main", 1);
+
+            root.Files.AddTemplateFile(fileName, TemplateFileType.FormPage);
+            if (templateForm.IsDefault)
+            {
+                switch (templateForm.FormType)
+                {
+                    case PageType.DisplayForm:
+                        list.DefaultDisplayFormUrl = fileName;
+                        break;
+                    case PageType.EditForm:
+                        list.DefaultEditFormUrl = fileName;
+                        break;
+                    case PageType.NewForm:
+                        list.DefaultNewFormUrl = fileName;
+                        break;
+                }
+            }
             list.Context.ExecuteQuery();
         }
 
-        private void DeleteForm(string formUrl, Web web)
+        private void DeletePage(string formUrl, Web web)
         {
             var file = web.GetFileByServerRelativeUrl(formUrl);
             file.Recycle();
@@ -333,7 +339,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             try
             {
-
                 var viewElement = XElement.Parse(view.SchemaXml);
                 var displayNameElement = viewElement.Attribute("DisplayName");
                 if (displayNameElement == null)
@@ -385,7 +390,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 var viewQuery = new StringBuilder();
                 foreach (var queryElement in viewElement.Descendants("Query").Elements())
                 {
-                    viewQuery.Append(queryElement.ToString());
+                    viewQuery.Append(queryElement);
                 }
 
                 var viewCI = new ViewCreationInformation
@@ -423,8 +428,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                 // Scope
                 var scope = viewElement.Attribute("Scope") != null ? viewElement.Attribute("Scope").Value : null;
-                ViewScope parsedScope = ViewScope.DefaultValue;
-                if (!string.IsNullOrEmpty(scope) && Enum.TryParse<ViewScope>(scope, out parsedScope))
+                ViewScope parsedScope;
+                if (!string.IsNullOrEmpty(scope) && Enum.TryParse(scope, out parsedScope))
                 {
                     createdView.Scope = parsedScope;
                     createdView.Update();
@@ -624,6 +629,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             web.Context.Load(existingList,
                 l => l.Title,
+                l => l.ParentWebUrl,
+                l => l.Id,
                 l => l.Description,
                 l => l.OnQuickLaunch,
                 l => l.Hidden,
@@ -633,7 +640,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 l => l.EnableMinorVersions,
                 l => l.DraftVersionVisibility,
                 l => l.Views,
-                l => l.Forms
+                l => l.Forms,
+                l => l.RootFolder.ServerRelativeUrl
 #if !CLIENTSDKV15
 , l => l.MajorWithMinorVersionsLimit
 #endif
@@ -892,6 +900,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             web.Context.Load(createdList.ContentTypes);
             web.Context.ExecuteQueryRetry();
 
+
+            parser.AddToken(new ListIdProvisionToken(web, createdList.Id, list.ID));
+            parser.AddToken(new ListNameProvisionToken(web, createdList.Id, list.ID));
+
             // Remove existing content types only if there are custom content type bindings
             var contentTypesToRemove = new List<ContentType>();
             if (list.RemoveExistingContentTypes && list.ContentTypeBindings.Count > 0)
@@ -951,7 +963,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             using (var scope = new PnPMonitoredScope(this.Name))
             {
-                web.EnsureProperties(w => w.ServerRelativeUrl, w => w.Url);
+                web.EnsureProperties(w => w.ServerRelativeUrl, w => w.Url, w => w.Id);
 
                 var serverRelativeUrl = web.ServerRelativeUrl;
 
@@ -961,6 +973,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 web.Context.Load(lists,
                     lc => lc.IncludeWithDefaultProperties(
                         l => l.ContentTypes,
+                        l => l.Id,
+                        l => l.ParentWebUrl,
                         l => l.Views,
                         l => l.Forms,
                         l => l.DefaultNewFormUrl,
@@ -1033,7 +1047,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         MinorVersionLimit =
                             siteList.IsObjectPropertyInstantiated("MajorWithMinorVersionsLimit")
                                 ? siteList.MajorWithMinorVersionsLimit
-                                : 0
+                                : 0,
+                        ParentWebUrl = web.Url,
+                        ID = siteList.Id,
+                        ParentWebId = web.Id,
+                        ServerRelativeUrl = siteList.RootFolder.ServerRelativeUrl
                     };
 
                     list = ExtractForms(siteList, list);
@@ -1086,7 +1104,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             foreach (var form in siteList.Forms)
             {
-                var model = new Model.Form
+                var model = new Form
                 {
                     FormType = form.FormType,
                     ServerRelativeUrl = form.ServerRelativeUrl,
@@ -1117,8 +1135,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 {
                     xslLinkElement.Remove();
                 }
-
-                list.Views.Add(new View { SchemaXml = schemaElement.ToString() });
+                list.Views.Add(new View { SchemaXml = schemaElement.ToString(), PageUrl = view.ServerRelativeUrl });
             }
 
             return list;

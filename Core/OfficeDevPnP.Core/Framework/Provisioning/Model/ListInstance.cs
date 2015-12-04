@@ -233,6 +233,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
             set { this._security = value; }
         }
 
+        public string ParentWebUrl { get; set; }
+        public Guid ID { get; set; }
+        public Guid ParentWebId { get; set; }
+        public string ServerRelativeUrl { get; set; }
+
         #endregion
 
         #region Comparison code
