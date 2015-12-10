@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 using Microsoft.SharePoint.Client;
 using Microsoft.SharePoint.Client.WebParts;
 using OfficeDevPnP.Core.Framework.Provisioning.Model;
@@ -115,8 +116,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                                 if (defaultWebPart != null && defaultWebPart.WebPart.Title == webpart.Title)
                                 {
-                                    defaultWebPart.MoveWebPartTo(webpart.Zone, (int) webpart.Order);
+                                    defaultWebPart.MoveWebPartTo(webpart.Zone, (int)webpart.Order);
                                     defaultWebPart.SaveWebPartChanges();
+                                    SetProperties(webpart.Contents, defaultWebPart, scope);
                                 }
                                 else
                                 {
@@ -144,6 +146,38 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return parser;
         }
 
+        private static void SetProperties(string xml, WebPartDefinition defaultWebPart, PnPMonitoredScope scope)
+        {
+            try
+            {
+                var defaultProperties = defaultWebPart.WebPart.Properties;
+                if (!xml.Contains("http://schemas.microsoft.com/WebPart/v3")) return;
+
+                using (var reader = new StringReader(xml))
+                {
+                    XElement xelement = XElement.Load(reader);
+                    var webPart = xelement.Elements().First();
+                    var data = webPart.Elements().FirstOrDefault(x => x.Name.LocalName == "data");
+                    var propertiesElement = data.Elements().FirstOrDefault(x => x.Name.LocalName == "properties");
+                    IEnumerable<XElement> properties = propertiesElement.Elements();
+                    foreach (var property in properties)
+                    {
+                        var propertyName = property.Attribute("name").Value;
+                        var propertyValue = property.Value;
+                        if (defaultProperties.FieldValues.ContainsKey(propertyName))
+                        {
+                            defaultProperties[propertyName] = Convert.ChangeType(propertyValue, Type.GetTypeCode(defaultProperties[propertyName].GetType()));
+                        }
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                scope.LogError(exception, "Resetting properties for default web part error");
+            }
+
+        }
+
         private static bool GetIsDefaultWebPart(Microsoft.SharePoint.Client.WebParts.WebPart webPart)
         {
             if (!webPart.Properties.FieldValues.ContainsKey("Default")) return false;
@@ -156,10 +190,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             var webPartPage = web.GetFileByServerRelativeUrl(targetFile.ServerRelativeUrl);
 
             var xml = parser.ParseString(webPart.Contents, Guid.Empty.ToString());
-            LimitedWebPartManager  limitedWebPartManager = webPartPage.GetLimitedWebPartManager(PersonalizationScope.Shared);
+            LimitedWebPartManager limitedWebPartManager = webPartPage.GetLimitedWebPartManager(PersonalizationScope.Shared);
             WebPartDefinition oWebPartDefinition = limitedWebPartManager.ImportWebPart(xml);
 
-            limitedWebPartManager.AddWebPart(oWebPartDefinition.WebPart, webPart.Zone, (int) webPart.Order);
+            limitedWebPartManager.AddWebPart(oWebPartDefinition.WebPart, webPart.Zone, (int)webPart.Order);
         }
 
         private static bool CheckOutIfNeeded(Web web, File targetFile)
@@ -211,7 +245,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         var pageUrl = provider.GetUrl();
                         var file = modelProvider.GetFile(provider.GetUrl());
                         files.Add(file);
-
                         this.CreateLocalFile(web, pageUrl, connector);
                     }
                     catch (Exception exception)
