@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.SharePoint.Client;
 using OfficeDevPnP.Core.Framework.Provisioning.Model;
 using OfficeDevPnP.Core.Diagnostics;
@@ -38,7 +37,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     // Retrieve all the lists and libraries
                     var lists = web.Lists;
                     web.Context.Load(lists);
-                    web.Context.ExecuteQuery();
+                    web.Context.ExecuteQueryRetry();
 
                     // Retrieve the workflow definitions (including unpublished ones)
                     Microsoft.SharePoint.Client.WorkflowServices.WorkflowDefinition[] definitions = null;

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using OfficeDevPnP.Core.Framework.Provisioning.Model.Common;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.Model
 {
-    public class View : IEquatable<View>
+    public class View : IEquatable<View>, IUrlProvider
     {
         #region Private Members
         private string _schemaXml = string.Empty;
@@ -31,6 +32,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             XElement element = PrepareViewForCompare(this.SchemaXml);
             return (element != null ? element.ToString().GetHashCode() : 0);
+        }
+
+        public string GetUrl()
+        {
+            return PageUrl;
         }
 
         public override bool Equals(object obj)

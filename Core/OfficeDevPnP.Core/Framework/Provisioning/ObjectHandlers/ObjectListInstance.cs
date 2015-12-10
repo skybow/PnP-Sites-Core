@@ -268,11 +268,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                             var form = targetForms.FirstOrDefault(x => GetPageName(x.ServerRelativeUrl).EndsWith(formName));
                             try
                             {
-                                if (form != null)
+                                if (form == null)
                                 {
-                                    DeletePage(form.ServerRelativeUrl, web);
+                                    CreateForm(templateForm, listInfo);
                                 }
-                                CreateForm(templateForm, listInfo);
                             }
                             catch (Exception exception)
                             {
@@ -325,14 +324,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         break;
                 }
             }
-            list.Context.ExecuteQuery();
-        }
-
-        private void DeletePage(string formUrl, Web web)
-        {
-            var file = web.GetFileByServerRelativeUrl(formUrl);
-            file.Recycle();
-            web.Context.ExecuteQuery();
+            list.Context.ExecuteQueryRetry();
         }
 
         private void CreateView(Web web, View view, ViewCollection existingViews, List createdList, PnPMonitoredScope monitoredScope)

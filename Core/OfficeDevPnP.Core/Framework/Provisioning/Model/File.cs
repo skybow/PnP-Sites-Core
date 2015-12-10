@@ -23,7 +23,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         public List<WebPart> WebParts
         {
             get { return _webParts; }
-            private set { _webParts = value; }
+            set { _webParts = value; }
         }
 
         public Dictionary<string, string> Properties

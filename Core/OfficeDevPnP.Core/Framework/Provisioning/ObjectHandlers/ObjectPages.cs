@@ -14,8 +14,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             get { return "Pages"; }
         }
-
-
+        
         public override TokenParser ProvisionObjects(Web web, ProvisioningTemplate template, TokenParser parser, ProvisioningTemplateApplyingInformation applyingInformation)
         {
             using (var scope = new PnPMonitoredScope(this.Name))
@@ -39,7 +38,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     {
                         file = web.GetFileByServerRelativeUrl(url);
                         web.Context.Load(file);
-                        web.Context.ExecuteQuery();
+                        web.Context.ExecuteQueryRetry();
                     }
                     catch (ServerException ex)
                     {
@@ -110,7 +109,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     {
                         file = web.GetFileByServerRelativeUrl(url);
                         web.Context.Load(file.ListItemAllFields);
-                        web.Context.ExecuteQuery();
+                        web.Context.ExecuteQueryRetry();
                         file.ListItemAllFields.SetSecurity(parser, page.Security);
                     }
                 }

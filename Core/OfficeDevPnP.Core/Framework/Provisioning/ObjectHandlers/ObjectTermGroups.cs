@@ -4,7 +4,11 @@ using System.Linq;
 using Microsoft.SharePoint.Client;
 using Microsoft.SharePoint.Client.Taxonomy;
 using OfficeDevPnP.Core.Diagnostics;
+using OfficeDevPnP.Core.Framework.Provisioning.Model;
 using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitions;
+using Term = Microsoft.SharePoint.Client.Taxonomy.Term;
+using TermGroup = Microsoft.SharePoint.Client.Taxonomy.TermGroup;
+using TermSet = Microsoft.SharePoint.Client.Taxonomy.TermSet;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 {
@@ -15,7 +19,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             get { return "Term Groups"; }
         }
-        public override TokenParser ProvisionObjects(Web web, Model.ProvisioningTemplate template, TokenParser parser, ProvisioningTemplateApplyingInformation applyingInformation)
+        public override TokenParser ProvisionObjects(Web web, ProvisioningTemplate template, TokenParser parser, ProvisioningTemplateApplyingInformation applyingInformation)
         {
             using (var scope = new PnPMonitoredScope(this.Name))
             {
@@ -310,15 +314,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     // Find the site collection termgroup, if any
                     TaxonomySession session = TaxonomySession.GetTaxonomySession(web.Context);
                     var termStore = session.GetDefaultSiteCollectionTermStore();
-					web.Context.Load(termStore, t => t.Id, t => t.DefaultLanguage);
-					web.Context.ExecuteQueryRetry();
+                    web.Context.Load(termStore, t => t.Id, t => t.DefaultLanguage);
+                    web.Context.ExecuteQueryRetry();
 
-					if (termStore.ServerObjectIsNull.Value)
-					{
-						termStore = session.GetDefaultKeywordsTermStore();
-						web.Context.Load(termStore, t => t.Id, t => t.DefaultLanguage);
-						web.Context.ExecuteQueryRetry();
-					}
+                    if (termStore.ServerObjectIsNull.Value)
+                    {
+                        termStore = session.GetDefaultKeywordsTermStore();
+                        web.Context.Load(termStore, t => t.Id, t => t.DefaultLanguage);
+                        web.Context.ExecuteQueryRetry();
+                    }
 
                     List<TermGroup> termGroups = new List<TermGroup>();
                     if (creationInfo.IncludeAllTermGroups)

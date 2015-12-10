@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Microsoft.SharePoint.Client.Publishing;
@@ -53,6 +56,40 @@ namespace Microsoft.SharePoint.Client
         }
 
         /// <summary>
+        /// Returns page content xml without webparts xml
+        /// </summary>
+        /// <param name="web">Site to be processed - can be root web or sub site</param>
+        /// <param name="serverRelativePageUrl">Server relative url of the page, e.g. /sites/demo/SitePages/Test.aspx</param>
+        /// <exception cref="System.ArgumentException">Thrown when serverRelativePageUrl is a zero-length string or contains only white space</exception>
+        /// <exception cref="System.ArgumentNullException">Thrown when serverRelativePageUrl is null</exception>
+        public static string GetPageContentXmlWithoutWebParts(this Web web, string serverRelativePageUrl)
+        {
+            if (string.IsNullOrEmpty(serverRelativePageUrl))
+            {
+                throw (serverRelativePageUrl == null)
+                  ? new ArgumentNullException("serverRelativePageUrl")
+                  : new ArgumentException(CoreResources.Exception_Message_EmptyString_Arg, "serverRelativePageUrl");
+            }
+
+            var file =
+              web.GetFileByServerRelativeUrl(serverRelativePageUrl);
+
+            string result;
+
+            var stream = file.OpenBinaryStream();
+            web.Context.ExecuteQueryRetry();
+            using (var streamResult = stream.Value)
+            {
+                using (var sr = new StreamReader(streamResult, Encoding.UTF8))
+                {
+                    result = sr.ReadToEnd();
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// List the web parts on a page
         /// </summary>
         /// <param name="web">Site to be processed - can be root web or sub site</param>
@@ -70,12 +107,61 @@ namespace Microsoft.SharePoint.Client
 
             File file = web.GetFileByServerRelativeUrl(serverRelativePageUrl);
             LimitedWebPartManager limitedWebPartManager = file.GetLimitedWebPartManager(PersonalizationScope.Shared);
-
             var query = web.Context.LoadQuery(limitedWebPartManager.WebParts.IncludeWithDefaultProperties(wp => wp.Id, wp => wp.WebPart, wp => wp.WebPart.Title, wp => wp.WebPart.Properties, wp => wp.WebPart.Hidden));
 
             web.Context.ExecuteQueryRetry();
 
             return query;
+        }
+
+        /// <summary>
+        /// Get the xml of all webarts on the page
+        /// </summary>
+        /// <param name="web">Site to be processed - can be root web or sub site</param>
+        /// <param name="pageUrl">Server relative url of the page containing the webparts</param>
+        /// <exception cref="System.ArgumentException">Thrown when pageUrl is a zero-length string or contains only white space</exception>
+        /// <exception cref="System.ArgumentNullException">Thrown when pageUrl is null</exception>
+        public static string GetWebPartsXml(this Web web, string pageUrl)
+        {
+            if (string.IsNullOrEmpty(pageUrl))
+            {
+                throw pageUrl == null
+                  ? new ArgumentNullException("pageUrl")
+                  : new ArgumentException(CoreResources.Exception_Message_EmptyString_Arg, "pageUrl");
+            }
+
+            var url = string.Format("{0}/_vti_bin/Webpartpages.asmx", web.Url);
+            HttpWebRequest endpointRequest = (HttpWebRequest)HttpWebRequest.Create(url);
+
+            endpointRequest.AuthenticationLevel = System.Net.Security.AuthenticationLevel.MutualAuthRequested;
+
+            endpointRequest.Method = "POST";
+            endpointRequest.Accept = "text/xml; charset=utf-8";
+            endpointRequest.ContentType = "text/xml; charset=utf-8";
+            endpointRequest.UseDefaultCredentials = false;
+            endpointRequest.Credentials = web.Context.Credentials;
+            var message = "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+                + "<soap:Body>"
+                + "   <GetWebPartProperties2 xmlns=\"http://microsoft.com/sharepoint/webpartpages\">"
+                + "      <pageUrl>" + pageUrl + "</pageUrl>"
+                + "      <storage>Shared</storage>"
+                + "      <behavior>Version3</behavior>"
+                + "   </GetWebPartProperties2>"
+                + "</soap:Body>"
+                + "</soap:Envelope>";
+
+            byte[] bytes = Encoding.UTF8.GetBytes(message);
+            endpointRequest.ContentLength = bytes.Length;
+            Stream dataStream = endpointRequest.GetRequestStream();
+            dataStream.Write(bytes, 0, bytes.Length);
+            dataStream.Close();
+            string webPartsSchemas;
+            using (HttpWebResponse response = endpointRequest.GetResponse() as HttpWebResponse)
+            {
+                StreamReader reader = new StreamReader(response.GetResponseStream());
+                webPartsSchemas = reader.ReadToEnd();
+            }
+            return webPartsSchemas;
         }
 
         /// <summary>
@@ -133,14 +219,6 @@ namespace Microsoft.SharePoint.Client
             }
 
             var webPartPage = web.GetFileByServerRelativeUrl(serverRelativePageUrl);
-
-            if (webPartPage == null)
-            {
-                return;
-            }
-
-            web.Context.Load(webPartPage);
-            web.Context.ExecuteQueryRetry();
 
             LimitedWebPartManager limitedWebPartManager = webPartPage.GetLimitedWebPartManager(PersonalizationScope.Shared);
             WebPartDefinition oWebPartDefinition = limitedWebPartManager.ImportWebPart(webPart.WebPartXml);

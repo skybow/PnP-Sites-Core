@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.SharePoint.Client;
 using OfficeDevPnP.Core.Framework.Provisioning.Model;
 using OfficeDevPnP.Core.Diagnostics;
@@ -23,7 +19,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                 web.Context.Load(web.RegionalSettings);
                 web.Context.Load(web.RegionalSettings.TimeZone, tz => tz.Id);
-                web.Context.ExecuteQuery();
+                web.Context.ExecuteQueryRetry();
 
                 Model.RegionalSettings settings = new Model.RegionalSettings();
 

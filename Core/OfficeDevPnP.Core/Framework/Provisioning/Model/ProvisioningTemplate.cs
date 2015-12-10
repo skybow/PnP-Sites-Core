@@ -39,7 +39,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         private List<AddIn> _addins = new List<AddIn>();
         private Publishing _publishing = null;
         private Dictionary<String, String> _properties = new Dictionary<string, string>();
-        private List<ListPage> _listPages = new List<ListPage>(); 
 
         #endregion
 
@@ -145,7 +144,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         public List<File> Files
         {
             get { return this._files; }
-            private set { this._files = value; }
+            set { this._files = value; }
         }
 
         /// <summary>
@@ -277,12 +276,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
             {
                 this.connector = value;
             }
-        }
-
-        public List<ListPage> ListPages
-        {
-            get { return _listPages; }
-            set { _listPages = value; }
         }
 
         #endregion

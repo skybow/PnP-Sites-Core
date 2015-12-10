@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Microsoft.SharePoint.Client;
 using OfficeDevPnP.Core.Framework.Provisioning.Model;
 using OfficeDevPnP.Core.Diagnostics;
@@ -23,7 +19,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                 web.Context.Load(web, w => w.SupportedUILanguageIds);
 
-                web.Context.ExecuteQuery();
+                web.Context.ExecuteQueryRetry();
 
                 foreach (var id in web.SupportedUILanguageIds)
                 {
@@ -42,7 +38,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 web.IsMultilingual = true;
                 web.Context.Load(web, w => w.SupportedUILanguageIds);
                 web.Update();
-                web.Context.ExecuteQuery();
+                web.Context.ExecuteQueryRetry();
 
                 var isDirty = false;
 

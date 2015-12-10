@@ -1,11 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using Microsoft.SharePoint.Client;
-using OfficeDevPnP.Core.Entities;
+using Microsoft.SharePoint.Client.WebParts;
 using OfficeDevPnP.Core.Framework.Provisioning.Model;
 using File = Microsoft.SharePoint.Client.File;
 using OfficeDevPnP.Core.Diagnostics;
+using OfficeDevPnP.Core.Framework.Provisioning.Connectors;
+using OfficeDevPnP.Core.Framework.Provisioning.Model.Common;
+using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.File;
 using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Extensions;
+using WebPart = OfficeDevPnP.Core.Framework.Provisioning.Model.WebPart;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 {
@@ -19,20 +26,16 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             using (var scope = new PnPMonitoredScope(this.Name))
             {
-                var context = web.Context as ClientContext;
-
                 web.EnsureProperties(w => w.ServerRelativeUrl);
 
                 foreach (var file in template.Files)
                 {
-
                     var folderName = parser.ParseString(file.Folder);
 
-                    if (folderName.ToLower().StartsWith((web.ServerRelativeUrl.ToLower())))
+                    if (folderName.ToLower().StartsWith(web.ServerRelativeUrl.ToLower()))
                     {
                         folderName = folderName.Substring(web.ServerRelativeUrl.Length);
                     }
-
 
                     var folder = web.EnsureFolderPath(folderName);
 
@@ -81,23 +84,46 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         if (file.WebParts != null && file.WebParts.Any())
                         {
                             targetFile.EnsureProperties(f => f.ServerRelativeUrl);
-                            
-                            var existingWebParts = web.GetWebParts(targetFile.ServerRelativeUrl);
-                            foreach (var webpart in file.WebParts)
-                            {
-                                // check if the webpart is already set on the page
-                                if (existingWebParts.FirstOrDefault(w => w.WebPart.Title == webpart.Title) == null)
-                                {
-                                    scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_Files_Adding_webpart___0___to_page, webpart.Title);
-                                    var wpEntity = new WebPartEntity();
-                                    wpEntity.WebPartTitle = webpart.Title;
-                                    wpEntity.WebPartXml = parser.ParseString(webpart.Contents).Trim(new[] { '\n', ' ' });
-                                    wpEntity.WebPartZone = webpart.Zone;
-                                    wpEntity.WebPartIndex = (int)webpart.Order;
 
-                                    web.AddWebPartToWebPartPage(targetFile.ServerRelativeUrl, wpEntity);
+                            var existingWebParts = web.GetWebParts(targetFile.ServerRelativeUrl);
+
+                            var enumerator = existingWebParts.GetEnumerator();
+                            var needToExecute = false;
+                            WebPartDefinition defaultWebPart = null;
+                            while (enumerator.MoveNext())
+                            {
+                                var current = enumerator.Current;
+                                if (GetIsDefaultWebPart(current.WebPart))
+                                {
+                                    defaultWebPart = current;
+                                }
+                                else
+                                {
+                                    enumerator.Current.DeleteWebPart();
+                                    needToExecute = true;
                                 }
                             }
+
+                            if (needToExecute)
+                            {
+                                web.Context.ExecuteQueryRetry();
+                            }
+
+                            foreach (var webpart in file.WebParts)
+                            {
+                                scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_Files_Adding_webpart___0___to_page, webpart.Title);
+
+                                if (defaultWebPart != null && defaultWebPart.WebPart.Title == webpart.Title)
+                                {
+                                    defaultWebPart.MoveWebPartTo(webpart.Zone, (int) webpart.Order);
+                                    defaultWebPart.SaveWebPartChanges();
+                                }
+                                else
+                                {
+                                    AddWebPart(web, parser, webpart, targetFile);
+                                }
+                            }
+                            web.Context.ExecuteQuery();
                         }
 
                         if (checkedOut)
@@ -113,25 +139,45 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                             targetFile.ListItemAllFields.SetSecurity(parser, file.Security);
                         }
                     }
-
                 }
             }
             return parser;
         }
 
+        private static bool GetIsDefaultWebPart(Microsoft.SharePoint.Client.WebParts.WebPart webPart)
+        {
+            if (!webPart.Properties.FieldValues.ContainsKey("Default")) return false;
+            var isDefaultString = webPart.Properties["Default"].ToString();
+            return !string.IsNullOrEmpty(isDefaultString) && bool.Parse(isDefaultString);
+        }
+
+        private static void AddWebPart(Web web, TokenParser parser, WebPart webPart, File targetFile)
+        {
+            var webPartPage = web.GetFileByServerRelativeUrl(targetFile.ServerRelativeUrl);
+
+            var xml = parser.ParseString(webPart.Contents, Guid.Empty.ToString());
+            LimitedWebPartManager  limitedWebPartManager = webPartPage.GetLimitedWebPartManager(PersonalizationScope.Shared);
+            WebPartDefinition oWebPartDefinition = limitedWebPartManager.ImportWebPart(xml);
+
+            limitedWebPartManager.AddWebPart(oWebPartDefinition.WebPart, webPart.Zone, (int) webPart.Order);
+        }
+
         private static bool CheckOutIfNeeded(Web web, File targetFile)
         {
             var checkedOut = false;
+
             try
             {
-                web.Context.Load(targetFile, f => f.CheckOutType, f => f.ListItemAllFields.ParentList.ForceCheckout);
+                web.Context.Load(targetFile, f => f.CheckOutType, f => f.ListItemAllFields, f => f.ListItemAllFields.ParentList.ForceCheckout);
                 web.Context.ExecuteQueryRetry();
-
-                if (targetFile.CheckOutType == CheckOutType.None)
+                if (IsLibraryFile(targetFile))
                 {
-                    targetFile.CheckOut();
+                    if (targetFile.CheckOutType == CheckOutType.None)
+                    {
+                        targetFile.CheckOut();
+                    }
+                    checkedOut = true;
                 }
-                checkedOut = true;
             }
             catch (ServerException ex)
             {
@@ -144,11 +190,38 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return checkedOut;
         }
 
+        private static bool IsLibraryFile(File file)
+        {
+            return file.ListItemAllFields.FieldValues.Any();
+        }
 
         public override ProvisioningTemplate ExtractObjects(Web web, ProvisioningTemplate template, ProvisioningTemplateCreationInformation creationInfo)
         {
+            web.EnsureProperties(x => x.Url, x => x.Id);
             using (var scope = new PnPMonitoredScope(this.Name))
             {
+                var connector = template.Connector;
+                var providers = this.GetUrlProviders(template.Lists);
+                var files = new List<Model.File>();
+                var modelProvider = new FileModelProvider(web, connector);
+                foreach (var provider in providers)
+                {
+                    try
+                    {
+                        var pageUrl = provider.GetUrl();
+                        var file = modelProvider.GetFile(provider.GetUrl());
+                        files.Add(file);
+
+                        this.CreateLocalFile(web, pageUrl, connector);
+                    }
+                    catch (Exception exception)
+                    {
+                        scope.LogError(exception, "Export file error");
+                    }
+                }
+
+                template.Files = files;
+
                 // Impossible to return all files in the site currently
 
                 // If a base template is specified then use that one to "cleanup" the generated template model
@@ -160,9 +233,31 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return template;
         }
 
+        private List<IUrlProvider> GetUrlProviders(List<ListInstance> templateLists)
+        {
+            var result = new List<IUrlProvider>();
+            var forms = templateLists.SelectMany(x => x.Forms);
+            var views = templateLists.SelectMany(x => x.Views);
+            result.AddRange(forms);
+            result.AddRange(views);
+            return result;
+        }
+
+        private void CreateLocalFile(Web web, string pageUrl, FileConnectorBase connector)
+        {
+            var fileContent = web.GetPageContentXmlWithoutWebParts(pageUrl);
+            var fileName = Path.GetFileName(pageUrl);
+            var folderPath = Path.GetDirectoryName(pageUrl).TrimStart('\\');
+
+            Byte[] info = new UTF8Encoding(true).GetBytes(fileContent);
+            using (var stream = new MemoryStream(info))
+            {
+                connector.SaveFileStream(fileName, folderPath, stream);
+            }
+        }
+
         private ProvisioningTemplate CleanupEntities(ProvisioningTemplate template, ProvisioningTemplate baseTemplate)
         {
-
             return template;
         }
 
@@ -179,7 +274,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             if (!_willExtract.HasValue)
             {
-                _willExtract = false;
+                var collList = web.Lists;
+                var lists = web.Context.LoadQuery(collList);
+
+                web.Context.ExecuteQueryRetry();
+
+                _willExtract = lists.Any();
             }
             return _willExtract.Value;
         }
