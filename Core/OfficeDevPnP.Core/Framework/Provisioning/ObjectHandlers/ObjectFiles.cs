@@ -125,7 +125,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                     AddWebPart(web, parser, webpart, targetFile);
                                 }
                             }
-                            web.Context.ExecuteQuery();
+                            web.Context.ExecuteQueryRetry();
                         }
 
                         if (checkedOut)
@@ -173,7 +173,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             }
             catch (Exception exception)
             {
-                scope.LogError(exception, "Resetting properties for default web part error");
+                scope.LogError(exception, "Resetting properties for default Web part error");
             }
 
         }

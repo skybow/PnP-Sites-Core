@@ -1155,5 +1155,18 @@ namespace Microsoft.SharePoint.Client
 
             return null;
         }
+        
+        /// <summary>
+        /// Get Home page url
+        /// </summary>
+        /// <param name="web">The web.</param>
+        /// <returns></returns>
+        public static string GetHomePageRelativeUrl(this Web web)
+        {
+            var rootFolder = web.RootFolder;
+            web.Context.Load(rootFolder, rf => rf.WelcomePage, rf => rf.ServerRelativeUrl);
+            web.Context.ExecuteQueryRetry();
+            return string.Format("{0}{1}", rootFolder.ServerRelativeUrl, rootFolder.WelcomePage);
+        }
     }
 }

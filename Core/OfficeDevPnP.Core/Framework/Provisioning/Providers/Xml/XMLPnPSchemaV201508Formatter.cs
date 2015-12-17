@@ -732,11 +732,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                     pages.Add(schemaPage);
                 }
 
-                result.Pages = new V201508.Pages()
+                var welComePage = template.Pages.Last(p => p.WelcomePage);
+                result.Pages = new V201508.Pages
                 {
                     Page = pages.ToArray(),
-                    WelcomePage = template.Pages.Any(p => p.WelcomePage = true) ?
-                        template.Pages.Last(p => p.WelcomePage = true).Url : null,
+                    WelcomePage = welComePage!= null ?
+                        welComePage.Url : null,
                 };
             }
 

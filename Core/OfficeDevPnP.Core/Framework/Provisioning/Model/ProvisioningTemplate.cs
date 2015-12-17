@@ -171,7 +171,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         public List<Page> Pages
         {
             get { return this._pages; }
-            private set { this._pages = value; }
+            set { this._pages = value; }
         }
 
         /// <summary>

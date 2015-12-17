@@ -269,6 +269,7 @@
     <Compile Include="AppModelExtensions\FileFolderExtensions.cs" />
     <Compile Include="AppModelExtensions\InformationManagementExtensions.cs" />
     <Compile Include="AppModelExtensions\ListExtensions.cs" />
+    <Compile Include="AppModelExtensions\ListItemExtensions.cs" />
     <Compile Include="AppModelExtensions\ListRatingExtensions.cs" />
     <Compile Include="AppModelExtensions\ProvisioningExtensions.cs" />
     <Compile Include="AppModelExtensions\RecordsManagementExtensions.cs" />
@@ -354,6 +355,7 @@
     <Compile Include="Framework\Provisioning\Model\AvailableWebTemplate.cs" />
     <Compile Include="Framework\Provisioning\Model\Common\IUrlProvider.cs" />
     <Compile Include="Framework\Provisioning\Model\ComposedLook.cs" />
+    <Compile Include="Framework\Provisioning\Model\ContentPage.cs" />
     <Compile Include="Framework\Provisioning\Model\ContentType.cs" />
     <Compile Include="Framework\Provisioning\Model\ContentTypeBinding.cs" />
     <Compile Include="Framework\Provisioning\Model\CustomAction.cs" />
@@ -395,6 +397,7 @@
     <Compile Include="Framework\Provisioning\Model\Workflows.cs" />
     <Compile Include="Framework\Provisioning\Model\WorkflowSubscription.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Export\File\FileModelProvider.cs" />
+    <Compile Include="Framework\Provisioning\ObjectHandlers\Export\Page\ContentPageModelProvider.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\WebPartsModelProvider.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Extensions\PnPMonitoredScopeExtensions.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Extensions\SecurableObjectExtensions.cs" />
@@ -431,6 +434,7 @@
     <Compile Include="Framework\Provisioning\ObjectHandlers\TokenDefinitions\BaseListProvisionToken.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\TokenDefinitions\CurrentUserFullNameToken.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\TokenDefinitions\CurrentUserLoginNameToken.cs" />
+    <Compile Include="Framework\Provisioning\ObjectHandlers\TokenDefinitions\IdToken.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\TokenDefinitions\KeywordsTermStoreIdToken.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\TokenDefinitions\ListIdProvisionToken.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\TokenDefinitions\ListNameProvisionToken.cs" />

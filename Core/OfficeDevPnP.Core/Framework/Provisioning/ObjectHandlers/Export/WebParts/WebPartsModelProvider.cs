@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using Microsoft.SharePoint.Client;
 using Microsoft.SharePoint.Client.WebParts;
 using ModelWebPart = OfficeDevPnP.Core.Framework.Provisioning.Model.WebPart;
@@ -10,33 +11,36 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebPart
     internal class WebPartsModelProvider
     {
         protected Web Web { get; set; }
-        protected string PageUrl { get; set; }
-
-        public WebPartsModelProvider(Web web, string pageUrl)
-        {
-            Web = web;
-            PageUrl = pageUrl;
-        }
 
         private static readonly Regex GetWebPartXmlReqex = new Regex(@"<WebPart (.*?)<\/WebPart>", RegexOptions.Singleline);
         private static readonly Regex ZoneRegEx = new Regex(@"(?<=ZoneID>).*?(?=<\/ZoneID>)");
 
-        public List<ModelWebPart> Retrieve(string xml, string pageUrl)
+        public WebPartsModelProvider(Web web)
         {
+            Web = web;
+        }
+
+        public List<ModelWebPart> Retrieve(string pageUrl)
+        {
+            var xml = Web.GetWebPartsXml(pageUrl);
             var result = new List<ModelWebPart>();
             if (string.IsNullOrEmpty(xml)) return result;
+            xml = this.TokenizeXml(xml);
             var maches = GetWebPartXmlReqex.Matches(xml);
 
             foreach (var match in maches)
             {
                 var webPartXml = match.ToString();
                 var zone = this.GetZone(webPartXml);
-                var webPart = this.GetWebPartWithServiceCall(this.GetWebPartId(webPartXml));
+                var definition = this.GetWebPartDefinitionWithServiceCall(this.GetWebPartId(webPartXml), pageUrl);
+                var webPart = definition.WebPart;
                 webPartXml = this.WrapToV3Format(webPartXml);
+                webPartXml = this.SetWebPartIdToXml(definition.Id, webPartXml);
+
                 var entity = new ModelWebPart
                 {
                     Contents = webPartXml,
-                    Order = (uint) webPart.ZoneIndex,
+                    Order = (uint)webPart.ZoneIndex,
                     Zone = zone,
                     Title = webPart.Title
                 };
@@ -47,18 +51,31 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebPart
             return result;
         }
 
-        private WebPart GetWebPartWithServiceCall(Guid webPartId)
+        private string SetWebPartIdToXml(Guid id, string xml)
         {
-            var page = Web.GetFileByServerRelativeUrl(PageUrl);
+            var element = XElement.Parse(xml);
+            element.SetAttributeValue("webpartid", id);
+            var reader = element.CreateReader();
+            reader.MoveToContent();
+            return reader.ReadOuterXml();
+        }
+
+        private string TokenizeXml(string xml)
+        {
+            xml = xml.Replace(Web.ServerRelativeUrl, "~site");
+            return xml.Replace(Web.Id.ToString(), "~siteid");
+        }
+
+        private WebPartDefinition GetWebPartDefinitionWithServiceCall(Guid webPartId, string pageUrl)
+        {
+            var page = Web.GetFileByServerRelativeUrl(pageUrl);
             var manager = page.GetLimitedWebPartManager(PersonalizationScope.Shared);
             var webParts = manager.WebParts;
+            var definition = webParts.GetById(webPartId);
             var context = Web.Context;
-            context.Load(webParts);
+            context.Load(definition, x=>x.Id, x => x.WebPart.Title, x => x.WebPart.ZoneIndex);
             context.ExecuteQueryRetry();
-            var webPart = webParts.GetById(webPartId).WebPart;
-            context.Load(webPart, x=>x.Title, x=>x.ZoneIndex);
-            context.ExecuteQueryRetry();
-            return webPart;
+            return definition;
         }
 
         private string GetZone(string webPartXml)
