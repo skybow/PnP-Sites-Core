@@ -1176,8 +1176,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             var siteColumns = web.Fields;
             web.Context.Load(siteColumns, scs => scs.Include(sc => sc.Id));
             web.Context.ExecuteQueryRetry();
-
-            var allowedFields = siteList.Fields.Where(field => !(BuiltInFieldId.Contains(field.Id) && field.Hidden));
+            //Do not remove AsEnumerable(). Fix for some on-premise environments
+            var allowedFields = siteList.Fields.AsEnumerable().Where(field => !(BuiltInFieldId.Contains(field.Id) && field.Hidden));
             foreach (var field in allowedFields)
             {
                 if (siteColumns.FirstOrDefault(sc => sc.Id == field.Id) != null)
