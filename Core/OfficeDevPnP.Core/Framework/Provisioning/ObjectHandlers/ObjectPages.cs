@@ -138,7 +138,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     model.Contents = parser.ParseString(model.Contents);
                     var addedWebPart = this.AddWebPart(web, model, file);
 
-                    parser.AddToken(new IdToken(web,addedWebPart.Id.ToString(), GetWebPartIdFromSchema(model.Contents)));
+                    parser.AddToken(new IdToken(web, addedWebPart.Id.ToString().ToLower(), GetWebPartIdFromSchema(model.Contents).ToLower()));
                 }
 
                 var html = parser.ParseString(contentPage.Html);

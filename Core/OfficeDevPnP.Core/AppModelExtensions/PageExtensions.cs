@@ -140,6 +140,7 @@ namespace Microsoft.SharePoint.Client
             endpointRequest.ContentType = "text/xml; charset=utf-8";
             endpointRequest.UseDefaultCredentials = false;
             endpointRequest.Credentials = web.Context.Credentials;
+            endpointRequest.Headers.Add("X-FORMS_BASED_AUTH_ACCEPTED", "f");
             var message = "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
                 + "<soap:Body>"
                 + "   <GetWebPartProperties2 xmlns=\"http://microsoft.com/sharepoint/webpartpages\">"
@@ -162,6 +163,42 @@ namespace Microsoft.SharePoint.Client
                 webPartsSchemas = reader.ReadToEnd();
             }
             return webPartsSchemas;
+        }
+
+        /// <summary>
+        /// Get page content
+        /// </summary>
+        /// <param name="web">Site to be processed - can be root web or sub site</param>
+        /// <param name="pageUrl">Server relative url of the page containing the webparts</param>
+        /// <exception cref="System.ArgumentException">Thrown when pageUrl is a zero-length string or contains only white space</exception>
+        /// <exception cref="System.ArgumentNullException">Thrown when pageUrl is null</exception>
+        public static string GetPageContent(this Web web, string pageUrl)
+        {
+            if (string.IsNullOrEmpty(pageUrl))
+            {
+                throw pageUrl == null
+                  ? new ArgumentNullException("pageUrl")
+                  : new ArgumentException(CoreResources.Exception_Message_EmptyString_Arg, "pageUrl");
+            }
+
+            var url = new Uri(new Uri(web.Url), pageUrl);
+            HttpWebRequest endpointRequest = (HttpWebRequest)HttpWebRequest.Create(url);
+
+            endpointRequest.AuthenticationLevel = System.Net.Security.AuthenticationLevel.MutualAuthRequested;
+
+            endpointRequest.Method = "GET";
+            endpointRequest.Accept = "text/xml; charset=utf-8";
+            endpointRequest.ContentType = "text/xml; charset=utf-8";
+            endpointRequest.UseDefaultCredentials = false;
+            endpointRequest.Credentials = web.Context.Credentials;
+            endpointRequest.Headers.Add("X-FORMS_BASED_AUTH_ACCEPTED", "f");
+            string content;
+            using (HttpWebResponse response = endpointRequest.GetResponse() as HttpWebResponse)
+            {
+                StreamReader reader = new StreamReader(response.GetResponseStream());
+                content = reader.ReadToEnd();
+            }
+            return content;
         }
 
         /// <summary>
@@ -363,7 +400,7 @@ namespace Microsoft.SharePoint.Client
             //</div>
 
             // Close all BR tags
-            Regex brRegex = new Regex("<br>",RegexOptions.IgnoreCase);
+            Regex brRegex = new Regex("<br>", RegexOptions.IgnoreCase);
 
             wikiField = brRegex.Replace(wikiField, "<br/>");
 
@@ -1155,7 +1192,7 @@ namespace Microsoft.SharePoint.Client
 
             return null;
         }
-        
+
         /// <summary>
         /// Get Home page url
         /// </summary>
