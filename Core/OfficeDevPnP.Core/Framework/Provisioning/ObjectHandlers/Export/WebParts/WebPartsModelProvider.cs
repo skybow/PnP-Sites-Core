@@ -5,7 +5,6 @@ using System.Xml.Linq;
 using Microsoft.SharePoint.Client;
 using Microsoft.SharePoint.Client.WebParts;
 using ModelWebPart = OfficeDevPnP.Core.Framework.Provisioning.Model.WebPart;
-using System.Net;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebParts
 {
@@ -14,8 +13,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebPart
         protected Web Web { get; set; }
 
         private static readonly Regex GetWebPartXmlReqex = new Regex(@"<WebPart (.*?)<\/WebPart>", RegexOptions.Singleline);
-        private static readonly Regex ZoneRegEx = new Regex(@"(?<=ZoneID>).*?(?=<\/ZoneID>)");
-        private static readonly Regex WebPartIDEx = new Regex(@"(?<=ID>).*?(?=<\/ID>)");
+        private static readonly Regex ZoneRegEx = new Regex(@"(?<=ZoneID>).*?(?=<\/ZoneID>)", RegexOptions.Singleline);
+        private static readonly Regex WebPartIdEx = new Regex(@"(?<=<ID>).*?(?=<\/ID>)", RegexOptions.Singleline);
 
         public WebPartsModelProvider(Web web)
         {
@@ -44,8 +43,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebPart
                 //TODO: refactor getting webpartId2 make separate method, probably use regex or another approach
                 var indexOfId = pcLower.IndexOf("webpartid2", pcLower.IndexOf(wpId.ToString().ToLower(), pcLower.IndexOf("<div id=\"contentbox\"")));
                 var wpExportId = definition.Id;
-                var wpStorageKey = this.GetWebPartStorageKey(webPartXml);
-                if (indexOfId != -1 && string.IsNullOrEmpty(wpStorageKey))
+                var wpControlId = GetWebPartControlId(webPartXml);
+                if (indexOfId != -1 && string.IsNullOrEmpty(wpControlId))
                 {
                     var wpId2 = pageContent.Substring(indexOfId + "webpartid2=\"".Length, 36);
                     wpExportId = Guid.Parse(wpId2);
@@ -67,9 +66,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebPart
             return result;
         }
 
-        private string GetWebPartStorageKey(string webPartXml)
+        public static string GetWebPartControlId(string webPartXml)
         {
-            var value = WebPartIDEx.Match(webPartXml).Value;
+            var value = WebPartIdEx.Match(webPartXml).Value;
             return value;
         }
 
@@ -116,11 +115,16 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebPart
 
         private string WrapToV3Format(string webPartxXml)
         {
-            if (webPartxXml.IndexOf("http://schemas.microsoft.com/WebPart/v3", StringComparison.OrdinalIgnoreCase) == -1)
+            if (!IsV3FormatXml(webPartxXml))
                 return webPartxXml;
             var getWebPartXmlReqex = new Regex(@"<webPart (.*?)<\/webPart>", RegexOptions.Singleline);
             webPartxXml = getWebPartXmlReqex.Match(webPartxXml).Value;
             return string.Format("<webParts>{0}</webParts>", webPartxXml);
+        }
+
+        public static bool IsV3FormatXml(string xml)
+        {
+            return xml.IndexOf("http://schemas.microsoft.com/WebPart/v3", StringComparison.OrdinalIgnoreCase) != -1;
         }
     }
 }

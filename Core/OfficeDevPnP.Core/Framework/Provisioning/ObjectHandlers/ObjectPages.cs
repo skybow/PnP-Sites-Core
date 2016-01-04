@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Microsoft.SharePoint.Client.WebParts;
 using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.Page;
+using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebParts;
 using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitions;
 using File = Microsoft.SharePoint.Client.File;
 using WebPart = OfficeDevPnP.Core.Framework.Provisioning.Model.WebPart;
@@ -136,9 +137,22 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 foreach (var model in contentPage.WebParts)
                 {
                     model.Contents = parser.ParseString(model.Contents);
-                    var addedWebPart = this.AddWebPart(web, model, file);
 
-                    parser.AddToken(new IdToken(web, addedWebPart.Id.ToString().ToLower(), GetWebPartIdFromSchema(model.Contents).ToLower()));
+                    string oldId = null;
+                    string newId = null;
+                    if (!WebPartsModelProvider.IsV3FormatXml(model.Contents))
+                    {
+                        var id = WebPartsModelProvider.GetWebPartControlId(model.Contents);
+                        var idToReplace = GetNewControlId();
+                        model.Contents = model.Contents.Replace(id, idToReplace);
+                        newId = this.GetIdFromControlId(idToReplace);
+                        oldId = this.GetIdFromControlId(id);
+                    }
+
+                    var addedWebPart = this.AddWebPart(web, model, file);
+                    newId = newId ?? addedWebPart.Id.ToString().ToLower();
+                    oldId = oldId ?? GetWebPartIdFromSchema(model.Contents).ToLower();
+                    parser.AddToken(new IdToken(web, newId, oldId));
                 }
 
                 var html = parser.ParseString(contentPage.Html);
@@ -163,11 +177,21 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             }
         }
 
+        private string GetNewControlId()
+        {
+            return string.Format("g_{0}", Guid.NewGuid().ToString("D").Replace("-", "_"));
+        }
+
+        private string GetIdFromControlId(string controlId)
+        {
+            return controlId.Replace("g_", string.Empty).Replace("_", "-");
+        }
+
         private WebPartDefinition AddWebPart(Web web, WebPart webPart, File pageFile)
         {
             LimitedWebPartManager limitedWebPartManager = pageFile.GetLimitedWebPartManager(PersonalizationScope.Shared);
             WebPartDefinition oWebPartDefinition = limitedWebPartManager.ImportWebPart(webPart.Contents);
-            WebPartDefinition wpdNew = limitedWebPartManager.AddWebPart(oWebPartDefinition.WebPart, "wpz", (int) webPart.Order);
+            WebPartDefinition wpdNew = limitedWebPartManager.AddWebPart(oWebPartDefinition.WebPart, "wpz", (int)webPart.Order);
             web.Context.Load(wpdNew, x => x.Id);
             web.Context.ExecuteQueryRetry();
             return wpdNew;
@@ -186,8 +210,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 var pages = new List<Page>();
 
                 var homePageUrl = web.GetHomePageRelativeUrl();
-                var provider =  new ContentPageModelProvider(homePageUrl, web);
-                
+                var provider = new ContentPageModelProvider(homePageUrl, web);
+
                 foreach (var list in lists)
                 {
                     try
@@ -196,7 +220,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                         var fileItems = listItems.Where(x => x.IsFile());
 
-                        pages.AddRange(fileItems.Select(x=>provider.GetPage(x)));
+                        pages.AddRange(fileItems.Select(x => provider.GetPage(x)));
                     }
                     catch (Exception exception)
                     {
