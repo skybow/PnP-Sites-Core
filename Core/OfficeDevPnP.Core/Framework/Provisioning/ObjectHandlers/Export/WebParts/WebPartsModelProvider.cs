@@ -13,7 +13,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebPart
         protected Web Web { get; set; }
 
         private static readonly Regex GetWebPartXmlReqex = new Regex(@"<WebPart (.*?)<\/WebPart>", RegexOptions.Singleline);
-        private static readonly Regex ZoneRegEx = new Regex(@"(?<=ZoneID>).*?(?=<\/ZoneID>)");
+        private static readonly Regex ZoneRegEx = new Regex(@"(?<=ZoneID>).*?(?=<\/ZoneID>)", RegexOptions.Singleline);
+        private static readonly Regex WebPartIdEx = new Regex(@"(?<=<ID>).*?(?=<\/ID>)", RegexOptions.Singleline);
 
         public WebPartsModelProvider(Web web)
         {
@@ -23,6 +24,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebPart
         public List<ModelWebPart> Retrieve(string pageUrl)
         {
             var xml = Web.GetWebPartsXml(pageUrl);
+            var pageContent = Web.GetPageContent(pageUrl);
             var result = new List<ModelWebPart>();
             if (string.IsNullOrEmpty(xml)) return result;
             xml = this.TokenizeXml(xml);
@@ -32,10 +34,23 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebPart
             {
                 var webPartXml = match.ToString();
                 var zone = this.GetZone(webPartXml);
-                var definition = this.GetWebPartDefinitionWithServiceCall(this.GetWebPartId(webPartXml), pageUrl);
+                var wpId = this.GetWebPartId(webPartXml);
+
+                var definition = this.GetWebPartDefinitionWithServiceCall(wpId, pageUrl);
                 var webPart = definition.WebPart;
                 webPartXml = this.WrapToV3Format(webPartXml);
-                webPartXml = this.SetWebPartIdToXml(definition.Id, webPartXml);
+                var pcLower = pageContent.ToLower();
+                //TODO: refactor getting webpartId2 make separate method, probably use regex or another approach
+                var indexOfId = pcLower.IndexOf("webpartid2", pcLower.IndexOf(wpId.ToString().ToLower(), pcLower.IndexOf("<div id=\"contentbox\"")));
+                var wpExportId = definition.Id;
+                var wpControlId = GetWebPartControlId(webPartXml);
+                if (indexOfId != -1 && string.IsNullOrEmpty(wpControlId))
+                {
+                    var wpId2 = pageContent.Substring(indexOfId + "webpartid2=\"".Length, 36);
+                    wpExportId = Guid.Parse(wpId2);
+                }
+
+                webPartXml = this.SetWebPartIdToXml(wpExportId, webPartXml);
 
                 var entity = new ModelWebPart
                 {
@@ -49,6 +64,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebPart
             }
 
             return result;
+        }
+
+        public static string GetWebPartControlId(string webPartXml)
+        {
+            var value = WebPartIdEx.Match(webPartXml).Value;
+            return value;
         }
 
         private string SetWebPartIdToXml(Guid id, string xml)
@@ -73,7 +94,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebPart
             var webParts = manager.WebParts;
             var definition = webParts.GetById(webPartId);
             var context = Web.Context;
-            context.Load(definition, x=>x.Id, x => x.WebPart.Title, x => x.WebPart.ZoneIndex);
+            context.Load(definition, x => x.Id, x => x.WebPart.Title, x => x.WebPart.ZoneIndex);
             context.ExecuteQueryRetry();
             return definition;
         }
@@ -94,11 +115,16 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebPart
 
         private string WrapToV3Format(string webPartxXml)
         {
-            if (webPartxXml.IndexOf("http://schemas.microsoft.com/WebPart/v3", StringComparison.OrdinalIgnoreCase) == -1)
+            if (!IsV3FormatXml(webPartxXml))
                 return webPartxXml;
             var getWebPartXmlReqex = new Regex(@"<webPart (.*?)<\/webPart>", RegexOptions.Singleline);
             webPartxXml = getWebPartXmlReqex.Match(webPartxXml).Value;
             return string.Format("<webParts>{0}</webParts>", webPartxXml);
+        }
+
+        public static bool IsV3FormatXml(string xml)
+        {
+            return xml.IndexOf("http://schemas.microsoft.com/WebPart/v3", StringComparison.OrdinalIgnoreCase) != -1;
         }
     }
 }
