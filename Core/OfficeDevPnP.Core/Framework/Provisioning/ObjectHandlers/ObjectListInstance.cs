@@ -652,7 +652,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 {
                     if (existingList.DocumentTemplateUrl != parser.ParseString(templateList.DocumentTemplate))
                     {
-                        existingList.DocumentTemplateUrl = parser.ParseString(templateList.DocumentTemplate);
+                        var documentTemplateUrl = parser.ParseString(templateList.DocumentTemplate);
+
+                        var templateFolderUrl = documentTemplateUrl.Substring(0, documentTemplateUrl.LastIndexOf('/'));
+                        var templateForder = web.GetFolderByServerRelativeUrl(templateFolderUrl);
+                        var templateName = documentTemplateUrl.Substring(documentTemplateUrl.LastIndexOf('/') + 1);
+                        var templateStream = new MemoryStream(Encoding.UTF8.GetBytes(templateList.DocumentTemplateContent));
+                        templateForder.UploadFile(templateName, templateStream, true);
+
+                        existingList.DocumentTemplateUrl = documentTemplateUrl;
                         isDirty = true;
                     }
                 }
@@ -819,7 +827,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             if (!String.IsNullOrEmpty(list.DocumentTemplate))
             {
-                createdList.DocumentTemplateUrl = parser.ParseString(list.DocumentTemplate);
+                var documentTemplateUrl = parser.ParseString(list.DocumentTemplate);
+                
+                var templateFolderUrl = documentTemplateUrl.Substring(0, documentTemplateUrl.LastIndexOf('/'));
+                var templateForder = web.GetFolderByServerRelativeUrl(templateFolderUrl);
+                var templateName = documentTemplateUrl.Substring(documentTemplateUrl.LastIndexOf('/') + 1);
+                var templateStream = new MemoryStream(Encoding.UTF8.GetBytes(list.DocumentTemplateContent));
+                templateForder.UploadFile(templateName, templateStream, true);
+
+                createdList.DocumentTemplateUrl = documentTemplateUrl;
             }
 
             // EnableAttachments are not supported for DocumentLibraries and Surveys
@@ -1018,6 +1034,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         }
                     }
 
+                    string documentTemplateContent = string.Empty;
+                    if (!String.IsNullOrEmpty(siteList.DocumentTemplateUrl)) {
+                        documentTemplateContent = web.GetFileAsString(siteList.DocumentTemplateUrl);
+                    }
+
                     var contentTypeFields = new List<FieldRef>();
                     var list = new ListInstance
                     {
@@ -1028,6 +1049,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         Hidden = siteList.Hidden,
                         EnableFolderCreation = siteList.EnableFolderCreation,
                         DocumentTemplate = Tokenize(siteList.DocumentTemplateUrl, web.Url),
+                        DocumentTemplateContent = documentTemplateContent,
                         ContentTypesEnabled = siteList.ContentTypesEnabled,
                         Url = siteList.RootFolder.ServerRelativeUrl.Substring(serverRelativeUrl.Length).TrimStart('/'),
                         TemplateFeatureID = siteList.TemplateFeatureId,

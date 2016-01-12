@@ -93,6 +93,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         public string DocumentTemplate { get; set; }
 
         /// <summary>
+        /// Gets or sets document template content for the new list.
+        /// </summary>
+        public string DocumentTemplateContent { get; set; }
+
+        /// <summary>
         /// Gets or sets a value that specifies whether the new list is displayed on the Quick Launch of the site.
         /// </summary>
         public bool OnQuickLaunch { get; set; }
