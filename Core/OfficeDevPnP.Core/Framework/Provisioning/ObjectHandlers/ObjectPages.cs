@@ -68,7 +68,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                                 file.DeleteObject();
                                 web.Context.ExecuteQueryRetry();
-                                this.AddPage(web, url, page);
+                                this.AddPage(web, url, page, parser);
                             }
                             catch (Exception ex)
                             {
@@ -81,7 +81,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         try
                         {
                             scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_Pages_Creating_new_page__0_, url);
-                            this.AddPage(web, url, page);
+                            this.AddPage(web, url, page, parser);
                         }
                         catch (Exception ex)
                         {
@@ -112,8 +112,18 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         }
 
         //TODO: move to class
-        private void AddPage(Web web, string url, Page page)
+        private void AddPage(Web web, string url, Page page, TokenParser parser)
         {
+
+            var publishingPage = page as PublishingPage;
+            if (publishingPage != null)
+            {
+                string layoutUrl = parser.ParseString(publishingPage.PageLayoutUrl);
+                web.AddPublishingPageByUrl(url, layoutUrl, publishingPage.PageTitle);
+
+                return;
+            }
+            
             var contentPage = page as ContentPage;
             if (contentPage != null)
             {
@@ -130,13 +140,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         private void AddWebParts(Web web, Page page, TokenParser parser)
         {
             var url = parser.ParseString(page.Url);
-            var contentPage = page as ContentPage;
+            ContentPage contentPage = page as ContentPage;
             if (contentPage != null)
             {
                 var file = web.GetFileByServerRelativeUrl(url);
+                file.CheckOut();
                 foreach (var model in contentPage.WebParts)
                 {
-                    model.Contents = parser.ParseString(model.Contents);
+                    model.Contents = parser.ParseString(model.Contents); 
 
                     string oldId = null;
                     string newId = null;
@@ -157,6 +168,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                 var html = parser.ParseString(contentPage.Html);
                 web.AddHtmlToWikiPage(url, html);
+                file.CheckIn(String.Empty, CheckinType.MajorCheckIn);
                 return;
             }
 
@@ -191,7 +203,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             LimitedWebPartManager limitedWebPartManager = pageFile.GetLimitedWebPartManager(PersonalizationScope.Shared);
             WebPartDefinition oWebPartDefinition = limitedWebPartManager.ImportWebPart(webPart.Contents);
-            WebPartDefinition wpdNew = limitedWebPartManager.AddWebPart(oWebPartDefinition.WebPart, "wpz", (int)webPart.Order);
+            WebPartDefinition wpdNew = limitedWebPartManager.AddWebPart(oWebPartDefinition.WebPart, webPart.Zone, (int)webPart.Order);
             web.Context.Load(wpdNew, x => x.Id);
             web.Context.ExecuteQueryRetry();
             return wpdNew;
@@ -210,17 +222,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 var pages = new List<Page>();
 
                 var homePageUrl = web.GetHomePageRelativeUrl();
-                var provider = new ContentPageModelProvider(homePageUrl, web);
-
                 foreach (var list in lists)
                 {
                     try
                     {
                         var listItems = GetListItems(web, list);
 
-                        var fileItems = listItems.Where(x => x.IsFile());
+                        var fileItems = listItems.AsEnumerable().Where(x => x.IsFile());
 
-                        pages.AddRange(fileItems.Select(x => provider.GetPage(x)));
+                        pages.AddRange(fileItems.AsEnumerable().Select(x => GetProvider(x, homePageUrl, web).GetPage(x)));
                     }
                     catch (Exception exception)
                     {
@@ -238,6 +248,22 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 }
             }
             return template;
+        }
+
+        private IPageModelProvider GetProvider(ListItem item, string homePageUrl, Web web) {
+            var fieldValues = item.FieldValues;
+            IPageModelProvider provider = null;
+
+            if (fieldValues.ContainsKey("PublishingPageContent"))
+            {
+                provider = new PublishingPageModelProvider(homePageUrl, web);
+            }
+            else if (fieldValues.ContainsKey("WikiField"))
+            {
+                provider = new ContentPageModelProvider(homePageUrl, web);
+            }
+
+            return provider;
         }
 
         private ListItemCollection GetListItems(Web web, ListInstance list)
@@ -266,7 +292,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         private IEnumerable<ListInstance> GetListsWithPages(ProvisioningTemplate template)
         {
-            return template.Lists.Where(x => x.TemplateType == (int)ListTemplateType.WebPageLibrary || x.TemplateType == (int)ListTemplateType.HomePageLibrary);
+            return template.Lists.Where(x => x.TemplateType == (int)ListTemplateType.WebPageLibrary 
+                || x.TemplateType == (int)ListTemplateType.HomePageLibrary
+#if CLIENTSDKV15
+                || x.TemplateType == (int)ListTemplateType.PublishingPages
+#endif
+                );
         }
 
         private ProvisioningTemplate CleanupEntities(ProvisioningTemplate template, ProvisioningTemplate baseTemplate)

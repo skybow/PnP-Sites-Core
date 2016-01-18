@@ -41,4 +41,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("1.8.1115.0")]
 [assembly: AssemblyFileVersion("1.8.1115.0")]
 
-[assembly: InternalsVisibleTo("OfficeDevPnP.Core.Tests")]
+//[assembly: InternalsVisibleTo("OfficeDevPnP.Core.Tests")]

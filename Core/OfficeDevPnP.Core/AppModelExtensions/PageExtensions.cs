@@ -345,13 +345,25 @@ namespace Microsoft.SharePoint.Client
             web.Context.Load(webPartPage.ListItemAllFields);
             web.Context.ExecuteQueryRetry();
 
-            string wikiField = (string)webPartPage.ListItemAllFields["WikiField"];
+            string wikiField = "";
+            if (webPartPage.ListItemAllFields.FieldValues.ContainsKey("PublishingPageContent"))
+            {
+                wikiField = (string)webPartPage.ListItemAllFields["PublishingPageContent"];
+            }
+            else if (webPartPage.ListItemAllFields.FieldValues.ContainsKey("WikiField"))
+            {
+                wikiField = (string)webPartPage.ListItemAllFields["WikiField"];
+            }
 
             LimitedWebPartManager limitedWebPartManager = webPartPage.GetLimitedWebPartManager(PersonalizationScope.Shared);
             WebPartDefinition oWebPartDefinition = limitedWebPartManager.ImportWebPart(webPart.WebPartXml);
-            WebPartDefinition wpdNew = limitedWebPartManager.AddWebPart(oWebPartDefinition.WebPart, "wpz", 0);
+            WebPartDefinition wpdNew = limitedWebPartManager.AddWebPart(oWebPartDefinition.WebPart, webPart.WebPartZone, 0);
             web.Context.Load(wpdNew);
             web.Context.ExecuteQueryRetry();
+
+            if (webPart.WebPartZone != "wpz") {
+                return;
+            }
 
             //HTML structure in default team site home page (W16)
             //<div class="ExternalClass284FC748CB4242F6808DE69314A7C981">
@@ -458,7 +470,15 @@ namespace Microsoft.SharePoint.Client
             attribute.Value = "vid_" + wpdNew.Id.ToString("D");
 
             ListItem listItem = webPartPage.ListItemAllFields;
-            listItem["WikiField"] = xd.OuterXml;
+            if (listItem.FieldValues.ContainsKey("PublishingPageContent"))
+            {
+                listItem["PublishingPageContent"] = xd.OuterXml;
+            }
+            else if (listItem.FieldValues.ContainsKey("WikiField"))
+            {
+                listItem["WikiField"] = xd.OuterXml;
+            }
+
             listItem.Update();
             web.Context.ExecuteQueryRetry();
 
@@ -650,7 +670,14 @@ namespace Microsoft.SharePoint.Client
 
             ListItem item = file.ListItemAllFields;
 
-            item["WikiField"] = html;
+            if (item.FieldValues.ContainsKey("PublishingPageContent"))
+            {
+                item["PublishingPageContent"] = html;
+            }
+            else if (item.FieldValues.ContainsKey("WikiField"))
+            {
+                item["WikiField"] = html;
+            }
 
             item.Update();
 
@@ -738,7 +765,16 @@ namespace Microsoft.SharePoint.Client
 
             ListItem item = file.ListItemAllFields;
 
-            string wikiField = (string)item["WikiField"];
+            string wikiField = "";
+            if (item.FieldValues.ContainsKey("PublishingPageContent"))
+            {
+                wikiField = (string)item["PublishingPageContent"];
+            }
+            else if (item.FieldValues.ContainsKey("WikiField"))
+            {
+                wikiField  = (string)item["WikiField"];
+            }
+
 
             XmlDocument xd = new XmlDocument();
             xd.PreserveWhitespace = true;
@@ -755,8 +791,14 @@ namespace Microsoft.SharePoint.Client
             XmlElement layoutsZoneInner = layoutsTable.SelectSingleNode(string.Format("tbody/tr[{0}]/td[{1}]/div/div", row, col)) as XmlElement;
             XmlText text = xd.CreateTextNode("!!123456789!!");
             layoutsZoneInner.AppendChild(text);
-
-            item["WikiField"] = xd.OuterXml.Replace("!!123456789!!", html);
+            if (item.FieldValues.ContainsKey("PublishingPageContent"))
+            {
+                item["PublishingPageContent"] = xd.OuterXml.Replace("!!123456789!!", html);
+            }
+            else if (item.FieldValues.ContainsKey("WikiField"))
+            {
+                item["WikiField"] = xd.OuterXml.Replace("!!123456789!!", html);
+            }
             item.Update();
             web.Context.ExecuteQueryRetry();
         }
@@ -934,6 +976,69 @@ namespace Microsoft.SharePoint.Client
             File file = folder.Files.AddTemplateFile(serverRelativePageUrl, TemplateFileType.WikiPage);
 
             web.Context.ExecuteQueryRetry();
+            if (html != null)
+            {
+                web.AddHtmlToWikiPage(serverRelativePageUrl, html);
+            }
+        }
+
+
+        /// <summary>
+        /// Adds a wiki page by Url
+        /// </summary>
+        /// <param name="web">The web to process</param>
+        /// <param name="serverRelativePageUrl">Server relative URL of the wiki page to process</param>
+        /// <param name="pageLayoutUrl">Server relative URL of the publishing page layout</param>
+        /// <param name="html">HTML to add to wiki page</param>
+        /// <exception cref="System.ArgumentException">Thrown when serverRelativePageUrl is a zero-length string or contains only white space</exception>
+        /// <exception cref="System.ArgumentNullException">Thrown when serverRelativePageUrl is null</exception>
+        public static void AddPublishingPageByUrl(this Web web, string serverRelativePageUrl, string pageLayoutUrl, string title, string html = null)
+        {
+            if (string.IsNullOrEmpty(serverRelativePageUrl))
+            {
+                throw (serverRelativePageUrl == null)
+                  ? new ArgumentNullException("serverRelativePageUrl")
+                  : new ArgumentException(CoreResources.Exception_Message_EmptyString_Arg, "serverRelativePageUrl");
+            }
+
+            var context = web.Context as ClientContext;
+
+            var list = context.Site.GetCatalog((int)ListTemplateType.MasterPageCatalog);
+            var qry = new CamlQuery();
+            qry.ViewXml = string.Format("<View><Query><Where><Contains><FieldRef Name=\"FileRef\"/><Value Type=\"Url\">{0}</Value></Contains></Where></Query></View>", pageLayoutUrl);
+            var layouts = list.GetItems(qry);
+            context.Load(layouts);
+            context.ExecuteQueryRetry();
+            var layoutEnum = layouts.GetEnumerator();
+            ListItem layoutItem = null;
+            while (layoutEnum.MoveNext()) {
+                layoutItem = layoutEnum.Current;
+                break;
+            }
+
+
+            PublishingWeb publishingWeb = PublishingWeb.GetPublishingWeb(context, web);
+            context.Load(publishingWeb);
+
+            string pageName = serverRelativePageUrl.Substring(serverRelativePageUrl.LastIndexOf('/') + 1);
+
+            PublishingPageInformation publishingPageInfo = new PublishingPageInformation();
+            publishingPageInfo.Name = pageName;
+            publishingPageInfo.PageLayoutListItem = layoutItem;
+
+            PublishingPage publishingPage = publishingWeb.AddPublishingPage(publishingPageInfo);
+
+            publishingPage.ListItem.FieldValues["Title"] = title;
+
+            publishingPage.ListItem.File.CheckIn(string.Empty, CheckinType.MajorCheckIn);
+
+            publishingPage.ListItem.File.Publish(string.Empty);
+
+            //publishingPage.ListItem.File.Approve(string.Empty);
+
+            context.Load(publishingPage);
+            context.Load(publishingPage.ListItem.File, obj => obj.ServerRelativeUrl);
+            context.ExecuteQueryRetry();
             if (html != null)
             {
                 web.AddHtmlToWikiPage(serverRelativePageUrl, html);

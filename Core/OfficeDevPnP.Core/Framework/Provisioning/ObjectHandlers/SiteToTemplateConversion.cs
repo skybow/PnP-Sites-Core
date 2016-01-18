@@ -60,18 +60,18 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                 List<ObjectHandlerBase> objectHandlers = new List<ObjectHandlerBase>();
 
-                objectHandlers.Add(new ObjectRegionalSettings());
-                objectHandlers.Add(new ObjectSupportedUILanguages());
-                objectHandlers.Add(new ObjectAuditSettings());
-                objectHandlers.Add(new ObjectSitePolicy());
-                objectHandlers.Add(new ObjectSiteSecurity());
+                //objectHandlers.Add(new ObjectRegionalSettings());
+                //objectHandlers.Add(new ObjectSupportedUILanguages());
+                //objectHandlers.Add(new ObjectAuditSettings());
+                //objectHandlers.Add(new ObjectSitePolicy());
+                //objectHandlers.Add(new ObjectSiteSecurity());
                 objectHandlers.Add(new ObjectTermGroups());
                 objectHandlers.Add(new ObjectField());
                 objectHandlers.Add(new ObjectContentType());
                 objectHandlers.Add(new ObjectListInstance());
-                objectHandlers.Add(new ObjectCustomActions());
-                objectHandlers.Add(new ObjectFeatures());
-                objectHandlers.Add(new ObjectComposedLook());
+                //objectHandlers.Add(new ObjectCustomActions());
+                //objectHandlers.Add(new ObjectFeatures());
+                //objectHandlers.Add(new ObjectComposedLook());
                 objectHandlers.Add(new ObjectSearchSettings());
                 objectHandlers.Add(new ObjectFiles());
                 objectHandlers.Add(new ObjectPages());
@@ -136,23 +136,23 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                 List<ObjectHandlerBase> objectHandlers = new List<ObjectHandlerBase>();
 
-                objectHandlers.Add(new ObjectRegionalSettings());
-                objectHandlers.Add(new ObjectSupportedUILanguages());
-                objectHandlers.Add(new ObjectAuditSettings());
-                objectHandlers.Add(new ObjectSitePolicy());
-                objectHandlers.Add(new ObjectSiteSecurity());
-                objectHandlers.Add(new ObjectFeatures());
+                //objectHandlers.Add(new ObjectRegionalSettings());
+                //objectHandlers.Add(new ObjectSupportedUILanguages());
+                //objectHandlers.Add(new ObjectAuditSettings());
+                //objectHandlers.Add(new ObjectSitePolicy());
+                //objectHandlers.Add(new ObjectSiteSecurity());
+                //objectHandlers.Add(new ObjectFeatures());
                 objectHandlers.Add(new ObjectTermGroups());
                 objectHandlers.Add(new ObjectField());
                 objectHandlers.Add(new ObjectContentType());
                 objectHandlers.Add(new ObjectListInstance());
                 objectHandlers.Add(new ObjectLookupFields());
-                objectHandlers.Add(new ObjectListInstanceDataRows());
-                objectHandlers.Add(new ObjectFiles());
+                //objectHandlers.Add(new ObjectListInstanceDataRows());
+                //objectHandlers.Add(new ObjectFiles());
                 objectHandlers.Add(new ObjectPages());
                 objectHandlers.Add(new ObjectCustomActions());
                 objectHandlers.Add(new ObjectPublishing());
-                objectHandlers.Add(new ObjectComposedLook());
+                //objectHandlers.Add(new ObjectComposedLook());
                 objectHandlers.Add(new ObjectSearchSettings());
                 objectHandlers.Add(new ObjectWorkflows());
                 objectHandlers.Add(new ObjectPropertyBagEntry());

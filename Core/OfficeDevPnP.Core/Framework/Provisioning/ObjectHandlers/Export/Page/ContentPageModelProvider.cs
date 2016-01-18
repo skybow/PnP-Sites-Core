@@ -5,7 +5,7 @@ using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebParts;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.Page
 {
-    internal class ContentPageModelProvider
+    internal class ContentPageModelProvider : IPageModelProvider
     {
         protected string HomePageUrl { get; private set; }
         protected Web Web { get; private set; }
@@ -16,17 +16,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.Page
             this.Web = web;
             Provider = new WebPartsModelProvider(web);
         }
+
         public ContentPage GetPage(ListItem item)
         {
             var html = string.Empty;
             var fieldValues = item.FieldValues;
-            if (fieldValues.ContainsKey("PublishingPageContent"))
+            var title = fieldValues["Title"] == null ? string.Empty : fieldValues["Title"].ToString();
+            if (fieldValues.ContainsKey("WikiField"))
             {
-                html = fieldValues["PublishingPageContent"].ToString();
-            }
-            else if (fieldValues.ContainsKey("WikiField"))
-            {
-                html = fieldValues["WikiField"].ToString();
+                html = fieldValues["WikiField"] == null ? string.Empty : fieldValues["WikiField"].ToString();
             }
             var url = fieldValues["FileRef"].ToString();
             var isHomePage = HomePageUrl.Equals(url);
@@ -34,7 +32,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.Page
 
             var webParts = Provider.Retrieve(url);
             url = url.Replace(Web.RootFolder.ServerRelativeUrl, "~site/");
-            return new ContentPage(url, html, needToOverwrite, webParts, isHomePage);
+            return new ContentPage(url, title, html, needToOverwrite, webParts, isHomePage);
         }
     }
 }

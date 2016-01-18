@@ -60,6 +60,13 @@
     <DocumentationFile>bin\Release15\OfficeDevPnP.Core.XML</DocumentationFile>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <Choose>
     <When Condition=" '$(Configuration)' == 'debug' Or '$(Configuration)' == 'release' ">
       <ItemGroup>
@@ -371,6 +378,7 @@
     <Compile Include="Framework\Provisioning\Model\ObjectSecurity.cs" />
     <Compile Include="Framework\Provisioning\Model\PageLayout.cs" />
     <Compile Include="Framework\Provisioning\Model\Publishing.cs" />
+    <Compile Include="Framework\Provisioning\Model\PublishingPage.cs" />
     <Compile Include="Framework\Provisioning\Model\RoleAssignment.cs" />
     <Compile Include="Framework\Provisioning\Model\RoleDefinition.cs" />
     <Compile Include="Framework\Provisioning\Model\SiteSecurityPermissions.cs" />
@@ -398,6 +406,8 @@
     <Compile Include="Framework\Provisioning\Model\WorkflowSubscription.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Export\File\FileModelProvider.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Export\Page\ContentPageModelProvider.cs" />
+    <Compile Include="Framework\Provisioning\ObjectHandlers\Export\Page\IPageModelProvider.cs" />
+    <Compile Include="Framework\Provisioning\ObjectHandlers\Export\Page\PublishingPageModelProvider.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\WebPartsModelProvider.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Extensions\PnPMonitoredScopeExtensions.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Extensions\SecurableObjectExtensions.cs" />
