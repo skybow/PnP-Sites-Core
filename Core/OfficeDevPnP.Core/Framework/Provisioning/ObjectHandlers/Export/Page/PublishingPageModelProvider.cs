@@ -27,7 +27,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.Page
             var title = fieldValues["Title"] == null ? string.Empty : fieldValues["Title"].ToString();
             if (fieldValues.ContainsKey("PublishingPageContent"))
             {
-                html = fieldValues["PublishingPageContent"] == null ? "" : fieldValues["PublishingPageContent"].ToString();
+                html = fieldValues["PublishingPageContent"] == null ? " " : fieldValues["PublishingPageContent"].ToString();
             }
 
             var pageLayoutUrl = string.Empty;

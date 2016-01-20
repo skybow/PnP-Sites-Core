@@ -1005,7 +1005,7 @@ namespace Microsoft.SharePoint.Client
 
             var list = context.Site.GetCatalog((int)ListTemplateType.MasterPageCatalog);
             var qry = new CamlQuery();
-            qry.ViewXml = string.Format("<View><Query><Where><Contains><FieldRef Name=\"FileRef\"/><Value Type=\"Url\">{0}</Value></Contains></Where></Query></View>", pageLayoutUrl);
+            qry.ViewXml = string.Format("<View><Query><Where><Contains><FieldRef Name=\"FileRef\"/><Value Type=\"Url\">{0}</Value></Contains></Where></Query></View>", pageLayoutUrl.Substring(pageLayoutUrl.IndexOf("_catalogs")));
             var layouts = list.GetItems(qry);
             context.Load(layouts);
             context.ExecuteQueryRetry();

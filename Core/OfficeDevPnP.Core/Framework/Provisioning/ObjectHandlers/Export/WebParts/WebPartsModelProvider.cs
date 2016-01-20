@@ -41,7 +41,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebPart
                 webPartXml = this.WrapToV3Format(webPartXml);
                 var pcLower = pageContent.ToLower();
                 //TODO: refactor getting webpartId2 make separate method, probably use regex or another approach
-                var indexOfId = pcLower.IndexOf("webpartid2", pcLower.IndexOf(wpId.ToString().ToLower(), pcLower.IndexOf("<div id=\"contentbox\"")));
+                var contentBoxIndex = pcLower.IndexOf("<div id=\"contentbox\"");
+                var indexOfIdStartIndex = contentBoxIndex != -1
+                    ? pcLower.IndexOf(wpId.ToString().ToLower(), contentBoxIndex)
+                    : -1;
+                var indexOfId = indexOfIdStartIndex != -1 ? pcLower.IndexOf("webpartid2", indexOfIdStartIndex) : -1;
                 var wpExportId = definition.Id;
                 var wpControlId = GetWebPartControlId(webPartXml);
                 if (indexOfId != -1 && string.IsNullOrEmpty(wpControlId))

@@ -378,7 +378,9 @@
     <Compile Include="Framework\Provisioning\Model\ObjectSecurity.cs" />
     <Compile Include="Framework\Provisioning\Model\PageLayout.cs" />
     <Compile Include="Framework\Provisioning\Model\Publishing.cs" />
-    <Compile Include="Framework\Provisioning\Model\PublishingPage.cs" />
+    <Compile Include="Framework\Provisioning\Model\PublishingPage.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Framework\Provisioning\Model\RoleAssignment.cs" />
     <Compile Include="Framework\Provisioning\Model\RoleDefinition.cs" />
     <Compile Include="Framework\Provisioning\Model\SiteSecurityPermissions.cs" />
@@ -406,8 +408,12 @@
     <Compile Include="Framework\Provisioning\Model\WorkflowSubscription.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Export\File\FileModelProvider.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Export\Page\ContentPageModelProvider.cs" />
-    <Compile Include="Framework\Provisioning\ObjectHandlers\Export\Page\IPageModelProvider.cs" />
-    <Compile Include="Framework\Provisioning\ObjectHandlers\Export\Page\PublishingPageModelProvider.cs" />
+    <Compile Include="Framework\Provisioning\ObjectHandlers\Export\Page\IPageModelProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Framework\Provisioning\ObjectHandlers\Export\Page\PublishingPageModelProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\WebPartsModelProvider.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Extensions\PnPMonitoredScopeExtensions.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Extensions\SecurableObjectExtensions.cs" />
