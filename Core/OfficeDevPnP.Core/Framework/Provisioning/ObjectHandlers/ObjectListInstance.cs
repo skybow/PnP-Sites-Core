@@ -984,7 +984,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         l => l.Id,
                         l => l.ParentWebUrl,
                         l => l.Views,
-                        l => l.Forms,
                         l => l.DefaultNewFormUrl,
                         l => l.DefaultDisplayFormUrl,
                         l => l.DefaultEditFormUrl,
@@ -1068,7 +1067,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         ServerRelativeUrl = siteList.RootFolder.ServerRelativeUrl
                     };
 
-                    list = ExtractForms(siteList, list);
+                    try
+                    {
+                        list = ExtractForms(web, siteList, list);
+                    }
+                    catch (Exception ex)
+                    {
+                        scope.LogDebug("Extract forms on list {0} failed. {1}. {2}", list.Title, ex.Message, ex.StackTrace);
+                    }
 
                     list = ExtractContentTypes(web, siteList, contentTypeFields, list);
 
@@ -1112,8 +1118,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return template;
         }
 
-        private static ListInstance ExtractForms(List siteList, ListInstance list)
+        private static ListInstance ExtractForms(Web web, List siteList, ListInstance list)
         {
+            web.Context.Load(siteList, l => l.Forms);
+            web.Context.ExecuteQueryRetry();
+
             var defaultForms = new[] { siteList.DefaultDisplayFormUrl, siteList.DefaultEditFormUrl, siteList.DefaultNewFormUrl };
 
             foreach (var form in siteList.Forms)

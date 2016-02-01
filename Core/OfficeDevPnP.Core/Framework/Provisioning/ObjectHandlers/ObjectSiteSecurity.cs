@@ -259,7 +259,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 catch (Exception ex)
                 {
                     scope.LogError(CoreResources.Provisioning_ObjectHandlers_SiteSecurity_Add_users_failed_for_group___0_____1_____2_, group.Title, ex.Message, ex.StackTrace);
-                    throw;
+                    //throw;
                 }
             }
         }
