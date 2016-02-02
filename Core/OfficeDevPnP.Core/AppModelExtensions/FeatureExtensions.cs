@@ -187,6 +187,7 @@ namespace Microsoft.SharePoint.Client
                 catch (Exception ex)
                 {
                     Log.Error(Constants.LOGGING_SOURCE, CoreResources.FeatureExtensions_FeatureActivationProblem, featureID, ex.Message);
+                    throw ex;
                 }
             }
         }

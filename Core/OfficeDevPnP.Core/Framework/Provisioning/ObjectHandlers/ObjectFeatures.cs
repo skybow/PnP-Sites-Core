@@ -4,6 +4,7 @@ using OfficeDevPnP.Core.Framework.Provisioning.Model;
 using Feature = OfficeDevPnP.Core.Framework.Provisioning.Model.Feature;
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using OfficeDevPnP.Core.Diagnostics;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
@@ -21,15 +22,36 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             {
                 var context = web.Context as ClientContext;
 
+                //----------------------------
+                //Feature activation order
+                //  - Site Collection Features
+                //  - Web Features
+                //----------------------------
+                //Feature Deactivation order
+                // - Web features
+                // - Site Collection Features
+                //----------------------------
+
                 // if this is a sub site then we're not enabling the site collection scoped features
                 if (!web.IsSubSite())
                 {
-                    var siteFeatures = template.Features.SiteFeatures;
-                    ProvisionFeaturesImplementation<Site>(context.Site, siteFeatures, scope);
+                    var siteFeaturesToActivate = template.Features.SiteFeatures.AsQueryable().Where(f => !f.Deactivate).ToList();
+                    ProvisionFeaturesImplementation<Site>(context.Site, siteFeaturesToActivate, scope);
                 }
 
-                var webFeatures = template.Features.WebFeatures;
-                ProvisionFeaturesImplementation<Web>(web, webFeatures, scope);
+                var webFeaturesToActivate = template.Features.WebFeatures.AsQueryable().Where(f => !f.Deactivate).ToList();
+                ProvisionFeaturesImplementation<Web>(web, webFeaturesToActivate, scope);
+
+                var webFeaturesToDeactivate = template.Features.WebFeatures.AsQueryable().Where(f => f.Deactivate).ToList();
+                ProvisionFeaturesImplementation<Web>(web, webFeaturesToDeactivate, scope);
+
+                if (!web.IsSubSite())
+                {
+                    var siteFeaturesToDeactivate = template.Features.SiteFeatures.AsQueryable().Where(f => f.Deactivate).ToList();
+                    ProvisionFeaturesImplementation<Site>(context.Site, siteFeaturesToDeactivate, scope);
+                }
+
+
             }
             return parser;
         }
@@ -56,43 +78,96 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             if (features != null)
             {
-                foreach (var feature in features)
+                bool needToRetry = false;
+                do
                 {
-                    if (!feature.Deactivate)
-                    {
-                        if (activeFeatures.FirstOrDefault(f => f.DefinitionId == feature.Id) == null)
-                        {
-                            scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_Features_Activating__0__scoped_feature__1_, site != null ? "site" :"web", feature.Id);
-                            if (site != null)
-                            {
-                                site.ActivateFeature(feature.Id);
-                            }
-                            else
-                            {
-                                web.ActivateFeature(feature.Id);
-                            }
-                        }
+                    needToRetry = false;
+                    var unProvisionFeatures = new List<Feature>();
 
-                    }
-                    else
+                    foreach (var feature in features)
                     {
-                        if (activeFeatures.FirstOrDefault(f => f.DefinitionId == feature.Id) != null)
+                        try
                         {
-                            scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_Features_Deactivating__0__scoped_feature__1_, site != null ? "site" : "web", feature.Id);
-                            if (site != null)
+
+                            if (!feature.Deactivate)
                             {
-                                site.DeactivateFeature(feature.Id);
+                                if (activeFeatures.FirstOrDefault(f => f.DefinitionId == feature.Id) == null)
+                                {
+                                    scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_Features_Activating__0__scoped_feature__1_, site != null ? "site" : "web", feature.Id);
+                                    if (site != null)
+                                    {
+                                        site.ActivateFeature(feature.Id);
+                                    }
+                                    else
+                                    {
+                                        web.ActivateFeature(feature.Id);
+                                    }
+                                    needToRetry = true;
+                                }
                             }
                             else
                             {
-                                web.DeactivateFeature(feature.Id);
+                                if (activeFeatures.FirstOrDefault(f => f.DefinitionId == feature.Id) != null)
+                                {
+                                    scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_Features_Deactivating__0__scoped_feature__1_, site != null ? "site" : "web", feature.Id);
+                                    if (site != null)
+                                    {
+                                        site.DeactivateFeature(feature.Id);
+                                    }
+                                    else
+                                    {
+                                        web.DeactivateFeature(feature.Id);
+                                    }
+
+                                    needToRetry = true;
+                                }
+                            }
+                        }
+                        catch (ServerException ex)
+                        {
+                            if (ex.ServerErrorTypeName == "Microsoft.SharePoint.SPFeatureDependencyNotActivatedException") {
+                                string message = ex.Message;
+
+                                string strGuidRegex = @"\b[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b";
+                                Regex guidRegex = new Regex(strGuidRegex, RegexOptions.IgnoreCase);
+                                var matches = guidRegex.Matches(message).Cast<Match>().Select(m => m.Value).Where(x => !x.Equals(feature.Id.ToString(), StringComparison.CurrentCultureIgnoreCase));
+                                InsertFeaturetoCorrectProvisionOrder(unProvisionFeatures, feature, matches);
+ 
                             }
                         }
                     }
-                }
+
+                    features = unProvisionFeatures;
+                } while (needToRetry);
             }
         }
 
+
+        private static void InsertFeaturetoCorrectProvisionOrder(List<Feature> features, Feature featureToInsert, IEnumerable<string> dependenceFeaturesIds) {
+            if (featureToInsert.Deactivate)
+            {
+                int indexToInsertForDeactivation = features.FindLastIndex((f) =>
+                {
+                    return dependenceFeaturesIds.Contains(f.Id.ToString());
+                });
+
+                if (indexToInsertForDeactivation == -1)
+                {
+                    features.Add(featureToInsert);
+                }
+                else {
+                    features.Insert(indexToInsertForDeactivation, featureToInsert);
+                }
+            }
+            else
+            {
+                int indexToInsertForActivation = features.FindLastIndex((f) => {
+                    return dependenceFeaturesIds.Contains(f.Id.ToString());
+                });
+
+                features.Insert(indexToInsertForActivation + 1, featureToInsert);
+            }
+        }
 
         public override ProvisioningTemplate ExtractObjects(Web web, ProvisioningTemplate template, ProvisioningTemplateCreationInformation creationInfo)
         {
