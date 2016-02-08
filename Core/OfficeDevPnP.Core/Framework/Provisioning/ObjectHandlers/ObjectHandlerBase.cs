@@ -69,7 +69,24 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     if (Uri.TryCreate(webUrl, UriKind.Absolute, out r))
                     {
                         var webUrlPathAndQuery = HttpUtility.UrlDecode(r.PathAndQuery);
-                        if (url.IndexOf(webUrlPathAndQuery, StringComparison.InvariantCultureIgnoreCase) > -1)
+                        if (webUrlPathAndQuery == "/") {
+                            if (url.StartsWith("/"))
+                            {
+                                var urlParts = url.Split('/');
+                                urlParts[0] = "{site}";
+                                return string.Join("/", urlParts);
+                            }
+                            else
+                            {
+                                Uri r2;
+                                if (Uri.TryCreate(url, UriKind.Absolute, out r2))
+                                {
+                                    return "{site}" + r2.PathAndQuery.Substring(1);
+                                }
+                            }
+                            return url;
+                        } 
+                        else if (url.IndexOf(webUrlPathAndQuery, StringComparison.InvariantCultureIgnoreCase) > -1)
                         {
                             return url.Replace(webUrlPathAndQuery, "{site}");
                         }

@@ -754,8 +754,14 @@ namespace Microsoft.SharePoint.Client
             if (flink == null)
             {
                 XElement fieldElement = XElement.Parse(field.SchemaXml);
-                fieldElement.SetAttributeValue("AllowDeletion", "TRUE"); // Default behavior when adding a field to a CT from the UI.
-                field.SchemaXml = fieldElement.ToString();
+
+                //can't update field if it was deployed with a version attribute
+                if (fieldElement.Attribute("Version") == null)
+                {
+                    fieldElement.SetAttributeValue("AllowDeletion", "TRUE"); // Default behavior when adding a field to a CT from the UI.
+                    field.SchemaXml = fieldElement.ToString();
+                }
+                
                 var fldInfo = new FieldLinkCreationInformation();
                 fldInfo.Field = field;
                 contentType.FieldLinks.Add(fldInfo);

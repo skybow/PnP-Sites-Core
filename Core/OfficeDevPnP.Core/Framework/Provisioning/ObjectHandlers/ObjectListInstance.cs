@@ -632,13 +632,22 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 l => l.EnableMinorVersions,
                 l => l.DraftVersionVisibility,
                 l => l.Views,
-                l => l.Forms,
                 l => l.RootFolder.ServerRelativeUrl
 #if !CLIENTSDKV15
 , l => l.MajorWithMinorVersionsLimit
 #endif
 );
             web.Context.ExecuteQueryRetry();
+
+            try
+            {
+                web.Context.Load(existingList, l => l.Forms);
+                web.Context.ExecuteQueryRetry();
+            }
+            catch (Exception ex)
+            {
+                scope.LogDebug("Loading forms on list {0} failed. {1}. {2}", existingList.Title, ex.Message, ex.StackTrace);
+            }
 
             if (existingList.BaseTemplate == templateList.TemplateType)
             {
@@ -794,7 +803,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 }
                 if (templateList.Security != null)
                 {
-                    existingList.SetSecurity(parser, templateList.Security);
+                    try
+                    {
+                        existingList.SetSecurity(parser, templateList.Security);
+                    }
+                    catch (Exception ex)
+                    {
+                        scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ListInstances_Updating_list__0__failed___1_____2_, templateList.Title, ex.Message, ex.StackTrace);
+                    }
                 }
                 return Tuple.Create(existingList, parser);
             }
@@ -956,7 +972,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             if (list.Security != null)
             {
-                createdList.SetSecurity(parser, list.Security);
+                try
+                {
+                    createdList.SetSecurity(parser, list.Security);
+                }
+                catch (Exception ex)
+                {
+                    scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ListInstances_Updating_list__0__failed___1_____2_, list.Title, ex.Message, ex.StackTrace);
+                }
             }
             return Tuple.Create(createdList, parser);
         }
