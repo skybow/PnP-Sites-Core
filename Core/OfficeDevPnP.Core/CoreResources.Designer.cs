@@ -777,6 +777,16 @@ namespace OfficeDevPnP.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Composed Look Information in Property Bag failed to deserialize. Falling back to detection of current composed look.
+        /// </summary>
+        internal static string Provisioning_ObjectHandlers_ComposedLooks_ExtractObjects_ComposedLookInfoFailedToDeserialize {
+            get {
+                return ResourceManager.GetString("Provisioning_ObjectHandlers_ComposedLooks_ExtractObjects_ComposedLookInfoFailedTo" +
+                        "Deserialize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Creating SharePointConnector.
         /// </summary>
         internal static string Provisioning_ObjectHandlers_ComposedLooks_ExtractObjects_Creating_SharePointConnector {
@@ -793,6 +803,16 @@ namespace OfficeDevPnP.Core {
             get {
                 return ResourceManager.GetString("Provisioning_ObjectHandlers_ComposedLooks_ExtractObjects_Retrieving_current_compo" +
                         "sed_look", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Using Composed Look Information from Property Bag.
+        /// </summary>
+        internal static string Provisioning_ObjectHandlers_ComposedLooks_ExtractObjects_Using_ComposedLookInfoFromPropertyBag {
+            get {
+                return ResourceManager.GetString("Provisioning_ObjectHandlers_ComposedLooks_ExtractObjects_Using_ComposedLookInfoFr" +
+                        "omPropertyBag", resourceCulture);
             }
         }
         
@@ -952,11 +972,31 @@ namespace OfficeDevPnP.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Calling extensibility tokenprovider callout {0}.
+        /// </summary>
+        internal static string Provisioning_ObjectHandlers_ExtensibilityProviders_Calling_tokenprovider_extensibility_callout__0_ {
+            get {
+                return ResourceManager.GetString("Provisioning_ObjectHandlers_ExtensibilityProviders_Calling_tokenprovider_extensib" +
+                        "ility_callout__0_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Extensibility callout failed: {0} : {1}.
         /// </summary>
         internal static string Provisioning_ObjectHandlers_ExtensibilityProviders_callout_failed___0_____1_ {
             get {
                 return ResourceManager.GetString("Provisioning_ObjectHandlers_ExtensibilityProviders_callout_failed___0_____1_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extensibility tokenprovider callout failed: {0} : {1}.
+        /// </summary>
+        internal static string Provisioning_ObjectHandlers_ExtensibilityProviders_tokenprovider_callout_failed___0_____1_ {
+            get {
+                return ResourceManager.GetString("Provisioning_ObjectHandlers_ExtensibilityProviders_tokenprovider_callout_failed__" +
+                        "_0_____1_", resourceCulture);
             }
         }
         
@@ -1180,6 +1220,15 @@ namespace OfficeDevPnP.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Folder &apos;{0}&apos; already exists in parent folder &apos;{1}&apos;..
+        /// </summary>
+        internal static string Provisioning_ObjectHandlers_ListInstances_FolderAlreadyExists {
+            get {
+                return ResourceManager.GetString("Provisioning_ObjectHandlers_ListInstances_FolderAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ID for field is not a valid Guid: {0}.
         /// </summary>
         internal static string Provisioning_ObjectHandlers_ListInstances_ID_for_field_is_not_a_valid_Guid___0_ {
@@ -1268,6 +1317,15 @@ namespace OfficeDevPnP.Core {
         internal static string Provisioning_ObjectHandlers_ListInstancesDataRows_Processing_data_rows_for__0_ {
             get {
                 return ResourceManager.GetString("Provisioning_ObjectHandlers_ListInstancesDataRows_Processing_data_rows_for__0_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to find lookup list with Id: {0}.
+        /// </summary>
+        internal static string Provisioning_ObjectHandlers_LookupFields_LookupTargetListLookupFailed__0 {
+            get {
+                return ResourceManager.GetString("Provisioning_ObjectHandlers_LookupFields_LookupTargetListLookupFailed__0", resourceCulture);
             }
         }
         
@@ -1473,6 +1531,33 @@ namespace OfficeDevPnP.Core {
         internal static string ProvisioningExtensions_ProvisionModuleInternal_Expected_element__Module__ {
             get {
                 return ResourceManager.GetString("ProvisioningExtensions_ProvisionModuleInternal_Expected_element__Module__", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Something wrong happened while visiting securable object: {0}, details: {1}.
+        /// </summary>
+        internal static string SecurityExtensions_Error_VisitingSecurableObject {
+            get {
+                return ResourceManager.GetString("SecurityExtensions_Error_VisitingSecurableObject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Visiting securable object: {0}.
+        /// </summary>
+        internal static string SecurityExtensions_Info_VisitingSecurableObject {
+            get {
+                return ResourceManager.GetString("SecurityExtensions_Info_VisitingSecurableObject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Skip visiting the child securable objects for {0}, unique_permission_item_count = {1}, leaf_breadth_limit = {2}.
+        /// </summary>
+        internal static string SecurityExtensions_Warning_SkipFurtherVisitingForTooManyChildObjects {
+            get {
+                return ResourceManager.GetString("SecurityExtensions_Warning_SkipFurtherVisitingForTooManyChildObjects", resourceCulture);
             }
         }
         
@@ -2357,6 +2442,15 @@ namespace OfficeDevPnP.Core {
         internal static string WebExtensions_RemoveAppInstance {
             get {
                 return ResourceManager.GetString("WebExtensions_RemoveAppInstance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Request access email addresses exceed 255 characters. Skipping: {0}.
+        /// </summary>
+        internal static string WebExtensions_RequestAccessEmailLimitExceeded {
+            get {
+                return ResourceManager.GetString("WebExtensions_RequestAccessEmailLimitExceeded", resourceCulture);
             }
         }
         

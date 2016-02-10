@@ -879,4 +879,34 @@
   <data name="Provisioning_Formatter_Invalid_Template_URI" xml:space="preserve">
     <value>The Provisioning Template URI {0} is not valid.</value>
   </data>
+  <data name="Provisioning_ObjectHandlers_ComposedLooks_ExtractObjects_ComposedLookInfoFailedToDeserialize" xml:space="preserve">
+    <value>Composed Look Information in Property Bag failed to deserialize. Falling back to detection of current composed look</value>
+  </data>
+  <data name="Provisioning_ObjectHandlers_ComposedLooks_ExtractObjects_Using_ComposedLookInfoFromPropertyBag" xml:space="preserve">
+    <value>Using Composed Look Information from Property Bag</value>
+  </data>
+  <data name="Provisioning_ObjectHandlers_LookupFields_LookupTargetListLookupFailed__0" xml:space="preserve">
+    <value>Unable to find lookup list with Id: {0}</value>
+  </data>
+  <data name="Provisioning_ObjectHandlers_ExtensibilityProviders_Calling_tokenprovider_extensibility_callout__0_" xml:space="preserve">
+    <value>Calling extensibility tokenprovider callout {0}</value>
+  </data>
+  <data name="Provisioning_ObjectHandlers_ExtensibilityProviders_tokenprovider_callout_failed___0_____1_" xml:space="preserve">
+    <value>Extensibility tokenprovider callout failed: {0} : {1}</value>
+  </data>
+  <data name="Provisioning_ObjectHandlers_ListInstances_FolderAlreadyExists" xml:space="preserve">
+    <value>Folder '{0}' already exists in parent folder '{1}'.</value>
+  </data>
+  <data name="SecurityExtensions_Error_VisitingSecurableObject" xml:space="preserve">
+    <value>Something wrong happened while visiting securable object: {0}, details: {1}</value>
+  </data>
+  <data name="SecurityExtensions_Info_VisitingSecurableObject" xml:space="preserve">
+    <value>Visiting securable object: {0}</value>
+  </data>
+  <data name="SecurityExtensions_Warning_SkipFurtherVisitingForTooManyChildObjects" xml:space="preserve">
+    <value>Skip visiting the child securable objects for {0}, unique_permission_item_count = {1}, leaf_breadth_limit = {2}</value>
+  </data>
+  <data name="WebExtensions_RequestAccessEmailLimitExceeded" xml:space="preserve">
+    <value>Request access email addresses exceed 255 characters. Skipping: {0}</value>
+  </data>
 </root>

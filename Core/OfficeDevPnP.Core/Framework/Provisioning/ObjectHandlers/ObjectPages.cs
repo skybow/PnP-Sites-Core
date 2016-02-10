@@ -13,6 +13,7 @@ using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebParts;
 using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitions;
 using File = Microsoft.SharePoint.Client.File;
 using WebPart = OfficeDevPnP.Core.Framework.Provisioning.Model.WebPart;
+using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitions;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 {
@@ -123,7 +124,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                 return;
             }
-            
+
             var contentPage = page as ContentPage;
             if (contentPage != null)
             {
@@ -147,7 +148,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 file.CheckOut();
                 foreach (var model in contentPage.WebParts)
                 {
-                    model.Contents = parser.ParseString(model.Contents); 
+                    model.Contents = parser.ParseString(model.Contents);
 
                     string oldId = null;
                     string newId = null;
@@ -171,29 +172,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 file.CheckIn(String.Empty, CheckinType.MajorCheckIn);
                 return;
             }
-
-            var existingWebParts = web.GetWebParts(url);
-
-            foreach (var webpart in page.WebParts)
-            {
-                if (existingWebParts.FirstOrDefault(w => w.WebPart.Title == webpart.Title) == null)
-                {
-                    var wpEntity = new WebPartEntity
-                    {
-                        WebPartTitle = webpart.Title,
-                        WebPartXml = parser.ParseString(webpart.Contents).Trim('\n', ' ')
-                    };
-
-                    web.AddWebPartToWikiPage(url, wpEntity, (int)webpart.Row, (int)webpart.Column, false);
-                }
-            }
         }
-
         private string GetNewControlId()
         {
             return string.Format("g_{0}", Guid.NewGuid().ToString("D").Replace("-", "_"));
         }
-
         private string GetIdFromControlId(string controlId)
         {
             return controlId.Replace("g_", string.Empty).Replace("_", "-");
@@ -219,7 +202,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             using (var scope = new PnPMonitoredScope(this.Name))
             {
                 var lists = this.GetListsWithPages(template);
-                var pages = new List<Page>();
+                var pages = new PageCollection(template);
 
                 var homePageUrl = web.GetHomePageRelativeUrl();
                 foreach (var list in lists)
@@ -250,7 +233,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return template;
         }
 
-        private IPageModelProvider GetProvider(ListItem item, string homePageUrl, Web web) {
+        private IPageModelProvider GetProvider(ListItem item, string homePageUrl, Web web)
+        {
             var fieldValues = item.FieldValues;
             IPageModelProvider provider = null;
 
@@ -292,12 +276,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         private IEnumerable<ListInstance> GetListsWithPages(ProvisioningTemplate template)
         {
-            return template.Lists.Where(x => x.TemplateType == (int)ListTemplateType.WebPageLibrary 
+            return template.Lists.Where(x => x.TemplateType == (int)ListTemplateType.WebPageLibrary
                 || x.TemplateType == (int)ListTemplateType.HomePageLibrary
 #if CLIENTSDKV15
-                || x.TemplateType == (int)ListTemplateType.PublishingPages
+ || x.TemplateType == (int)ListTemplateType.PublishingPages
 #endif
-                );
+);
         }
 
         private ProvisioningTemplate CleanupEntities(ProvisioningTemplate template, ProvisioningTemplate baseTemplate)

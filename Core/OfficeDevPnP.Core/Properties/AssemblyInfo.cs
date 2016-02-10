@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("OfficeDevPnP.Core")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2015")]
+[assembly: AssemblyCopyright("Copyright © Microsoft 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en-US")]
@@ -34,11 +34,11 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // Convention:
-// Major version = current version 1
-// Minor version = Sequence...version 0 was with March release...so 1=April, 2=May, 3=June, 4=August, 6=September, 7=October, 8=November, 9=December
-// Third part = version indenpendant showing the release month in MMYY
+// Major version = current version 2
+// Minor version = Sequence...version 0 was with January release...so 1=Feb 2=Mar, 3=Apr, 4=May, 6=Jun, 7=Jul, 8=Aug, 9=Sept,...
+// Third part = version indenpendant showing the release month in YYMM
 // Fourth part = 0 normally or a sequence number when we do an emergency release
-[assembly: AssemblyVersion("1.8.1115.1")]
-[assembly: AssemblyFileVersion("1.8.1115.1")]
+[assembly: AssemblyVersion("2.1.1602.0")]
+[assembly: AssemblyFileVersion("2.1.1602.0")]
 
 //[assembly: InternalsVisibleTo("OfficeDevPnP.Core.Tests")]

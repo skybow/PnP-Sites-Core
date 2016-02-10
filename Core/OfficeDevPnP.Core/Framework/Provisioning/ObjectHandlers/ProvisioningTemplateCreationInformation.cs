@@ -13,12 +13,16 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
     {
         private ProvisioningTemplate baseTemplate;
         private FileConnectorBase fileConnector;
-        private bool persistComposedLookFiles = false;
+        private bool persistBrandingFiles = false;
         private bool includeAllTermGroups = false;
         private bool includeSiteCollectionTermGroup = false;
         private bool includeSiteGroups = false;
         private bool includeSearchConfiguration = false;
         private List<String> propertyBagPropertiesToPreserve;
+        private bool persistPublishingFiles = false;
+        private bool includeNativePublishingFiles = false;
+
+        private Handlers handlersToProcess = Handlers.All;
 
         public ProvisioningProgressDelegate ProgressDelegate { get; set; }
         public ProvisioningMessagesDelegate MessagesDelegate { get; set; }
@@ -63,18 +67,61 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         /// Do composed look files (theme files, site logo, alternate css) need to be persisted to storage when 
         /// we're "getting" a template
         /// </summary>
+        [Obsolete("Use PersistBrandingFiles instead")]
         public bool PersistComposedLookFiles
         {
             get
             {
-                return this.persistComposedLookFiles;
+                return this.persistBrandingFiles;
             }
             set
             {
-                this.persistComposedLookFiles = value;
+                this.persistBrandingFiles = value;
             }
         }
 
+        public bool PersistBrandingFiles
+        {
+            get
+            {
+                return this.persistBrandingFiles;
+            }
+            set
+            {
+                this.persistBrandingFiles = value;
+            }
+        }
+
+        /// <summary>
+        /// Defines whether to persist publishing files (MasterPages and PageLayouts)
+        /// </summary>
+        public bool PersistPublishingFiles
+        {
+            get
+            {
+                return this.persistPublishingFiles;
+            }
+            set
+            {
+                this.persistPublishingFiles = value;
+            }
+        }
+
+        /// <summary>
+        /// Defines whether to extract native publishing files (MasterPages and PageLayouts)
+        /// </summary>
+        public bool IncludeNativePublishingFiles
+        {
+            get
+            {
+                return this.includeNativePublishingFiles;
+            }
+            set
+            {
+                this.includeNativePublishingFiles = value;
+            }
+        }
+        
         public bool IncludeAllTermGroups
         {
             get
@@ -114,6 +161,18 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             set
             {
                 this.includeSearchConfiguration = value;
+            }
+        }
+
+        public Handlers HandlersToProcess
+        {
+            get
+            {
+                return handlersToProcess;
+            }
+            set
+            {
+                handlersToProcess = value;
             }
         }
     }

@@ -14,8 +14,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Extensions
     {
         public static void SetSecurity(this SecurableObject securable, TokenParser parser, ObjectSecurity security)
         {
-            //using (var scope = new PnPMonitoredScope("Set Security"))
-            //{
+            // If there's no role assignments we're returning
+            if (security.RoleAssignments.Count == 0) return;
 
             var context = securable.Context as ClientContext;
 
@@ -45,7 +45,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Extensions
                 securable.RoleAssignments.Add(principal, roleDefinitionBindingCollection);
             }
             context.ExecuteQueryRetry();
-            //}
         }
 
         public static ObjectSecurity GetSecurity(this SecurableObject securable)
@@ -93,13 +92,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Extensions
 
         private static string ReplaceGroupTokens(Web web, string loginName)
         {
-			Regex regex = new Regex("{associated(owner|member|visitor)group}");
-			if(regex.IsMatch(loginName))
-			{
-				loginName = loginName.Replace(web.AssociatedOwnerGroup.Title, "{associatedownergroup}");
-				loginName = loginName.Replace(web.AssociatedMemberGroup.Title, "{associatedmembergroup}");
-				loginName = loginName.Replace(web.AssociatedVisitorGroup.Title, "{associatedvisitorgroup}");
-			}
+			loginName = loginName.Replace(web.AssociatedOwnerGroup.Title, "{associatedownergroup}");
+			loginName = loginName.Replace(web.AssociatedMemberGroup.Title, "{associatedmembergroup}");
+			loginName = loginName.Replace(web.AssociatedVisitorGroup.Title, "{associatedvisitorgroup}");
             return loginName;
         }
     }

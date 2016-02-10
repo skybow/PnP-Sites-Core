@@ -56,7 +56,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return parser;
         }
 
-        private static void ProvisionFeaturesImplementation<T>(T parent, List<Feature> features, PnPMonitoredScope scope)
+        private static void ProvisionFeaturesImplementation<T>(T parent, IEnumerable<Feature> features, PnPMonitoredScope scope)
         {
             var activeFeatures = new List<Microsoft.SharePoint.Client.Feature>();
             Web web = null;
@@ -84,40 +84,39 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     needToRetry = false;
                     var unProvisionFeatures = new List<Feature>();
 
-                    foreach (var feature in features)
-                    {
+                foreach (var feature in features)
+                {
                         try
                         {
 
-                            if (!feature.Deactivate)
+                    if (!feature.Deactivate)
+                    {
+                        if (activeFeatures.FirstOrDefault(f => f.DefinitionId == feature.Id) == null)
+                        {
+                            scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_Features_Activating__0__scoped_feature__1_, site != null ? "site" : "web", feature.Id);
+                            if (site != null)
                             {
-                                if (activeFeatures.FirstOrDefault(f => f.DefinitionId == feature.Id) == null)
-                                {
-                                    scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_Features_Activating__0__scoped_feature__1_, site != null ? "site" : "web", feature.Id);
-                                    if (site != null)
-                                    {
-                                        site.ActivateFeature(feature.Id);
-                                    }
-                                    else
-                                    {
-                                        web.ActivateFeature(feature.Id);
-                                    }
-                                    needToRetry = true;
-                                }
+                                site.ActivateFeature(feature.Id);
                             }
                             else
                             {
-                                if (activeFeatures.FirstOrDefault(f => f.DefinitionId == feature.Id) != null)
-                                {
-                                    scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_Features_Deactivating__0__scoped_feature__1_, site != null ? "site" : "web", feature.Id);
-                                    if (site != null)
-                                    {
-                                        site.DeactivateFeature(feature.Id);
-                                    }
-                                    else
-                                    {
-                                        web.DeactivateFeature(feature.Id);
-                                    }
+                                web.ActivateFeature(feature.Id);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (activeFeatures.FirstOrDefault(f => f.DefinitionId == feature.Id) != null)
+                        {
+                            scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_Features_Deactivating__0__scoped_feature__1_, site != null ? "site" : "web", feature.Id);
+                            if (site != null)
+                            {
+                                site.DeactivateFeature(feature.Id);
+                            }
+                            else
+                            {
+                                web.DeactivateFeature(feature.Id);
+                            }
 
                                     needToRetry = true;
                                 }
@@ -133,9 +132,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 var matches = guidRegex.Matches(message).Cast<Match>().Select(m => m.Value).Where(x => !x.Equals(feature.Id.ToString(), StringComparison.CurrentCultureIgnoreCase));
                                 InsertFeaturetoCorrectProvisionOrder(unProvisionFeatures, feature, matches);
  
-                            }
                         }
                     }
+                }
 
                     features = unProvisionFeatures;
                 } while (needToRetry);

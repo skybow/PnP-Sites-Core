@@ -324,6 +324,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         web.Context.ExecuteQueryRetry();
                     }
 
+                    var propertyBagKey = string.Format("SiteCollectionGroupId{0}", termStore.Id);
+
+                    var siteCollectionTermGroupId = web.GetPropertyBagValueString(propertyBagKey, "");
+
+                    Guid termGroupGuid = Guid.Empty;
+                    Guid.TryParse(siteCollectionTermGroupId, out termGroupGuid);
+
                     List<TermGroup> termGroups = new List<TermGroup>();
                     if (creationInfo.IncludeAllTermGroups)
                     {
@@ -336,12 +343,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     }
                     else
                     {
-                        var propertyBagKey = string.Format("SiteCollectionGroupId{0}", termStore.Id);
-
-                        var siteCollectionTermGroupId = web.GetPropertyBagValueString(propertyBagKey, "");
-
-                        Guid termGroupGuid = Guid.Empty;
-                        if (Guid.TryParse(siteCollectionTermGroupId, out termGroupGuid))
+                        if (termGroupGuid != Guid.Empty)
                         {
                             var termGroup = termStore.GetGroup(termGroupGuid);
                             web.Context.Load(termGroup,
@@ -358,10 +360,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                     foreach (var termGroup in termGroups)
                     {
+                        Boolean isSiteCollectionTermGroup = termGroupGuid != Guid.Empty && termGroup.Id == termGroupGuid;
+
                         var modelTermGroup = new Model.TermGroup
                         {
-                            Name = termGroup.Name,
-                            Id = termGroup.Id,
+                            Name = isSiteCollectionTermGroup ? "{sitecollectiontermgroupname}" : termGroup.Name,
+                            Id = isSiteCollectionTermGroup ? Guid.Empty : termGroup.Id,
                             Description = termGroup.Description
                         };
 
@@ -369,11 +373,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         {
                             var modelTermSet = new Model.TermSet();
                             modelTermSet.Name = termSet.Name;
-                            modelTermSet.Id = termSet.Id;
+                            if (!isSiteCollectionTermGroup)
+                            {
+                                modelTermSet.Id = termSet.Id;
+                            }
                             modelTermSet.IsAvailableForTagging = termSet.IsAvailableForTagging;
                             modelTermSet.IsOpenForTermCreation = termSet.IsOpenForTermCreation;
                             modelTermSet.Description = termSet.Description;
-                            modelTermSet.Terms.AddRange(GetTerms<TermSet>(web.Context, termSet, termStore.DefaultLanguage));
+                            modelTermSet.Terms.AddRange(GetTerms<TermSet>(web.Context, termSet, termStore.DefaultLanguage, isSiteCollectionTermGroup));
                             foreach (var property in termSet.CustomProperties)
                             {
                                 modelTermSet.Properties.Add(property.Key, property.Value);
@@ -388,10 +395,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return template;
         }
 
-        private List<Model.Term> GetTerms<T>(ClientRuntimeContext context, TaxonomyItem parent, int defaultLanguage)
+        private List<Model.Term> GetTerms<T>(ClientRuntimeContext context, TaxonomyItem parent, int defaultLanguage, Boolean isSiteCollectionTermGroup = false)
         {
             List<Model.Term> termsToReturn = new List<Model.Term>();
-            TermCollection terms = null;
+            Microsoft.SharePoint.Client.Taxonomy.TermCollection terms = null;
             var customSortOrder = string.Empty;
             if (parent is TermSet)
             {
@@ -409,7 +416,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             foreach (var term in terms)
             {
                 var modelTerm = new Model.Term();
-                modelTerm.Id = term.Id;
+                if (!isSiteCollectionTermGroup)
+                {
+                    modelTerm.Id = term.Id;
+                }
                 modelTerm.Name = term.Name;
                 modelTerm.IsAvailableForTagging = term.IsAvailableForTagging;
 
@@ -453,7 +463,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 }
                 if (term.TermsCount > 0)
                 {
-                    modelTerm.Terms.AddRange(GetTerms<Term>(context, term, defaultLanguage));
+                    modelTerm.Terms.AddRange(GetTerms<Term>(context, term, defaultLanguage, isSiteCollectionTermGroup));
                 }
                 termsToReturn.Add(modelTerm);
             }
