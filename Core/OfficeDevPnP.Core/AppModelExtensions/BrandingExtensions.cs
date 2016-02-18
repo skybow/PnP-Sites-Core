@@ -1124,7 +1124,7 @@ namespace Microsoft.SharePoint.Client
             {
                 pageLayoutName = pageLayoutName.Substring(partMasterCatalogPath.Length + 1);
             }
-            var fileRefValue = string.Format("{0}/{1}{2}", masterPageGallery.RootFolder.ServerRelativeUrl, pageLayoutName, ".aspx");
+            var fileRefValue = string.Format("{0}/{1}{2}", masterPageGallery.RootFolder.ServerRelativeUrl, pageLayoutName, pageLayoutName.EndsWith(".aspx") ? string.Empty : ".aspx");
             var query = new CamlQuery();
             // Use query Scope='RecursiveAll' to iterate through sub folders of Master page library because we might have file in folder hierarchy
             query.ViewXml = string.Format("<View Scope='RecursiveAll'><Query><Where><Eq><FieldRef Name='FileRef'/><Value Type='Text'>{0}</Value></Eq></Where></Query></View>", fileRefValue);

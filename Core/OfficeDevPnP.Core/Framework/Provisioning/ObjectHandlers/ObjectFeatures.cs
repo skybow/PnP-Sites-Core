@@ -84,39 +84,39 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     needToRetry = false;
                     var unProvisionFeatures = new List<Feature>();
 
-                foreach (var feature in features)
-                {
+                    foreach (var feature in features)
+                    {
                         try
                         {
 
-                    if (!feature.Deactivate)
-                    {
-                        if (activeFeatures.FirstOrDefault(f => f.DefinitionId == feature.Id) == null)
-                        {
-                            scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_Features_Activating__0__scoped_feature__1_, site != null ? "site" : "web", feature.Id);
-                            if (site != null)
+                            if (!feature.Deactivate)
                             {
-                                site.ActivateFeature(feature.Id);
+                                if (activeFeatures.FirstOrDefault(f => f.DefinitionId == feature.Id) == null)
+                                {
+                                    scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_Features_Activating__0__scoped_feature__1_, site != null ? "site" : "web", feature.Id);
+                                    if (site != null)
+                                    {
+                                        site.ActivateFeature(feature.Id);
+                                    }
+                                    else
+                                    {
+                                        web.ActivateFeature(feature.Id);
+                                    }
+                                }
                             }
                             else
                             {
-                                web.ActivateFeature(feature.Id);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (activeFeatures.FirstOrDefault(f => f.DefinitionId == feature.Id) != null)
-                        {
-                            scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_Features_Deactivating__0__scoped_feature__1_, site != null ? "site" : "web", feature.Id);
-                            if (site != null)
-                            {
-                                site.DeactivateFeature(feature.Id);
-                            }
-                            else
-                            {
-                                web.DeactivateFeature(feature.Id);
-                            }
+                                if (activeFeatures.FirstOrDefault(f => f.DefinitionId == feature.Id) != null)
+                                {
+                                    scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_Features_Deactivating__0__scoped_feature__1_, site != null ? "site" : "web", feature.Id);
+                                    if (site != null)
+                                    {
+                                        site.DeactivateFeature(feature.Id);
+                                    }
+                                    else
+                                    {
+                                        web.DeactivateFeature(feature.Id);
+                                    }
 
                                     needToRetry = true;
                                 }
@@ -124,17 +124,21 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         }
                         catch (ServerException ex)
                         {
-                            if (ex.ServerErrorTypeName == "Microsoft.SharePoint.SPFeatureDependencyNotActivatedException") {
+                            if (ex.ServerErrorTypeName == "Microsoft.SharePoint.SPFeatureDependencyNotActivatedException")
+                            {
                                 string message = ex.Message;
 
                                 string strGuidRegex = @"\b[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b";
                                 Regex guidRegex = new Regex(strGuidRegex, RegexOptions.IgnoreCase);
                                 var matches = guidRegex.Matches(message).Cast<Match>().Select(m => m.Value).Where(x => !x.Equals(feature.Id.ToString(), StringComparison.CurrentCultureIgnoreCase));
                                 InsertFeaturetoCorrectProvisionOrder(unProvisionFeatures, feature, matches);
- 
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(Constants.LOGGING_SOURCE_FRAMEWORK_PROVISIONING, " Error in ProvisionFeatures: {0} - {1}", ex.Message, ex.StackTrace);
                         }
                     }
-                }
 
                     features = unProvisionFeatures;
                 } while (needToRetry);
@@ -142,7 +146,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         }
 
 
-        private static void InsertFeaturetoCorrectProvisionOrder(List<Feature> features, Feature featureToInsert, IEnumerable<string> dependenceFeaturesIds) {
+        private static void InsertFeaturetoCorrectProvisionOrder(List<Feature> features, Feature featureToInsert, IEnumerable<string> dependenceFeaturesIds)
+        {
             if (featureToInsert.Deactivate)
             {
                 int indexToInsertForDeactivation = features.FindLastIndex((f) =>
@@ -154,13 +159,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 {
                     features.Add(featureToInsert);
                 }
-                else {
+                else
+                {
                     features.Insert(indexToInsertForDeactivation, featureToInsert);
                 }
             }
             else
             {
-                int indexToInsertForActivation = features.FindLastIndex((f) => {
+                int indexToInsertForActivation = features.FindLastIndex((f) =>
+                {
                     return dependenceFeaturesIds.Contains(f.Id.ToString());
                 });
 

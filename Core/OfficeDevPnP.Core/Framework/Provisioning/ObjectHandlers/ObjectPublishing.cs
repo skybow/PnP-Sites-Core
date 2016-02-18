@@ -75,51 +75,60 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     f => f.Name.EndsWith(".aspx", StringComparison.InvariantCultureIgnoreCase) ||
                     f.Name.EndsWith(".master", StringComparison.InvariantCultureIgnoreCase)))
                 {
-                    var listItem = file.EnsureProperty(f => f.ListItemAllFields);
-                    listItem.ContentType.EnsureProperties(ct => ct.Id, ct => ct.StringId);
-
-                    // Check if the content type is of type Master Page or Page Layout
-                    if (listItem.ContentType.StringId.StartsWith(MASTER_PAGE_CONTENT_TYPE_ID) ||
-                        listItem.ContentType.StringId.StartsWith(PAGE_LAYOUT_CONTENT_TYPE_ID))
+                    try
                     {
-                        // If the file is a custom one, and not one native
-                        // and coming out from the publishing feature
-                        if (creationInfo.IncludeNativePublishingFiles || 
-                            !IsPublishingFeatureNativeFile(publishingFeatureTemplate, file.Name))
+
+                        var listItem = file.EnsureProperty(f => f.ListItemAllFields);
+                        listItem.ContentType.EnsureProperties(ct => ct.Id, ct => ct.StringId);
+
+                        // Check if the content type is of type Master Page or Page Layout
+                        if (listItem.ContentType.StringId.StartsWith(MASTER_PAGE_CONTENT_TYPE_ID) ||
+                            listItem.ContentType.StringId.StartsWith(PAGE_LAYOUT_CONTENT_TYPE_ID))
                         {
-                            var fullUri = new Uri(UrlUtility.Combine(webApplicationUrl, file.ServerRelativeUrl));
-
-                            var folderPath = fullUri.Segments.Take(fullUri.Segments.Count() - 1).ToArray().Aggregate((i, x) => i + x).TrimEnd('/');
-                            var fileName = fullUri.Segments[fullUri.Segments.Count() - 1];
-
-                            var publishingFile = new Model.File()
+                            // If the file is a custom one, and not one native
+                            // and coming out from the publishing feature
+                            if (creationInfo.IncludeNativePublishingFiles ||
+                                !IsPublishingFeatureNativeFile(publishingFeatureTemplate, file.Name))
                             {
-                                Folder = Tokenize(folderPath, web.Url),
-                                Src = HttpUtility.UrlDecode(fileName),
-                                Overwrite = true,
-                            };
+                                var fullUri = new Uri(UrlUtility.Combine(webApplicationUrl, file.ServerRelativeUrl));
 
-                            // Add field values to file
-                            RetrieveFieldValues(web, file, publishingFile);
+                                var folderPath = fullUri.Segments.Take(fullUri.Segments.Count() - 1).ToArray().Aggregate((i, x) => i + x).TrimEnd('/');
+                                var fileName = fullUri.Segments[fullUri.Segments.Count() - 1];
 
-                            // Add the file to the template
-                            template.Files.Add(publishingFile);
+                                var publishingFile = new Model.File()
+                                {
+                                    Folder = Tokenize(folderPath, web.Url),
+                                    Src = HttpUtility.UrlDecode(fileName),
+                                    Overwrite = true,
+                                };
 
-                            // Persist file using connector, if needed
-                            if (creationInfo.PersistPublishingFiles)
-                            {
-                                PersistFile(web, creationInfo, scope, folderPath, fileName, true);
+                                // Add field values to file
+                                RetrieveFieldValues(web, file, publishingFile);
+
+                                // Add the file to the template
+                                template.Files.Add(publishingFile);
+
+                                // Persist file using connector, if needed
+                                if (creationInfo.PersistPublishingFiles)
+                                {
+                                    PersistFile(web, creationInfo, scope, folderPath, fileName, true);
+                                }
+
+                                if (listItem.ContentType.StringId.StartsWith(MASTER_PAGE_CONTENT_TYPE_ID))
+                                {
+                                    scope.LogWarning(String.Format("The file \"{0}\" is a custom MasterPage. Accordingly to the PnP Guidance (http://aka.ms/o365pnpguidancemasterpages) you should try to avoid using custom MasterPages.", file.Name));
+                                }
                             }
-
-                            if (listItem.ContentType.StringId.StartsWith(MASTER_PAGE_CONTENT_TYPE_ID))
+                            else
                             {
-                                scope.LogWarning(String.Format("The file \"{0}\" is a custom MasterPage. Accordingly to the PnP Guidance (http://aka.ms/o365pnpguidancemasterpages) you should try to avoid using custom MasterPages.", file.Name));
+                                scope.LogWarning(String.Format("Skipping file \"{0}\" because it is native in the publishing feature.", file.Name));
                             }
                         }
-                        else
-                        {
-                            scope.LogWarning(String.Format("Skipping file \"{0}\" because it is native in the publishing feature.", file.Name));
-                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        scope.LogError(String.Format("Could not extract master page or layout: {0} - {1}", ex.Message, ex.StackTrace));
                     }
                 }
             }
@@ -168,8 +177,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             Boolean result = false;
 
-            if (nativeFilesTemplate != null 
-                && nativeFilesTemplate.Files != null 
+            if (nativeFilesTemplate != null
+                && nativeFilesTemplate.Files != null
                 && nativeFilesTemplate.Files.Count > 0)
             {
                 result = nativeFilesTemplate.Files.Any(f => f.Src == fileName);

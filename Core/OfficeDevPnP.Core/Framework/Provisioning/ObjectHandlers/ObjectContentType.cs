@@ -30,47 +30,65 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     return parser;
                 }
 
-                web.Context.Load(web.ContentTypes, ct => ct.IncludeWithDefaultProperties(c => c.StringId, c => c.FieldLinks,
-                                                                                         c => c.FieldLinks.Include(fl => fl.Id, fl => fl.Required, fl => fl.Hidden)));
-                web.Context.Load(web.Fields, fld => fld.IncludeWithDefaultProperties(f => f.Id));
-
-                web.Context.ExecuteQueryRetry();
-
-                var existingCTs = web.ContentTypes.ToList();
-                var existingFields = web.Fields.ToList();
-
-                foreach (var ct in template.ContentTypes.OrderBy(ct => ct.Id)) // ordering to handle references to parent content types that can be in the same template
+                try
                 {
-                    var existingCT = existingCTs.FirstOrDefault(c => c.StringId.Equals(ct.Id, StringComparison.OrdinalIgnoreCase));
-                    if (existingCT == null)
-                    {
-                        scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ContentTypes_Creating_new_Content_Type___0_____1_, ct.Id, ct.Name);
-                        var newCT = CreateContentType(web, ct, parser, template.Connector ?? null, existingCTs, existingFields);
-                        if (newCT != null)
-                        {
-                            existingCTs.Add(newCT);
-                        }
-                    }
-                    else
-                    {
-                        if (ct.Overwrite)
-                        {
-                            scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ContentTypes_Recreating_existing_Content_Type___0_____1_, ct.Id, ct.Name);
 
-                            existingCT.DeleteObject();
-                            web.Context.ExecuteQueryRetry();
-                            var newCT = CreateContentType(web, ct, parser, template.Connector ?? null, existingCTs, existingFields);
-                            if (newCT != null)
+                    web.Context.Load(web.ContentTypes, ct => ct.IncludeWithDefaultProperties(c => c.StringId, c => c.FieldLinks,
+                                                                                             c => c.FieldLinks.Include(fl => fl.Id, fl => fl.Required, fl => fl.Hidden)));
+                    web.Context.Load(web.Fields, fld => fld.IncludeWithDefaultProperties(f => f.Id));
+
+                    web.Context.ExecuteQueryRetry();
+
+                    var existingCTs = web.ContentTypes.ToList();
+                    var existingFields = web.Fields.ToList();
+
+                    foreach (var ct in template.ContentTypes.OrderBy(ct => ct.Id)) // ordering to handle references to parent content types that can be in the same template
+                    {
+
+                        try
+                        {
+
+                            var existingCT = existingCTs.FirstOrDefault(c => c.StringId.Equals(ct.Id, StringComparison.OrdinalIgnoreCase));
+                            if (existingCT == null)
                             {
-                                existingCTs.Add(newCT);
+                                scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ContentTypes_Creating_new_Content_Type___0_____1_, ct.Id, ct.Name);
+                                var newCT = CreateContentType(web, ct, parser, template.Connector ?? null, existingCTs, existingFields);
+                                if (newCT != null)
+                                {
+                                    existingCTs.Add(newCT);
+                                }
+                            }
+                            else
+                            {
+                                if (ct.Overwrite)
+                                {
+                                    scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ContentTypes_Recreating_existing_Content_Type___0_____1_, ct.Id, ct.Name);
+                                    existingCT.DeleteObject();
+                                    web.Context.ExecuteQueryRetry();
+                                    var newCT = CreateContentType(web, ct, parser, template.Connector ?? null, existingCTs, existingFields);
+                                    if (newCT != null)
+                                    {
+                                        existingCTs.Add(newCT);
+                                    }
+                                }
+                                else
+                                {
+                                    scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ContentTypes_Updating_existing_Content_Type___0_____1_, ct.Id, ct.Name);
+                                    UpdateContentType(web, existingCT, ct, parser, scope);
+                                }
                             }
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ContentTypes_Updating_existing_Content_Type___0_____1_, ct.Id, ct.Name);
-                            UpdateContentType(web, existingCT, ct, parser, scope);
+                            Log.Error(Constants.LOGGING_SOURCE_FRAMEWORK_PROVISIONING, "Could not provision content type: {0} - {1}", ex.Message, ex.StackTrace);
                         }
                     }
+
+                }
+                catch (Exception ex)
+                {
+
+                    Log.Error(Constants.LOGGING_SOURCE_FRAMEWORK_PROVISIONING, "Could not load content type: {0} - {1}", ex.Message, ex.StackTrace);
                 }
             }
             return parser;
@@ -235,8 +253,16 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             var createdCT = web.CreateContentType(name, description, id, group);
             foreach (var fieldRef in templateContentType.FieldRefs)
             {
-                var field = web.Fields.GetById(fieldRef.Id);
-                web.AddFieldToContentType(createdCT, field, fieldRef.Required, fieldRef.Hidden);
+                try
+                {
+                    var field = web.Fields.GetById(fieldRef.Id);
+                    web.AddFieldToContentType(createdCT, field, fieldRef.Required, fieldRef.Hidden);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(Constants.LOGGING_SOURCE_FRAMEWORK_PROVISIONING, "Could not add field to content type: {0} - {1}", ex.Message, ex.StackTrace);
+                }
+
             }
 
             // Add new CTs

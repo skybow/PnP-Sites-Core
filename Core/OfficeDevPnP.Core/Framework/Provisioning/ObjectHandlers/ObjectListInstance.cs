@@ -125,11 +125,25 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 {
                                     if (!listInfo.SiteList.FieldExistsById(fieldRef.Id))
                                     {
-                                        CreateFieldRef(listInfo, field, fieldRef);
+                                        try
+                                        {
+                                            CreateFieldRef(listInfo, field, fieldRef);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            scope.LogError("Could not create FieldRef: {0} - {1}", ex.Message, ex.StackTrace);
+                                        }
                                     }
                                     else
                                     {
-                                        UpdateFieldRef(listInfo.SiteList, field.Id, fieldRef);
+                                        try
+                                        {
+                                            UpdateFieldRef(listInfo.SiteList, field.Id, fieldRef);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            scope.LogError("Could not update FieldRef: {0} - {1}", ex.Message, ex.StackTrace);
+                                        }
                                     }
                                 }
 

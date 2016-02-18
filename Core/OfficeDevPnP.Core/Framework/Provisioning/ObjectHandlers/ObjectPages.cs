@@ -148,23 +148,30 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 file.CheckOut();
                 foreach (var model in contentPage.WebParts)
                 {
-                    model.Contents = parser.ParseString(model.Contents);
-
-                    string oldId = null;
-                    string newId = null;
-                    if (!WebPartsModelProvider.IsV3FormatXml(model.Contents))
+                    try
                     {
-                        var id = WebPartsModelProvider.GetWebPartControlId(model.Contents);
-                        var idToReplace = GetNewControlId();
-                        model.Contents = model.Contents.Replace(id, idToReplace);
-                        newId = this.GetIdFromControlId(idToReplace);
-                        oldId = this.GetIdFromControlId(id);
-                    }
+                        model.Contents = parser.ParseString(model.Contents);
 
-                    var addedWebPart = this.AddWebPart(web, model, file);
-                    newId = newId ?? addedWebPart.Id.ToString().ToLower();
-                    oldId = oldId ?? GetWebPartIdFromSchema(model.Contents).ToLower();
-                    parser.AddToken(new IdToken(web, newId, oldId));
+                        string oldId = null;
+                        string newId = null;
+                        if (!WebPartsModelProvider.IsV3FormatXml(model.Contents))
+                        {
+                            var id = WebPartsModelProvider.GetWebPartControlId(model.Contents);
+                            var idToReplace = GetNewControlId();
+                            model.Contents = model.Contents.Replace(id, idToReplace);
+                            newId = this.GetIdFromControlId(idToReplace);
+                            oldId = this.GetIdFromControlId(id);
+                        }
+
+                        var addedWebPart = this.AddWebPart(web, model, file);
+                        newId = newId ?? addedWebPart.Id.ToString().ToLower();
+                        oldId = oldId ?? GetWebPartIdFromSchema(model.Contents).ToLower();
+                        parser.AddToken(new IdToken(web, newId, oldId));
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(Constants.LOGGING_SOURCE_FRAMEWORK_PROVISIONING, "Could not add webpart: {0} - {1}", ex.Message, ex.StackTrace);
+                    }
                 }
 
                 var html = parser.ParseString(contentPage.Html);

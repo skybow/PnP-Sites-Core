@@ -147,10 +147,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                 foreach (var admin in siteSecurity.AdditionalAdministrators)
                 {
-                    var user = web.EnsureUser(admin.Name);
-                    user.IsSiteAdmin = true;
-                    user.Update();
-                    web.Context.ExecuteQueryRetry();
+                    try
+                    {
+                        var user = web.EnsureUser(admin.Name);
+                        user.IsSiteAdmin = true;
+                        user.Update();
+                        web.Context.ExecuteQueryRetry();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(Constants.LOGGING_SOURCE_FRAMEWORK_PROVISIONING, "Could not add additional administrator: {0} - {1}", ex.Message, ex.StackTrace);
+                    }
                 }
 
                 if (siteSecurity.SiteSecurityPermissions != null)

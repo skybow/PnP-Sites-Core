@@ -201,6 +201,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                             step++;
                         }
                         tokenParser = handler.ProvisionObjects(web, template, tokenParser, provisioningInfo);
+
                     }
                 }
             }
