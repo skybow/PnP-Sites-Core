@@ -98,6 +98,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         : url.Replace(webUrlPathAndQuery, "{site}");
                     }
                 }
+                // Default action
+                if (String.IsNullOrEmpty(result))
+                {
+                    result = url;
+                }
             }
             return result;
         }
