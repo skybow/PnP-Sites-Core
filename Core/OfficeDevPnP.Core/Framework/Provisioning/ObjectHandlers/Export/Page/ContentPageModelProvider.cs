@@ -30,8 +30,34 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.Page
             var needToOverwrite = item.File.Versions.Any();
 
             var webParts = Provider.Retrieve(url);
-            url = url.Replace(Web.RootFolder.ServerRelativeUrl, "~site/");
+            url = this.TokenizeUrl(url);
+
             return new ContentPage(url, html, needToOverwrite, webParts, isHomePage);
+        }
+
+        private string TokenizeUrl(string url)
+        {
+            url = url.Replace(Web.Url, "{site}/");
+            url = url.Replace(Web.RootFolder.ServerRelativeUrl, "{site}/");
+
+            var context = Web.Context as ClientContext;
+            var site = context.Site;
+            site.EnsureProperties(s => s.Url, s => s.ServerRelativeUrl);
+
+            url = url.Replace(site.Url, "{sitecollection}/");
+            if (site.ServerRelativeUrl == "/")
+            {
+                if (url.StartsWith("/"))
+                {
+                    url = "{sitecollection}" + url;
+                }
+            }
+            else
+            {
+                url = url.Replace(site.ServerRelativeUrl, "{sitecollection}/");
+            }
+
+            return url;
         }
     }
 }

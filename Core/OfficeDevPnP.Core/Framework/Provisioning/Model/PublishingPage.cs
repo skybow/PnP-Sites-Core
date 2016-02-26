@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.Model
 {
-    class PublishingPage: ContentPage
+    public class PublishingPage: ContentPage
     {
         public string PageTitle { get; set; }
         public string PageLayoutUrl { get; set; }

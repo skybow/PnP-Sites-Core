@@ -20,6 +20,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.Page
             this.Web = web;
             Provider = new WebPartsModelProvider(web);
         }
+
         public ContentPage GetPage(ListItem item)
         {
             var html = string.Empty;
@@ -36,16 +37,40 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.Page
                 pageLayoutUrl = fieldValues["PublishingPageLayout"] == null ? "" : (fieldValues["PublishingPageLayout"] as FieldUrlValue).Url;
             }
 
-            var siteCollectionContext = Web.Context.GetSiteCollectionContext();
-            pageLayoutUrl = pageLayoutUrl.Replace(siteCollectionContext.Url, string.Empty);
+            pageLayoutUrl = this.TokenizeUrl(pageLayoutUrl);
 
             var url = fieldValues["FileRef"].ToString();
             var isHomePage = HomePageUrl.Equals(url);
             var needToOverwrite = item.File.Versions.Any();
 
             var webParts = Provider.Retrieve(url);
-            url = url.Replace(Web.RootFolder.ServerRelativeUrl, "~site/");
+            url = this.TokenizeUrl(url);
+
             return new PublishingPage(url, title, html, pageLayoutUrl, needToOverwrite, webParts, isHomePage);
+        }
+
+        private string TokenizeUrl(string url) {
+            url = url.Replace(Web.Url, "{site}/");
+            url = url.Replace(Web.RootFolder.ServerRelativeUrl, "{site}/");
+
+            var context = Web.Context as ClientContext;
+            var site = context.Site;
+            site.EnsureProperties(s => s.Url, s => s.ServerRelativeUrl);
+
+            url = url.Replace(site.Url, "{sitecollection}/");
+            if (site.ServerRelativeUrl == "/")
+            {
+                if (url.StartsWith("/"))
+                {
+                    url = "{sitecollection}" + url;
+                }
+            }
+            else
+            {
+                url = url.Replace(site.ServerRelativeUrl, "{sitecollection}/");
+            }
+
+            return url;
         }
     }
 }

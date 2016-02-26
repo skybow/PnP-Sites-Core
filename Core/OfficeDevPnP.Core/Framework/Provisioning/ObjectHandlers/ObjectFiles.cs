@@ -42,115 +42,125 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                 foreach (var file in template.Files)
                 {
-                    var folderName = parser.ParseString(file.Folder);
-
-                    if (folderName.ToLower().StartsWith(web.ServerRelativeUrl.ToLower()))
+                    try
                     {
-                        folderName = folderName.Substring(web.ServerRelativeUrl.Length);
-                    }
 
-                    var folder = web.EnsureFolderPath(folderName);
+                        var folderName = parser.ParseString(file.Folder);
 
-                    File targetFile = null;
-
-                    var checkedOut = false;
-
-                    targetFile = folder.GetFile(template.Connector.GetFilenamePart(file.Src));
-
-                    if (targetFile != null)
-                    {
-                        if (file.Overwrite)
+                        if (folderName.ToLower().StartsWith(web.ServerRelativeUrl.ToLower()))
                         {
-                            scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_Files_Uploading_and_overwriting_existing_file__0_, file.Src);
-                            checkedOut = CheckOutIfNeeded(web, targetFile);
+                            folderName = folderName.Substring(web.ServerRelativeUrl.Length);
+                        }
 
-                            using (var stream = template.Connector.GetFileStream(file.Src))
+                        var folder = web.EnsureFolderPath(folderName);
+
+                        File targetFile = null;
+
+                        var checkedOut = false;
+
+                        targetFile = folder.GetFile(template.Connector.GetFilenamePart(file.Src));
+
+                        if (targetFile != null)
+                        {
+                            if (file.Overwrite)
                             {
-                                targetFile = folder.UploadFile(template.Connector.GetFilenamePart(file.Src), stream, file.Overwrite);
+                                scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_Files_Uploading_and_overwriting_existing_file__0_, file.Src);
+                                checkedOut = CheckOutIfNeeded(web, targetFile);
+
+                                using (var stream = template.Connector.GetFileStream(file.Src))
+                                {
+                                    targetFile = folder.UploadFile(template.Connector.GetFilenamePart(file.Src), stream, file.Overwrite);
+                                }
+                            }
+                            else
+                            {
+                                checkedOut = CheckOutIfNeeded(web, targetFile);
                             }
                         }
                         else
                         {
-                            checkedOut = CheckOutIfNeeded(web, targetFile);
-                        }
-                    }
-                    else
-                    {
-                        using (var stream = template.Connector.GetFileStream(file.Src))
-                        {
-                            scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_Files_Uploading_file__0_, file.Src);
-                            targetFile = folder.UploadFile(template.Connector.GetFilenamePart(file.Src), stream, file.Overwrite);
-                        }
-
-                        checkedOut = CheckOutIfNeeded(web, targetFile);
-                    }
-
-                    if (targetFile != null)
-                    {
-                        if (file.Properties != null && file.Properties.Any())
-                        {
-                            Dictionary<string, string> transformedProperties = file.Properties.ToDictionary(property => property.Key, property => parser.ParseString(property.Value));
-                            SetFileProperties(targetFile, transformedProperties, false);
-                        }
-
-                        if (file.WebParts != null && file.WebParts.Any())
-                        {
-                            targetFile.EnsureProperties(f => f.ServerRelativeUrl);
-
-                            var existingWebParts = web.GetWebParts(targetFile.ServerRelativeUrl);
-
-                            var enumerator = existingWebParts.GetEnumerator();
-                            var needToExecute = false;
-                            WebPartDefinition defaultWebPart = null;
-                            while (enumerator.MoveNext())
+                            using (var stream = template.Connector.GetFileStream(file.Src))
                             {
-                                var current = enumerator.Current;
-                                if (GetIsDefaultWebPart(current.WebPart))
-                                {
-                                    defaultWebPart = current;
-                                }
-                                else
-                                {
-                                    enumerator.Current.DeleteWebPart();
-                                    needToExecute = true;
-                                }
+                                scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_Files_Uploading_file__0_, file.Src);
+                                targetFile = folder.UploadFile(template.Connector.GetFilenamePart(file.Src), stream, file.Overwrite);
                             }
 
-                            if (needToExecute)
+                            checkedOut = CheckOutIfNeeded(web, targetFile);
+                        }
+
+                        if (targetFile != null)
+                        {
+                            if (file.Properties != null && file.Properties.Any())
                             {
+                                Dictionary<string, string> transformedProperties = file.Properties.ToDictionary(property => property.Key, property => parser.ParseString(property.Value));
+                                SetFileProperties(targetFile, transformedProperties, false);
+                            }
+
+                            if (file.WebParts != null && file.WebParts.Any())
+                            {
+                                targetFile.EnsureProperties(f => f.ServerRelativeUrl);
+
+                                var existingWebParts = web.GetWebParts(targetFile.ServerRelativeUrl);
+
+                                var enumerator = existingWebParts.GetEnumerator();
+                                var needToExecute = false;
+                                WebPartDefinition defaultWebPart = null;
+                                while (enumerator.MoveNext())
+                                {
+                                    var current = enumerator.Current;
+                                    if (GetIsDefaultWebPart(current.WebPart))
+                                    {
+                                        defaultWebPart = current;
+                                    }
+                                    else
+                                    {
+                                        enumerator.Current.DeleteWebPart();
+                                        needToExecute = true;
+                                    }
+                                }
+
+                                if (needToExecute)
+                                {
+                                    web.Context.ExecuteQueryRetry();
+                                }
+
+                                foreach (var webpart in file.WebParts)
+                                {
+                                    scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_Files_Adding_webpart___0___to_page, webpart.Title);
+
+                                    if (defaultWebPart != null && defaultWebPart.WebPart.Title == webpart.Title)
+                                    {
+                                        defaultWebPart.MoveWebPartTo(webpart.Zone, (int)webpart.Order);
+                                        defaultWebPart.SaveWebPartChanges();
+                                        SetProperties(webpart.Contents, defaultWebPart, scope);
+                                    }
+                                    else
+                                    {
+                                        AddWebPart(web, parser, webpart, targetFile);
+                                    }
+                                }
                                 web.Context.ExecuteQueryRetry();
                             }
 
-                            foreach (var webpart in file.WebParts)
+                            if (checkedOut)
                             {
-                                scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_Files_Adding_webpart___0___to_page, webpart.Title);
-
-                                if (defaultWebPart != null && defaultWebPart.WebPart.Title == webpart.Title)
-                                {
-                                    defaultWebPart.MoveWebPartTo(webpart.Zone, (int)webpart.Order);
-                                    defaultWebPart.SaveWebPartChanges();
-                                    SetProperties(webpart.Contents, defaultWebPart, scope);
-                                }
-                                else
-                                {
-                                    AddWebPart(web, parser, webpart, targetFile);
-                                }
+                                targetFile.CheckIn("", CheckinType.MajorCheckIn);
+                                web.Context.ExecuteQueryRetry();
                             }
-                            web.Context.ExecuteQueryRetry();
+
+                            // Don't set security when nothing is defined. This otherwise breaks on files set outside of a list
+                            if (file.Security != null &&
+                                (file.Security.ClearSubscopes == true || file.Security.CopyRoleAssignments == true || file.Security.RoleAssignments.Count > 0))
+                            {
+                                targetFile.ListItemAllFields.SetSecurity(parser, file.Security);
+                            }
                         }
 
-                        if (checkedOut)
-                        {
-                            targetFile.CheckIn("", CheckinType.MajorCheckIn);
-                            web.Context.ExecuteQueryRetry();
-                        }
 
-                        // Don't set security when nothing is defined. This otherwise breaks on files set outside of a list
-                        if (file.Security != null &&
-                            (file.Security.ClearSubscopes == true || file.Security.CopyRoleAssignments == true || file.Security.RoleAssignments.Count > 0))
-                        {
-                            targetFile.ListItemAllFields.SetSecurity(parser, file.Security);
-                        }
+                    }
+                    catch (System.Exception ex)
+                    {
+                        
                     }
                 }
             }
