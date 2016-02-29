@@ -48,10 +48,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.File
 
         private bool NeedToOverrideFile(Web web, string pageUrl)
         {
-            var file = web.GetFileByServerRelativeUrl(pageUrl);
-            web.Context.Load(file, f => f.Versions);
-            web.Context.ExecuteQueryRetry();
-            return file.Versions.Any();
+            //var file = web.GetFileByServerRelativeUrl(pageUrl);
+            //web.Context.Load(file, f => f.Versions);
+            //web.Context.ExecuteQueryRetry();
+            //return file.Versions.Any();
+            return true;
         }
     }
 }

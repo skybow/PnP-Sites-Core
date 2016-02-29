@@ -290,7 +290,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 xml = Regex.Replace(xml, list.Id.ToString(), string.Format("{{listid:{0}}}", list.Title), RegexOptions.IgnoreCase);
             }
             xml = Regex.Replace(xml, web.Id.ToString(), "{siteid}", RegexOptions.IgnoreCase);
-            xml = Regex.Replace(xml, web.ServerRelativeUrl, "{site}", RegexOptions.IgnoreCase);
+            if (web.ServerRelativeUrl != "/")
+            {
+                xml = Regex.Replace(xml, web.ServerRelativeUrl, "{site}", RegexOptions.IgnoreCase);
+            }
 
             return xml;
         }
@@ -394,7 +397,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     try
                     {
                         var pageUrl = provider.GetUrl();
-                        var file = modelProvider.GetFile(provider.GetUrl());
+                        var file = modelProvider.GetFile(pageUrl);
                         files.Add(file);
                         this.CreateLocalFile(web, pageUrl, connector);
                     }

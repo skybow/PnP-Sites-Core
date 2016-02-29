@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Microsoft.SharePoint.Client;
@@ -30,13 +31,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebPart
             xml = this.TokenizeXml(xml);
             var maches = GetWebPartXmlReqex.Matches(xml);
 
+            var webPartDefinitions = this.GetWebPartDefinitionsWithServiceCall(pageUrl);
+
             foreach (var match in maches)
             {
                 var webPartXml = match.ToString();
                 var zone = this.GetZone(webPartXml);
                 var wpId = this.GetWebPartId(webPartXml);
 
-                var definition = this.GetWebPartDefinitionWithServiceCall(wpId, pageUrl);
+                var definition = webPartDefinitions.FirstOrDefault(d => d.Id == wpId);
                 var webPart = definition.WebPart;
                 webPartXml = this.WrapToV3Format(webPartXml);
                 var pcLower = pageContent.ToLower();
@@ -87,20 +90,29 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebPart
 
         private string TokenizeXml(string xml)
         {
-            xml = xml.Replace(Web.ServerRelativeUrl, "~site");
-            return xml.Replace(Web.Id.ToString(), "~siteid");
+            if (Web.ServerRelativeUrl != null)
+            {
+                xml = xml.Replace(Web.ServerRelativeUrl, "{site}");
+            }
+            return xml.Replace(Web.Id.ToString(), "{siteid}");
         }
 
-        private WebPartDefinition GetWebPartDefinitionWithServiceCall(Guid webPartId, string pageUrl)
+        private List<WebPartDefinition> GetWebPartDefinitionsWithServiceCall(string pageUrl)
         {
+            var definitions = new List<WebPartDefinition>();
             var page = Web.GetFileByServerRelativeUrl(pageUrl);
             var manager = page.GetLimitedWebPartManager(PersonalizationScope.Shared);
             var webParts = manager.WebParts;
-            var definition = webParts.GetById(webPartId);
             var context = Web.Context;
-            context.Load(definition, x => x.Id, x => x.WebPart.Title, x => x.WebPart.ZoneIndex);
+            context.Load(webParts, wp => wp.Include(x => x.Id, x => x.WebPart.Title, x => x.WebPart.ZoneIndex));
             context.ExecuteQueryRetry();
-            return definition;
+
+            foreach (var definition in webParts)
+            {
+                definitions.Add(definition);
+            }
+
+            return definitions;
         }
 
         private string GetZone(string webPartXml)
