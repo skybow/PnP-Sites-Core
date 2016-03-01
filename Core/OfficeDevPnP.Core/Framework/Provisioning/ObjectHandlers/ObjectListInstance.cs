@@ -155,10 +155,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                             foreach (var fieldRef in listInfo.TemplateList.FieldRefs)
                             {
-                                var field = rootWeb.Fields.AsEnumerable().FirstOrDefault(f => f.Id == fieldRef.Id);
+                                var field = rootWeb.Fields.AsEnumerable().FirstOrDefault(f => f.IsPropertyAvailable("Id") && f.Id.ToString().Equals(fieldRef.Id.ToString(), StringComparison.InvariantCultureIgnoreCase));
                                 if (field != null)
                                 {
-                                    if (!listInfo.SiteList.Fields.Any(item => item.Id == fieldRef.Id))
+                                    if (!listInfo.SiteList.Fields.AsEnumerable().Any(item => item.IsPropertyAvailable("Id") && item.Id.ToString().Equals(fieldRef.Id.ToString(), StringComparison.InvariantCultureIgnoreCase)))
                                     {
                                         try
                                         {
@@ -190,6 +190,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                     #endregion
 
+                    //Update list fields
+                    var updatedLists = web.Lists;
+                    web.Context.Load(updatedLists, lc => lc.IncludeWithDefaultProperties(
+                            l => l.Fields.IncludeWithDefaultProperties(
+                                f => f.SchemaXml
+                                )));
+                    web.Context.ExecuteQueryRetry();
+
                     #region Fields
 
                     foreach (var listInfo in processedLists)
@@ -214,7 +222,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 }
                                 else
                                 {
-                                    var fieldFromList = listInfo.SiteList.Fields.AsEnumerable().FirstOrDefault(f => f.Id == fieldGuid);
+                                    var fieldFromList = listInfo.SiteList.Fields.AsEnumerable().FirstOrDefault(f => f.IsPropertyAvailable("Id") && f.Id.ToString().Equals(fieldGuid.ToString(), StringComparison.InvariantCultureIgnoreCase));
+                                    if(fieldFromList == null){
+                                        var list = updatedLists.AsEnumerable().FirstOrDefault(l => l.Id.ToString().Equals(listInfo.SiteList.Id.ToString(), StringComparison.InvariantCultureIgnoreCase));
+                                        fieldFromList = list.Fields.AsEnumerable().FirstOrDefault(f => f.IsPropertyAvailable("Id") && f.Id.ToString().Equals(fieldGuid.ToString(), StringComparison.InvariantCultureIgnoreCase));
+                                    }
                                     if (fieldFromList == null)
                                     {
                                         try
@@ -997,7 +1009,32 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             var createdList = web.Lists.Add(listCreate);
             createdList.Update();
-            web.Context.Load(createdList, l => l.BaseTemplate);
+            web.Context.Load(createdList, 
+                l => l.BaseTemplate,
+                l => l.RootFolder.ServerRelativeUrl,
+                l => l.Title,
+                l => l.ParentWebUrl,
+                l => l.Id,
+                l => l.Description,
+                l => l.OnQuickLaunch,
+                l => l.Hidden,
+                l => l.Fields.IncludeWithDefaultProperties(
+                    f => f.SchemaXml
+                    ),
+                l => l.ContentTypesEnabled,
+                l => l.ContentTypes.IncludeWithDefaultProperties(
+                    ct => ct.Id, 
+                    ct => ct.StringId,
+                    ct => ct.Name),
+                l => l.EnableAttachments,
+                l => l.EnableFolderCreation,
+                l => l.EnableMinorVersions,
+                l => l.DraftVersionVisibility,
+                l => l.Views
+            #if !CLIENTSDKV15
+            , l => l.MajorWithMinorVersionsLimit
+            #endif
+                );
             web.Context.ExecuteQueryRetry();
 
 #if !CLIENTSDKV15
