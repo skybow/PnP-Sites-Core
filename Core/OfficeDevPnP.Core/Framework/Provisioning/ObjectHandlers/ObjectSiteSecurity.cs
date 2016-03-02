@@ -5,6 +5,7 @@ using Microsoft.SharePoint.Client;
 using OfficeDevPnP.Core.Framework.Provisioning.Model;
 using User = OfficeDevPnP.Core.Framework.Provisioning.Model.User;
 using OfficeDevPnP.Core.Diagnostics;
+using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Extensions;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 {
@@ -463,19 +464,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         private string ReplaceGroupTokens(Web web, string loginName)
         {
-            if (!web.AssociatedOwnerGroup.ServerObjectIsNull.Value)
-            {
-                loginName = loginName.Replace(web.AssociatedOwnerGroup.Title, "{associatedownergroup}");
-            }
-            if (!web.AssociatedMemberGroup.ServerObjectIsNull.Value)
-            {
-                loginName = loginName.Replace(web.AssociatedMemberGroup.Title, "{associatedmembergroup}");
-            }
-            if (!web.AssociatedVisitorGroup.ServerObjectIsNull.Value)
-            {
-                loginName = loginName.Replace(web.AssociatedVisitorGroup.Title, "{associatedvisitorgroup}");
-            }
-            return loginName;
+            return SecurableObjectExtensions.ReplaceGroupTokens(web, loginName);
         }
 
         private ProvisioningTemplate CleanupEntities(ProvisioningTemplate template, ProvisioningTemplate baseTemplate)
