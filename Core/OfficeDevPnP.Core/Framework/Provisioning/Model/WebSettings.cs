@@ -58,6 +58,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// </summary>
         public String CustomMasterPageUrl { get; set; }
 
+        /// <summary>
+        /// The Web Template
+        /// </summary>
+        public String WebTemplate { get; set; }
+
         #endregion
 
         #region Constructors
@@ -94,7 +99,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 (this.Title != null ? this.Title.GetHashCode() : 0),
                 (this.Description != null ? this.Description.GetHashCode() : 0),
                 (this.SiteLogo != null ? this.SiteLogo.GetHashCode() : 0),
-                (this.AlternateCSS != null ? this.AlternateCSS.GetHashCode() : 0)
+                (this.AlternateCSS != null ? this.AlternateCSS.GetHashCode() : 0),
+                (this.WebTemplate != null ? this.WebTemplate.GetHashCode() : 0)
             ).GetHashCode());
         }
 
@@ -120,7 +126,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                     this.Title == other.Title &&
                     this.Description == other.Description &&
                     this.SiteLogo == other.SiteLogo &&
-                    this.AlternateCSS == other.AlternateCSS
+                    this.AlternateCSS == other.AlternateCSS &&
+                    this.WebTemplate == other.WebTemplate
                 );
         }
 

@@ -170,7 +170,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                     AlternateCSS = template.WebSettings.AlternateCSS,
                     MasterPageUrl = template.WebSettings.MasterPageUrl,
                     CustomMasterPageUrl = template.WebSettings.CustomMasterPageUrl,
-                    WelcomePage = template.WebSettings.WelcomePage
+                    WelcomePage = template.WebSettings.WelcomePage,
+                    WebTemplate = template.WebSettings.WebTemplate
                 };
             }
 
@@ -736,11 +737,36 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             // Translate Pages, if any
             if (template.Pages != null && template.Pages.Count > 0)
             {
-                var pages = new List<V201512.Page>();
+                var defPages = new List<V201512.Page>();
+                var contentPages = new List<V201512.ContentPage>();
+                var publishingPages = new List<V201512.PublishingPage>();
 
                 foreach (var page in template.Pages)
                 {
-                    var schemaPage = new V201512.Page();
+                    V201512.Page schemaPage = null;// new V201512.Page();
+                    if (page is Model.PublishingPage)
+                    {
+                        V201512.PublishingPage publishPage = new V201512.PublishingPage();
+                        publishPage.HTML = ((Model.PublishingPage)page).Html;
+                        publishPage.PageTitle = ((Model.PublishingPage)page).PageTitle;
+                        publishPage.PageLayoutUrl = ((Model.PublishingPage)page).PageLayoutUrl;
+                        publishingPages.Add(publishPage);
+
+                        schemaPage = publishPage;
+                    }
+                    else if (page is Model.ContentPage)
+                    {
+                        V201512.ContentPage contentPage = new V201512.ContentPage();
+                        contentPage.HTML = ((Model.ContentPage)page).Html;
+                        contentPages.Add(contentPage);
+
+                        schemaPage = contentPage;
+                    }
+                    else
+                    {
+                        schemaPage = new V201512.Page();
+                        defPages.Add(schemaPage);
+                    }
 
                     var pageLayout = V201512.WikiPageLayout.OneColumn;
                     switch (page.Layout)
@@ -785,6 +811,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                              Row = (int)wp.Row,
                              Contents = XElement.Parse(wp.Contents).ToXmlElement(),
                              Title = wp.Title,
+                             Zone = wp.Zone,
+                             Order = (int)wp.Order
                          }).ToArray() : null;
 
                     schemaPage.Url = page.Url;
@@ -796,11 +824,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                                      FieldName = f.Key,
                                      Value = f.Value,
                                  }).ToArray() : null;
-
-                    pages.Add(schemaPage);
                 }
 
-                result.Pages = pages.ToArray();
+                result.Pages = new Pages()
+                {
+                    PublishingPage = publishingPages.ToArray(),
+                    ContentPage = contentPages.ToArray(),
+                    Page = defPages.ToArray()
+                };
             }
 
             #endregion
@@ -1207,6 +1238,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                     AlternateCSS = source.WebSettings.AlternateCSS,
                     MasterPageUrl = source.WebSettings.MasterPageUrl,
                     CustomMasterPageUrl = source.WebSettings.CustomMasterPageUrl,
+                    WebTemplate = source.WebSettings.WebTemplate
                 };
             }
 
@@ -1618,9 +1650,22 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             // Translate Pages, if any
             if (source.Pages != null)
             {
-                foreach (var page in source.Pages)
+                List<V201512.Page> pages = new List<V201512.Page>();                
+                if (null != source.Pages.PublishingPage)
                 {
-
+                    pages.AddRange(source.Pages.PublishingPage.Select(p => (V201512.Page)p));
+                }
+                if (null != source.Pages.ContentPage)
+                {
+                    pages.AddRange(source.Pages.ContentPage.Select(p => (V201512.Page)p));
+                }
+                if (null != source.Pages.Page)
+                {
+                    pages.AddRange(source.Pages.Page);
+                }
+                
+                foreach (var page in pages)
+                {                    
                     var pageLayout = WikiPageLayout.OneColumn;
                     switch (page.Layout)
                     {
@@ -1651,23 +1696,48 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                         case V201512.WikiPageLayout.Custom:
                             pageLayout = WikiPageLayout.Custom;
                             break;
-                    }
+                    }                    
 
-                    result.Pages.Add(new Model.Page(page.Url, page.Overwrite, pageLayout,
-                        (page.WebParts != null ?
+                    var webparts = (page.WebParts != null ?
                             (from wp in page.WebParts
                              select new Model.WebPart
                              {
                                  Title = wp.Title,
                                  Column = (uint)wp.Column,
                                  Row = (uint)wp.Row,
-                                 Contents = wp.Contents.InnerXml
-                             }).ToList() : null),
-                        page.Security.FromSchemaToTemplateObjectSecurityV201512(),
-                        (page.Fields != null && page.Fields.Length > 0) ?
+                                 Contents = wp.Contents.InnerXml,
+                                 Zone = wp.Zone,
+                                 Order = (uint)wp.Order
+                             }).ToList() : null);
+                    var security = page.Security.FromSchemaToTemplateObjectSecurityV201512();
+                    var fields = (page.Fields != null && page.Fields.Length > 0) ?
                              (from f in page.Fields
-                              select f).ToDictionary(i => i.FieldName, i => i.Value) : null
-                        ));
+                              select f).ToDictionary(i => i.FieldName, i => i.Value) : null;
+
+                    Model.Page modelPage = null;
+                    if (page is V201512.PublishingPage)
+                    {
+                        modelPage = new Model.PublishingPage(page.Url,
+                            ((V201512.PublishingPage)page).PageTitle,
+                            ((V201512.PublishingPage)page).HTML,
+                            ((V201512.PublishingPage)page).PageLayoutUrl,
+                            page.Overwrite, webparts, false, security, fields);
+                    }
+                    else if (page is V201512.ContentPage)
+                    {
+                        modelPage = new Model.ContentPage(page.Url,
+                            ((V201512.ContentPage)page).HTML,
+                            page.Overwrite, webparts, false, security, fields);
+                    }
+                    else
+                    {
+                        modelPage = new Model.Page(page.Url, page.Overwrite, pageLayout,
+                            webparts,
+                            security,
+                            fields);
+                    }
+
+                    result.Pages.Add(modelPage);
                 }
             }
 

@@ -55,7 +55,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         {
                             exists = false;
                         }
-                    }
+                    }                    
                     if (exists)
                     {
                         if (page.Overwrite)
@@ -64,7 +64,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                             {
                                 scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_Pages_Overwriting_existing_page__0_, url);
 
-                                if (page.WelcomePage && url.Contains(web.RootFolder.WelcomePage))
+                                string welcomePageUrl = string.IsNullOrEmpty(web.RootFolder.WelcomePage) ? "" : UrlUtility.Combine(web.ServerRelativeUrl, web.RootFolder.WelcomePage);
+                                if (!string.IsNullOrEmpty(welcomePageUrl) && url.Equals(welcomePageUrl, StringComparison.InvariantCultureIgnoreCase))
                                     web.SetHomePage(string.Empty);
 
                                 file.DeleteObject();

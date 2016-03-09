@@ -11,8 +11,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         public string PageTitle { get; set; }
         public string PageLayoutUrl { get; set; }
 
-        public PublishingPage(string url, string title,  string html, string layoutUrl, bool overwrite, IEnumerable<WebPart> webParts, bool welcomePage = false, ObjectSecurity security = null)
-            : base(url, html, overwrite, webParts, welcomePage, security)
+        public PublishingPage(string url, string title,  string html, string layoutUrl, bool overwrite, IEnumerable<WebPart> webParts, bool welcomePage = false, ObjectSecurity security = null, Dictionary<string, string> fields = null)
+            : base(url, html, overwrite, webParts, welcomePage, security, fields)
         {
             PageTitle = title;
             PageLayoutUrl = layoutUrl;

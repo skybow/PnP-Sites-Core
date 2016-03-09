@@ -13,8 +13,8 @@
 // 
 namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     using System.Xml.Serialization;
-    
-    
+
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -23,17 +23,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     [System.Xml.Serialization.XmlRootAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema", IsNullable=false)]
     public partial class Provisioning {
-        
+    
         private Preferences preferencesField;
-        
+    
         private LocalizationsLocalization[] localizationsField;
-        
+    
         private Templates[] templatesField;
-        
+    
         private Sequence[] sequenceField;
-        
+    
         private ImportSequence[] importSequenceField;
-        
+    
         /// <remarks/>
         public Preferences Preferences {
             get {
@@ -43,7 +43,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.preferencesField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("Localization", IsNullable=false)]
         public LocalizationsLocalization[] Localizations {
@@ -54,7 +54,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.localizationsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("Templates")]
         public Templates[] Templates {
@@ -65,7 +65,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.templatesField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("Sequence")]
         public Sequence[] Sequence {
@@ -76,7 +76,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.sequenceField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("ImportSequence")]
         public ImportSequence[] ImportSequence {
@@ -88,7 +88,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -96,15 +96,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class Preferences {
-        
+    
         private PreferencesParameter[] parametersField;
-        
+    
         private string versionField;
-        
+    
         private string authorField;
-        
+    
         private string generatorField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("Parameter", IsNullable=false)]
         public PreferencesParameter[] Parameters {
@@ -115,7 +115,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.parametersField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Version {
@@ -126,7 +126,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.versionField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Author {
@@ -137,7 +137,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.authorField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Generator {
@@ -149,7 +149,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -157,17 +157,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class PreferencesParameter {
-        
+    
         private string keyField;
-        
+    
         private bool requiredField;
-        
+    
         private string[] textField;
-        
+    
         public PreferencesParameter() {
             this.requiredField = false;
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Key {
@@ -178,7 +178,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.keyField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -190,7 +190,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.requiredField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlTextAttribute()]
         public string[] Text {
@@ -202,7 +202,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -210,9 +210,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class ImportSequence {
-        
+    
         private string fileField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string File {
@@ -224,7 +224,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -232,11 +232,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class TermStore {
-        
+    
         private TermGroup[] termGroupField;
-        
+    
         private TermStoreScope scopeField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("TermGroup")]
         public TermGroup[] TermGroup {
@@ -247,7 +247,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.termGroupField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public TermStoreScope Scope {
@@ -259,7 +259,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -267,15 +267,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class TermGroup : TaxonomyItem {
-        
+    
         private TermSet[] termSetsField;
-        
+    
         private string descriptionField;
-        
+    
         private bool siteCollectionTermGroupField;
-        
+    
         private bool siteCollectionTermGroupFieldSpecified;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
         public TermSet[] TermSets {
@@ -286,7 +286,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.termSetsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Description {
@@ -297,7 +297,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.descriptionField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool SiteCollectionTermGroup {
@@ -308,7 +308,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.siteCollectionTermGroupField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool SiteCollectionTermGroupSpecified {
@@ -320,7 +320,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -328,21 +328,21 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class TermSet : TermSetItem {
-        
+    
         private StringDictionaryItem[] customPropertiesField;
-        
+    
         private Term[] termsField;
-        
+    
         private int languageField;
-        
+    
         private bool languageFieldSpecified;
-        
+    
         private bool isOpenForTermCreationField;
-        
+    
         public TermSet() {
             this.isOpenForTermCreationField = false;
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("Property", IsNullable=false)]
         public StringDictionaryItem[] CustomProperties {
@@ -353,7 +353,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.customPropertiesField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
         public Term[] Terms {
@@ -364,7 +364,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.termsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public int Language {
@@ -375,7 +375,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.languageField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool LanguageSpecified {
@@ -386,7 +386,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.languageFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -399,7 +399,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(PropertyBagEntry))]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
@@ -408,11 +408,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class StringDictionaryItem {
-        
+    
         private string keyField;
-        
+    
         private string valueField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Key {
@@ -423,7 +423,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.keyField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Value {
@@ -435,7 +435,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -443,17 +443,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class PropertyBagEntry : StringDictionaryItem {
-        
+    
         private bool overwriteField;
-        
+    
         private bool overwriteFieldSpecified;
-        
+    
         private bool indexedField;
-        
+    
         public PropertyBagEntry() {
             this.indexedField = false;
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool Overwrite {
@@ -464,7 +464,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.overwriteField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool OverwriteSpecified {
@@ -475,7 +475,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.overwriteFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -488,7 +488,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -496,36 +496,36 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class Term : TermSetItem {
-        
+    
         private TermTerms termsField;
-        
+    
         private TermLabelsLabel[] labelsField;
-        
+    
         private StringDictionaryItem[] customPropertiesField;
-        
+    
         private StringDictionaryItem[] localCustomPropertiesField;
-        
+    
         private int languageField;
-        
+    
         private bool languageFieldSpecified;
-        
+    
         private int customSortOrderField;
-        
+    
         private bool isReusedField;
-        
+    
         private bool isSourceTermField;
-        
+    
         private bool isDeprecatedField;
-        
+    
         private string sourceTermIdField;
-        
+    
         public Term() {
             this.customSortOrderField = 0;
             this.isReusedField = false;
             this.isSourceTermField = true;
             this.isDeprecatedField = false;
         }
-        
+    
         /// <remarks/>
         public TermTerms Terms {
             get {
@@ -535,7 +535,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.termsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("Label", IsNullable=false)]
         public TermLabelsLabel[] Labels {
@@ -546,7 +546,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.labelsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("Property", IsNullable=false)]
         public StringDictionaryItem[] CustomProperties {
@@ -557,7 +557,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.customPropertiesField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("Property", IsNullable=false)]
         public StringDictionaryItem[] LocalCustomProperties {
@@ -568,7 +568,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.localCustomPropertiesField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public int Language {
@@ -579,7 +579,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.languageField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool LanguageSpecified {
@@ -590,7 +590,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.languageFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(0)]
@@ -602,7 +602,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.customSortOrderField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -614,7 +614,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.isReusedField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(true)]
@@ -626,7 +626,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.isSourceTermField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -638,7 +638,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.isDeprecatedField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string SourceTermId {
@@ -650,7 +650,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -658,9 +658,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class TermTerms {
-        
+    
         private Term[] itemsField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("Term")]
         public Term[] Items {
@@ -672,7 +672,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -680,17 +680,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class TermLabelsLabel {
-        
+    
         private int languageField;
-        
+    
         private string valueField;
-        
+    
         private bool isDefaultForLanguageField;
-        
+    
         public TermLabelsLabel() {
             this.isDefaultForLanguageField = false;
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public int Language {
@@ -701,7 +701,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.languageField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Value {
@@ -712,7 +712,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.valueField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -725,7 +725,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(Term))]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(TermSet))]
@@ -735,17 +735,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class TermSetItem : TaxonomyItem {
-        
+    
         private string ownerField;
-        
+    
         private string descriptionField;
-        
+    
         private bool isAvailableForTaggingField;
-        
+    
         public TermSetItem() {
             this.isAvailableForTaggingField = true;
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Owner {
@@ -756,7 +756,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.ownerField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Description {
@@ -767,7 +767,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.descriptionField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(true)]
@@ -780,7 +780,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(TermSetItem))]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(Term))]
@@ -792,11 +792,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class TaxonomyItem {
-        
+    
         private string nameField;
-        
+    
         private string idField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Name {
@@ -807,7 +807,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.nameField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string ID {
@@ -819,20 +819,20 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public enum TermStoreScope {
-        
+    
         /// <remarks/>
         Default,
-        
+    
         /// <remarks/>
         Current,
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -840,37 +840,37 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class Site {
-        
+    
         private Templates templatesField;
-        
+    
         private string titleField;
-        
+    
         private string customJSUrlField;
-        
+    
         private bool quickLaunchEnabledField;
-        
+    
         private bool quickLaunchEnabledFieldSpecified;
-        
+    
         private string alternateCssUrlField;
-        
+    
         private string languageField;
-        
+    
         private bool allowDesignerField;
-        
+    
         private bool allowDesignerFieldSpecified;
-        
+    
         private bool membersCanShareField;
-        
+    
         private bool membersCanShareFieldSpecified;
-        
+    
         private string timeZoneField;
-        
+    
         private bool useSamePermissionsAsParentSiteField;
-        
+    
         private bool useSamePermissionsAsParentSiteFieldSpecified;
-        
+    
         private string urlField;
-        
+    
         /// <remarks/>
         public Templates Templates {
             get {
@@ -880,7 +880,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.templatesField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Title {
@@ -891,7 +891,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.titleField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string CustomJSUrl {
@@ -902,7 +902,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.customJSUrlField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool QuickLaunchEnabled {
@@ -913,7 +913,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.quickLaunchEnabledField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool QuickLaunchEnabledSpecified {
@@ -924,7 +924,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.quickLaunchEnabledFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string AlternateCssUrl {
@@ -935,7 +935,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.alternateCssUrlField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Language {
@@ -946,7 +946,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.languageField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool AllowDesigner {
@@ -957,7 +957,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.allowDesignerField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool AllowDesignerSpecified {
@@ -968,7 +968,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.allowDesignerFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool MembersCanShare {
@@ -979,7 +979,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.membersCanShareField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool MembersCanShareSpecified {
@@ -990,7 +990,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.membersCanShareFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string TimeZone {
@@ -1001,7 +1001,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.timeZoneField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool UseSamePermissionsAsParentSite {
@@ -1012,7 +1012,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.useSamePermissionsAsParentSiteField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool UseSamePermissionsAsParentSiteSpecified {
@@ -1023,7 +1023,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.useSamePermissionsAsParentSiteFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Url {
@@ -1035,7 +1035,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -1043,15 +1043,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class Templates {
-        
+    
         private ProvisioningTemplateFile[] provisioningTemplateFileField;
-        
+    
         private ProvisioningTemplateReference[] provisioningTemplateReferenceField;
-        
+    
         private ProvisioningTemplate[] provisioningTemplateField;
-        
+    
         private string idField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("ProvisioningTemplateFile")]
         public ProvisioningTemplateFile[] ProvisioningTemplateFile {
@@ -1062,7 +1062,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.provisioningTemplateFileField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("ProvisioningTemplateReference")]
         public ProvisioningTemplateReference[] ProvisioningTemplateReference {
@@ -1073,7 +1073,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.provisioningTemplateReferenceField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("ProvisioningTemplate")]
         public ProvisioningTemplate[] ProvisioningTemplate {
@@ -1084,7 +1084,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.provisioningTemplateField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute(DataType="ID")]
         public string ID {
@@ -1096,7 +1096,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -1104,11 +1104,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class ProvisioningTemplateFile {
-        
+    
         private string fileField;
-        
+    
         private string idField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string File {
@@ -1119,7 +1119,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.fileField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute(DataType="ID")]
         public string ID {
@@ -1131,7 +1131,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -1139,9 +1139,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class ProvisioningTemplateReference {
-        
+    
         private string idField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute(DataType="IDREF")]
         public string ID {
@@ -1153,7 +1153,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -1162,63 +1162,63 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     [System.Xml.Serialization.XmlRootAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema", IsNullable=false)]
     public partial class ProvisioningTemplate {
-        
+    
         private StringDictionaryItem[] propertiesField;
-        
+    
         private string sitePolicyField;
-        
+    
         private WebSettings webSettingsField;
-        
+    
         private RegionalSettings regionalSettingsField;
-        
+    
         private SupportedUILanguagesSupportedUILanguage[] supportedUILanguagesField;
-        
+    
         private AuditSettings auditSettingsField;
-        
+    
         private PropertyBagEntry[] propertyBagEntriesField;
-        
+    
         private Security securityField;
-        
+    
         private ProvisioningTemplateSiteFields siteFieldsField;
-        
+    
         private ContentType[] contentTypesField;
-        
+    
         private ListInstance[] listsField;
-        
+    
         private Features featuresField;
-        
+    
         private CustomActions customActionsField;
-        
+    
         private File[] filesField;
-        
-        private Page[] pagesField;
-        
+    
+        private Pages pagesField;
+    
         private TermGroup[] termGroupsField;
-        
+    
         private ComposedLook composedLookField;
-        
+    
         private Workflows workflowsField;
-        
+    
         private System.Xml.XmlElement searchSettingsField;
-        
+    
         private Publishing publishingField;
-        
+    
         private AddInsAddin[] addInsField;
-        
+    
         private Provider[] providersField;
-        
+    
         private string idField;
-        
+    
         private decimal versionField;
-        
+    
         private bool versionFieldSpecified;
-        
+    
         private string imagePreviewUrlField;
-        
+    
         private string displayNameField;
-        
+    
         private string descriptionField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("Property", IsNullable=false)]
         public StringDictionaryItem[] Properties {
@@ -1229,7 +1229,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.propertiesField = value;
             }
         }
-        
+    
         /// <remarks/>
         public string SitePolicy {
             get {
@@ -1239,7 +1239,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.sitePolicyField = value;
             }
         }
-        
+    
         /// <remarks/>
         public WebSettings WebSettings {
             get {
@@ -1249,7 +1249,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.webSettingsField = value;
             }
         }
-        
+    
         /// <remarks/>
         public RegionalSettings RegionalSettings {
             get {
@@ -1259,7 +1259,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.regionalSettingsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("SupportedUILanguage", IsNullable=false)]
         public SupportedUILanguagesSupportedUILanguage[] SupportedUILanguages {
@@ -1270,7 +1270,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.supportedUILanguagesField = value;
             }
         }
-        
+    
         /// <remarks/>
         public AuditSettings AuditSettings {
             get {
@@ -1280,7 +1280,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.auditSettingsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
         public PropertyBagEntry[] PropertyBagEntries {
@@ -1291,7 +1291,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.propertyBagEntriesField = value;
             }
         }
-        
+    
         /// <remarks/>
         public Security Security {
             get {
@@ -1301,7 +1301,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.securityField = value;
             }
         }
-        
+    
         /// <remarks/>
         public ProvisioningTemplateSiteFields SiteFields {
             get {
@@ -1311,7 +1311,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.siteFieldsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
         public ContentType[] ContentTypes {
@@ -1322,7 +1322,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.contentTypesField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
         public ListInstance[] Lists {
@@ -1333,7 +1333,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.listsField = value;
             }
         }
-        
+    
         /// <remarks/>
         public Features Features {
             get {
@@ -1343,7 +1343,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.featuresField = value;
             }
         }
-        
+    
         /// <remarks/>
         public CustomActions CustomActions {
             get {
@@ -1353,7 +1353,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.customActionsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
         public File[] Files {
@@ -1364,10 +1364,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.filesField = value;
             }
         }
-        
+    
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
-        public Page[] Pages {
+        public Pages Pages {
             get {
                 return this.pagesField;
             }
@@ -1375,7 +1374,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.pagesField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
         public TermGroup[] TermGroups {
@@ -1386,7 +1385,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.termGroupsField = value;
             }
         }
-        
+    
         /// <remarks/>
         public ComposedLook ComposedLook {
             get {
@@ -1396,7 +1395,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.composedLookField = value;
             }
         }
-        
+    
         /// <remarks/>
         public Workflows Workflows {
             get {
@@ -1406,7 +1405,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.workflowsField = value;
             }
         }
-        
+    
         /// <remarks/>
         public System.Xml.XmlElement SearchSettings {
             get {
@@ -1416,7 +1415,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.searchSettingsField = value;
             }
         }
-        
+    
         /// <remarks/>
         public Publishing Publishing {
             get {
@@ -1426,7 +1425,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.publishingField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("Addin", IsNullable=false)]
         public AddInsAddin[] AddIns {
@@ -1437,7 +1436,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.addInsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
         public Provider[] Providers {
@@ -1448,7 +1447,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.providersField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute(DataType="ID")]
         public string ID {
@@ -1459,7 +1458,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.idField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public decimal Version {
@@ -1470,7 +1469,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.versionField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool VersionSpecified {
@@ -1481,7 +1480,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.versionFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string ImagePreviewUrl {
@@ -1492,7 +1491,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.imagePreviewUrlField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string DisplayName {
@@ -1503,7 +1502,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.displayNameField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Description {
@@ -1515,7 +1514,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -1523,27 +1522,29 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class WebSettings {
-        
+    
         private string requestAccessEmailField;
-        
+    
         private bool noCrawlField;
-        
+    
         private bool noCrawlFieldSpecified;
-        
+    
         private string welcomePageField;
-        
+    
         private string titleField;
-        
+    
         private string descriptionField;
-        
+    
         private string siteLogoField;
-        
+    
         private string alternateCSSField;
-        
+    
         private string masterPageUrlField;
-        
+    
         private string customMasterPageUrlField;
-        
+    
+        private string webTemplateField;
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string RequestAccessEmail {
@@ -1554,7 +1555,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.requestAccessEmailField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool NoCrawl {
@@ -1565,7 +1566,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.noCrawlField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool NoCrawlSpecified {
@@ -1576,7 +1577,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.noCrawlFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string WelcomePage {
@@ -1587,7 +1588,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.welcomePageField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Title {
@@ -1598,7 +1599,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.titleField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Description {
@@ -1609,7 +1610,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.descriptionField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string SiteLogo {
@@ -1620,7 +1621,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.siteLogoField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string AlternateCSS {
@@ -1631,7 +1632,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.alternateCSSField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string MasterPageUrl {
@@ -1642,7 +1643,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.masterPageUrlField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string CustomMasterPageUrl {
@@ -1653,8 +1654,19 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.customMasterPageUrlField = value;
             }
         }
-    }
     
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string WebTemplate {
+            get {
+                return this.webTemplateField;
+            }
+            set {
+                this.webTemplateField = value;
+            }
+        }
+    }
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -1662,57 +1674,57 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class RegionalSettings {
-        
+    
         private int adjustHijriDaysField;
-        
+    
         private bool adjustHijriDaysFieldSpecified;
-        
+    
         private CalendarType alternateCalendarTypeField;
-        
+    
         private bool alternateCalendarTypeFieldSpecified;
-        
+    
         private CalendarType calendarTypeField;
-        
+    
         private bool calendarTypeFieldSpecified;
-        
+    
         private int collationField;
-        
+    
         private bool collationFieldSpecified;
-        
+    
         private DayOfWeek firstDayOfWeekField;
-        
+    
         private bool firstDayOfWeekFieldSpecified;
-        
+    
         private int firstWeekOfYearField;
-        
+    
         private bool firstWeekOfYearFieldSpecified;
-        
+    
         private int localeIdField;
-        
+    
         private bool localeIdFieldSpecified;
-        
+    
         private bool showWeeksField;
-        
+    
         private bool showWeeksFieldSpecified;
-        
+    
         private bool time24Field;
-        
+    
         private bool time24FieldSpecified;
-        
+    
         private string timeZoneField;
-        
+    
         private WorkHour workDayEndHourField;
-        
+    
         private bool workDayEndHourFieldSpecified;
-        
+    
         private int workDaysField;
-        
+    
         private bool workDaysFieldSpecified;
-        
+    
         private WorkHour workDayStartHourField;
-        
+    
         private bool workDayStartHourFieldSpecified;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public int AdjustHijriDays {
@@ -1723,7 +1735,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.adjustHijriDaysField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool AdjustHijriDaysSpecified {
@@ -1734,7 +1746,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.adjustHijriDaysFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public CalendarType AlternateCalendarType {
@@ -1745,7 +1757,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.alternateCalendarTypeField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool AlternateCalendarTypeSpecified {
@@ -1756,7 +1768,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.alternateCalendarTypeFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public CalendarType CalendarType {
@@ -1767,7 +1779,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.calendarTypeField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool CalendarTypeSpecified {
@@ -1778,7 +1790,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.calendarTypeFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public int Collation {
@@ -1789,7 +1801,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.collationField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool CollationSpecified {
@@ -1800,7 +1812,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.collationFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public DayOfWeek FirstDayOfWeek {
@@ -1811,7 +1823,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.firstDayOfWeekField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool FirstDayOfWeekSpecified {
@@ -1822,7 +1834,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.firstDayOfWeekFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public int FirstWeekOfYear {
@@ -1833,7 +1845,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.firstWeekOfYearField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool FirstWeekOfYearSpecified {
@@ -1844,7 +1856,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.firstWeekOfYearFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public int LocaleId {
@@ -1855,7 +1867,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.localeIdField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool LocaleIdSpecified {
@@ -1866,7 +1878,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.localeIdFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool ShowWeeks {
@@ -1877,7 +1889,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.showWeeksField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool ShowWeeksSpecified {
@@ -1888,7 +1900,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.showWeeksFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool Time24 {
@@ -1899,7 +1911,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.time24Field = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool Time24Specified {
@@ -1910,7 +1922,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.time24FieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string TimeZone {
@@ -1921,7 +1933,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.timeZoneField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public WorkHour WorkDayEndHour {
@@ -1932,7 +1944,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.workDayEndHourField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool WorkDayEndHourSpecified {
@@ -1943,7 +1955,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.workDayEndHourFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public int WorkDays {
@@ -1954,7 +1966,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.workDaysField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool WorkDaysSpecified {
@@ -1965,7 +1977,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.workDaysFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public WorkHour WorkDayStartHour {
@@ -1976,7 +1988,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.workDayStartHourField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool WorkDayStartHourSpecified {
@@ -1988,201 +2000,201 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public enum CalendarType {
-        
+    
         /// <remarks/>
         None,
-        
+    
         /// <remarks/>
         Gregorian,
-        
+    
         /// <remarks/>
         Japan,
-        
+    
         /// <remarks/>
         Taiwan,
-        
+    
         /// <remarks/>
         Korea,
-        
+    
         /// <remarks/>
         Hijri,
-        
+    
         /// <remarks/>
         Thai,
-        
+    
         /// <remarks/>
         Hebrew,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("Gregorian Middle East French Calendar")]
         GregorianMiddleEastFrenchCalendar,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("Gregorian Arabic Calendar")]
         GregorianArabicCalendar,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("Gregorian Transliterated English Calendar")]
         GregorianTransliteratedEnglishCalendar,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("Gregorian Transliterated French Calendar")]
         GregorianTransliteratedFrenchCalendar,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("Korea and Japanese Lunar")]
         KoreaandJapaneseLunar,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("Chinese Lunar")]
         ChineseLunar,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("Saka Era")]
         SakaEra,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("Umm al-Qura")]
         UmmalQura,
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public enum DayOfWeek {
-        
+    
         /// <remarks/>
         Sunday,
-        
+    
         /// <remarks/>
         Monday,
-        
+    
         /// <remarks/>
         Tuesday,
-        
+    
         /// <remarks/>
         Wednesday,
-        
+    
         /// <remarks/>
         Thursday,
-        
+    
         /// <remarks/>
         Friday,
-        
+    
         /// <remarks/>
         Saturday,
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public enum WorkHour {
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("12:00AM")]
         Item1200AM,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("1:00AM")]
         Item100AM,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("2:00AM")]
         Item200AM,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("3:00AM")]
         Item300AM,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("4:00AM")]
         Item400AM,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("5:00AM")]
         Item500AM,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("6:00AM")]
         Item600AM,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("7:00AM")]
         Item700AM,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("8:00AM")]
         Item800AM,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("9:00AM")]
         Item900AM,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("10:00AM")]
         Item1000AM,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("11:00AM")]
         Item1100AM,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("12:00PM")]
         Item1200PM,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("1:00PM")]
         Item100PM,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("2:00PM")]
         Item200PM,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("3:00PM")]
         Item300PM,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("4:00PM")]
         Item400PM,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("5:00PM")]
         Item500PM,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("6:00PM")]
         Item600PM,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("7:00PM")]
         Item700PM,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("8:00PM")]
         Item800PM,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("9:00PM")]
         Item900PM,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("10:00PM")]
         Item1000PM,
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlEnumAttribute("11:00PM")]
         Item1100PM,
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -2190,9 +2202,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class SupportedUILanguagesSupportedUILanguage {
-        
+    
         private int lCIDField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public int LCID {
@@ -2204,7 +2216,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -2212,17 +2224,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class AuditSettings {
-        
+    
         private AuditSettingsAudit[] auditField;
-        
+    
         private int auditLogTrimmingRetentionField;
-        
+    
         private bool auditLogTrimmingRetentionFieldSpecified;
-        
+    
         private bool trimAuditLogField;
-        
+    
         private bool trimAuditLogFieldSpecified;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("Audit")]
         public AuditSettingsAudit[] Audit {
@@ -2233,7 +2245,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.auditField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public int AuditLogTrimmingRetention {
@@ -2244,7 +2256,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.auditLogTrimmingRetentionField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool AuditLogTrimmingRetentionSpecified {
@@ -2255,7 +2267,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.auditLogTrimmingRetentionFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool TrimAuditLog {
@@ -2266,7 +2278,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.trimAuditLogField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool TrimAuditLogSpecified {
@@ -2278,7 +2290,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -2286,9 +2298,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class AuditSettingsAudit {
-        
+    
         private AuditSettingsAuditAuditFlag auditFlagField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public AuditSettingsAuditAuditFlag AuditFlag {
@@ -2300,62 +2312,62 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public enum AuditSettingsAuditAuditFlag {
-        
+    
         /// <remarks/>
         All,
-        
+    
         /// <remarks/>
         CheckIn,
-        
+    
         /// <remarks/>
         CheckOut,
-        
+    
         /// <remarks/>
         ChildDelete,
-        
+    
         /// <remarks/>
         Copy,
-        
+    
         /// <remarks/>
         Move,
-        
+    
         /// <remarks/>
         None,
-        
+    
         /// <remarks/>
         ObjectDelete,
-        
+    
         /// <remarks/>
         ProfileChange,
-        
+    
         /// <remarks/>
         SchemaChange,
-        
+    
         /// <remarks/>
         Search,
-        
+    
         /// <remarks/>
         SecurityChange,
-        
+    
         /// <remarks/>
         Undelete,
-        
+    
         /// <remarks/>
         Update,
-        
+    
         /// <remarks/>
         View,
-        
+    
         /// <remarks/>
         Workflow,
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -2363,19 +2375,19 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class Security {
-        
+    
         private User[] additionalAdministratorsField;
-        
+    
         private User[] additionalOwnersField;
-        
+    
         private User[] additionalMembersField;
-        
+    
         private User[] additionalVisitorsField;
-        
+    
         private SiteGroup[] siteGroupsField;
-        
+    
         private SecurityPermissions permissionsField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
         public User[] AdditionalAdministrators {
@@ -2386,7 +2398,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.additionalAdministratorsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
         public User[] AdditionalOwners {
@@ -2397,7 +2409,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.additionalOwnersField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
         public User[] AdditionalMembers {
@@ -2408,7 +2420,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.additionalMembersField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
         public User[] AdditionalVisitors {
@@ -2419,7 +2431,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.additionalVisitorsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
         public SiteGroup[] SiteGroups {
@@ -2430,7 +2442,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.siteGroupsField = value;
             }
         }
-        
+    
         /// <remarks/>
         public SecurityPermissions Permissions {
             get {
@@ -2441,7 +2453,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -2449,9 +2461,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class User {
-        
+    
         private string nameField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Name {
@@ -2463,7 +2475,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -2471,33 +2483,33 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class SiteGroup {
-        
+    
         private User[] membersField;
-        
+    
         private string titleField;
-        
+    
         private string descriptionField;
-        
+    
         private string ownerField;
-        
+    
         private bool allowMembersEditMembershipField;
-        
+    
         private bool allowMembersEditMembershipFieldSpecified;
-        
+    
         private bool allowRequestToJoinLeaveField;
-        
+    
         private bool allowRequestToJoinLeaveFieldSpecified;
-        
+    
         private bool autoAcceptRequestToJoinLeaveField;
-        
+    
         private bool autoAcceptRequestToJoinLeaveFieldSpecified;
-        
+    
         private bool onlyAllowMembersViewMembershipField;
-        
+    
         private bool onlyAllowMembersViewMembershipFieldSpecified;
-        
+    
         private string requestToJoinLeaveEmailSettingField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
         public User[] Members {
@@ -2508,7 +2520,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.membersField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Title {
@@ -2519,7 +2531,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.titleField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Description {
@@ -2530,7 +2542,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.descriptionField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Owner {
@@ -2541,7 +2553,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.ownerField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool AllowMembersEditMembership {
@@ -2552,7 +2564,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.allowMembersEditMembershipField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool AllowMembersEditMembershipSpecified {
@@ -2563,7 +2575,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.allowMembersEditMembershipFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool AllowRequestToJoinLeave {
@@ -2574,7 +2586,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.allowRequestToJoinLeaveField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool AllowRequestToJoinLeaveSpecified {
@@ -2585,7 +2597,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.allowRequestToJoinLeaveFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool AutoAcceptRequestToJoinLeave {
@@ -2596,7 +2608,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.autoAcceptRequestToJoinLeaveField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool AutoAcceptRequestToJoinLeaveSpecified {
@@ -2607,7 +2619,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.autoAcceptRequestToJoinLeaveFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool OnlyAllowMembersViewMembership {
@@ -2618,7 +2630,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.onlyAllowMembersViewMembershipField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool OnlyAllowMembersViewMembershipSpecified {
@@ -2629,7 +2641,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.onlyAllowMembersViewMembershipFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string RequestToJoinLeaveEmailSetting {
@@ -2641,7 +2653,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -2649,11 +2661,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class SecurityPermissions {
-        
+    
         private RoleDefinition[] roleDefinitionsField;
-        
+    
         private RoleAssignment[] roleAssignmentsField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
         public RoleDefinition[] RoleDefinitions {
@@ -2664,7 +2676,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.roleDefinitionsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
         public RoleAssignment[] RoleAssignments {
@@ -2676,7 +2688,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -2684,13 +2696,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class RoleDefinition {
-        
+    
         private RoleDefinitionPermission[] permissionsField;
-        
+    
         private string nameField;
-        
+    
         private string descriptionField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("Permission", IsNullable=false)]
         public RoleDefinitionPermission[] Permissions {
@@ -2701,7 +2713,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.permissionsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Name {
@@ -2712,7 +2724,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.nameField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Description {
@@ -2724,125 +2736,125 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public enum RoleDefinitionPermission {
-        
+    
         /// <remarks/>
         EmptyMask,
-        
+    
         /// <remarks/>
         ViewListItems,
-        
+    
         /// <remarks/>
         AddListItems,
-        
+    
         /// <remarks/>
         EditListItems,
-        
+    
         /// <remarks/>
         DeleteListItems,
-        
+    
         /// <remarks/>
         ApproveItems,
-        
+    
         /// <remarks/>
         OpenItems,
-        
+    
         /// <remarks/>
         ViewVersions,
-        
+    
         /// <remarks/>
         DeleteVersions,
-        
+    
         /// <remarks/>
         CancelCheckout,
-        
+    
         /// <remarks/>
         ManagePersonalViews,
-        
+    
         /// <remarks/>
         ManageLists,
-        
+    
         /// <remarks/>
         ViewFormPages,
-        
+    
         /// <remarks/>
         AnonymousSearchAccessList,
-        
+    
         /// <remarks/>
         Open,
-        
+    
         /// <remarks/>
         ViewPages,
-        
+    
         /// <remarks/>
         AddAndCustomizePages,
-        
+    
         /// <remarks/>
         ApplyThemeAndBorder,
-        
+    
         /// <remarks/>
         ApplyStyleSheets,
-        
+    
         /// <remarks/>
         ViewUsageData,
-        
+    
         /// <remarks/>
         CreateSSCSite,
-        
+    
         /// <remarks/>
         ManageSubwebs,
-        
+    
         /// <remarks/>
         CreateGroups,
-        
+    
         /// <remarks/>
         ManagePermissions,
-        
+    
         /// <remarks/>
         BrowseDirectories,
-        
+    
         /// <remarks/>
         BrowseUserInfo,
-        
+    
         /// <remarks/>
         AddDelPrivateWebParts,
-        
+    
         /// <remarks/>
         UpdatePersonalWebParts,
-        
+    
         /// <remarks/>
         ManageWeb,
-        
+    
         /// <remarks/>
         AnonymousSearchAccessWebLists,
-        
+    
         /// <remarks/>
         UseClientIntegration,
-        
+    
         /// <remarks/>
         UseRemoteAPIs,
-        
+    
         /// <remarks/>
         ManageAlerts,
-        
+    
         /// <remarks/>
         CreateAlerts,
-        
+    
         /// <remarks/>
         EditMyUserInfo,
-        
+    
         /// <remarks/>
         EnumeratePermissions,
-        
+    
         /// <remarks/>
         FullMask,
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -2850,11 +2862,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class RoleAssignment {
-        
+    
         private string principalField;
-        
+    
         private string roleDefinitionField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Principal {
@@ -2865,7 +2877,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.principalField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string RoleDefinition {
@@ -2877,7 +2889,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -2885,9 +2897,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class ProvisioningTemplateSiteFields {
-        
+    
         private System.Xml.XmlElement[] anyField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAnyElementAttribute()]
         public System.Xml.XmlElement[] Any {
@@ -2899,7 +2911,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -2907,44 +2919,44 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class ContentType {
-        
+    
         private ContentTypeFieldRef[] fieldRefsField;
-        
+    
         private ContentTypeDocumentTemplate documentTemplateField;
-        
+    
         private DocumentSetTemplate documentSetTemplateField;
-        
+    
         private string idField;
-        
+    
         private string nameField;
-        
+    
         private string descriptionField;
-        
+    
         private string groupField;
-        
+    
         private bool hiddenField;
-        
+    
         private bool sealedField;
-        
+    
         private bool readOnlyField;
-        
+    
         private bool overwriteField;
-        
+    
         private string newFormUrlField;
-        
+    
         private string editFormUrlField;
-        
+    
         private string displayFormUrlField;
-        
+    
         private System.Xml.XmlAttribute[] anyAttrField;
-        
+    
         public ContentType() {
             this.hiddenField = false;
             this.sealedField = false;
             this.readOnlyField = false;
             this.overwriteField = false;
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("FieldRef", IsNullable=false)]
         public ContentTypeFieldRef[] FieldRefs {
@@ -2955,7 +2967,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.fieldRefsField = value;
             }
         }
-        
+    
         /// <remarks/>
         public ContentTypeDocumentTemplate DocumentTemplate {
             get {
@@ -2965,7 +2977,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.documentTemplateField = value;
             }
         }
-        
+    
         /// <remarks/>
         public DocumentSetTemplate DocumentSetTemplate {
             get {
@@ -2975,7 +2987,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.documentSetTemplateField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string ID {
@@ -2986,7 +2998,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.idField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Name {
@@ -2997,7 +3009,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.nameField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Description {
@@ -3008,7 +3020,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.descriptionField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Group {
@@ -3019,7 +3031,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.groupField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -3031,7 +3043,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.hiddenField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -3043,7 +3055,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.sealedField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -3055,7 +3067,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.readOnlyField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -3067,7 +3079,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.overwriteField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string NewFormUrl {
@@ -3078,7 +3090,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.newFormUrlField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string EditFormUrl {
@@ -3089,7 +3101,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.editFormUrlField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string DisplayFormUrl {
@@ -3100,7 +3112,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.displayFormUrlField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAnyAttributeAttribute()]
         public System.Xml.XmlAttribute[] AnyAttr {
@@ -3112,7 +3124,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -3121,7 +3133,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class ContentTypeFieldRef : FieldRefFull {
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(ContentTypeFieldRef))]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(ListInstanceFieldRef))]
@@ -3131,18 +3143,18 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class FieldRefFull : FieldRefBase {
-        
+    
         private string nameField;
-        
+    
         private bool requiredField;
-        
+    
         private bool hiddenField;
-        
+    
         public FieldRefFull() {
             this.requiredField = false;
             this.hiddenField = false;
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Name {
@@ -3153,7 +3165,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.nameField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -3165,7 +3177,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.requiredField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -3178,7 +3190,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(DocumentSetFieldRef))]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(FieldRefFull))]
@@ -3190,9 +3202,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class FieldRefBase {
-        
+    
         private string idField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string ID {
@@ -3204,7 +3216,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -3213,7 +3225,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class DocumentSetFieldRef : FieldRefBase {
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -3221,9 +3233,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class ListInstanceFieldRef : FieldRefFull {
-        
+    
         private string displayNameField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string DisplayName {
@@ -3235,7 +3247,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -3243,9 +3255,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class ContentTypeDocumentTemplate {
-        
+    
         private string targetNameField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string TargetName {
@@ -3257,7 +3269,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -3265,17 +3277,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class DocumentSetTemplate {
-        
+    
         private DocumentSetTemplateAllowedContentType[] allowedContentTypesField;
-        
+    
         private DocumentSetTemplateDefaultDocument[] defaultDocumentsField;
-        
+    
         private DocumentSetFieldRef[] sharedFieldsField;
-        
+    
         private DocumentSetFieldRef[] welcomePageFieldsField;
-        
+    
         private string welcomePageField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("AllowedContentType", IsNullable=false)]
         public DocumentSetTemplateAllowedContentType[] AllowedContentTypes {
@@ -3286,7 +3298,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.allowedContentTypesField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("DefaultDocument", IsNullable=false)]
         public DocumentSetTemplateDefaultDocument[] DefaultDocuments {
@@ -3297,7 +3309,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.defaultDocumentsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("SharedField", IsNullable=false)]
         public DocumentSetFieldRef[] SharedFields {
@@ -3308,7 +3320,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.sharedFieldsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("WelcomePageField", IsNullable=false)]
         public DocumentSetFieldRef[] WelcomePageFields {
@@ -3319,7 +3331,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.welcomePageFieldsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string WelcomePage {
@@ -3331,7 +3343,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -3339,9 +3351,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class DocumentSetTemplateAllowedContentType {
-        
+    
         private string contentTypeIDField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string ContentTypeID {
@@ -3353,7 +3365,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -3361,13 +3373,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class DocumentSetTemplateDefaultDocument {
-        
+    
         private string nameField;
-        
+    
         private string contentTypeIDField;
-        
+    
         private string fileSourcePathField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Name {
@@ -3378,7 +3390,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.nameField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string ContentTypeID {
@@ -3389,7 +3401,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.contentTypeIDField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string FileSourcePath {
@@ -3401,7 +3413,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -3409,65 +3421,65 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class ListInstance {
-        
+    
         private ContentTypeBinding[] contentTypeBindingsField;
-        
+    
         private ListInstanceViews viewsField;
-        
+    
         private ListInstanceFields fieldsField;
-        
+    
         private ListInstanceFieldRef[] fieldRefsField;
-        
+    
         private ListInstanceDataRow[] dataRowsField;
-        
+    
         private Folder[] foldersField;
-        
+    
         private FieldDefault[] fieldDefaultsField;
-        
+    
         private ObjectSecurity securityField;
-        
+    
         private string titleField;
-        
+    
         private string descriptionField;
-        
+    
         private string documentTemplateField;
-        
+    
         private bool onQuickLaunchField;
-        
+    
         private int templateTypeField;
-        
+    
         private string urlField;
-        
+    
         private bool enableVersioningField;
-        
+    
         private bool enableMinorVersionsField;
-        
+    
         private bool enableModerationField;
-        
+    
         private int minorVersionLimitField;
-        
+    
         private bool minorVersionLimitFieldSpecified;
-        
+    
         private int maxVersionLimitField;
-        
+    
         private bool maxVersionLimitFieldSpecified;
-        
+    
         private int draftVersionVisibilityField;
-        
+    
         private bool draftVersionVisibilityFieldSpecified;
-        
+    
         private bool removeExistingContentTypesField;
-        
+    
         private string templateFeatureIDField;
-        
+    
         private bool contentTypesEnabledField;
-        
+    
         private bool hiddenField;
-        
+    
         private bool enableAttachmentsField;
-        
+    
         private bool enableFolderCreationField;
-        
+    
         public ListInstance() {
             this.onQuickLaunchField = false;
             this.enableVersioningField = false;
@@ -3479,7 +3491,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             this.enableAttachmentsField = true;
             this.enableFolderCreationField = true;
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
         public ContentTypeBinding[] ContentTypeBindings {
@@ -3490,7 +3502,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.contentTypeBindingsField = value;
             }
         }
-        
+    
         /// <remarks/>
         public ListInstanceViews Views {
             get {
@@ -3500,7 +3512,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.viewsField = value;
             }
         }
-        
+    
         /// <remarks/>
         public ListInstanceFields Fields {
             get {
@@ -3510,7 +3522,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.fieldsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("FieldRef", IsNullable=false)]
         public ListInstanceFieldRef[] FieldRefs {
@@ -3521,7 +3533,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.fieldRefsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("DataRow", IsNullable=false)]
         public ListInstanceDataRow[] DataRows {
@@ -3532,7 +3544,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.dataRowsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
         public Folder[] Folders {
@@ -3543,7 +3555,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.foldersField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
         public FieldDefault[] FieldDefaults {
@@ -3554,7 +3566,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.fieldDefaultsField = value;
             }
         }
-        
+    
         /// <remarks/>
         public ObjectSecurity Security {
             get {
@@ -3564,7 +3576,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.securityField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Title {
@@ -3575,7 +3587,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.titleField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Description {
@@ -3586,7 +3598,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.descriptionField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string DocumentTemplate {
@@ -3597,7 +3609,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.documentTemplateField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -3609,7 +3621,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.onQuickLaunchField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public int TemplateType {
@@ -3620,7 +3632,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.templateTypeField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Url {
@@ -3631,7 +3643,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.urlField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -3643,7 +3655,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.enableVersioningField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -3655,7 +3667,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.enableMinorVersionsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -3667,7 +3679,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.enableModerationField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public int MinorVersionLimit {
@@ -3678,7 +3690,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.minorVersionLimitField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool MinorVersionLimitSpecified {
@@ -3689,7 +3701,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.minorVersionLimitFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public int MaxVersionLimit {
@@ -3700,7 +3712,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.maxVersionLimitField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool MaxVersionLimitSpecified {
@@ -3711,7 +3723,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.maxVersionLimitFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public int DraftVersionVisibility {
@@ -3722,7 +3734,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.draftVersionVisibilityField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool DraftVersionVisibilitySpecified {
@@ -3733,7 +3745,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.draftVersionVisibilityFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -3745,7 +3757,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.removeExistingContentTypesField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string TemplateFeatureID {
@@ -3756,7 +3768,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.templateFeatureIDField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -3768,7 +3780,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.contentTypesEnabledField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -3780,7 +3792,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.hiddenField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(true)]
@@ -3792,7 +3804,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.enableAttachmentsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(true)]
@@ -3805,7 +3817,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -3813,15 +3825,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class ContentTypeBinding {
-        
+    
         private string contentTypeIDField;
-        
+    
         private bool defaultField;
-        
+    
         public ContentTypeBinding() {
             this.defaultField = false;
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string ContentTypeID {
@@ -3832,7 +3844,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.contentTypeIDField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -3845,7 +3857,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -3853,15 +3865,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class ListInstanceViews {
-        
+    
         private System.Xml.XmlElement[] anyField;
-        
+    
         private bool removeExistingViewsField;
-        
+    
         public ListInstanceViews() {
             this.removeExistingViewsField = false;
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAnyElementAttribute()]
         public System.Xml.XmlElement[] Any {
@@ -3872,7 +3884,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.anyField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -3885,7 +3897,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -3893,9 +3905,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class ListInstanceFields {
-        
+    
         private System.Xml.XmlElement[] anyField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAnyElementAttribute()]
         public System.Xml.XmlElement[] Any {
@@ -3907,7 +3919,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -3915,11 +3927,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class ListInstanceDataRow {
-        
+    
         private DataValue[] dataValueField;
-        
+    
         private ObjectSecurity securityField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("DataValue")]
         public DataValue[] DataValue {
@@ -3930,7 +3942,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.dataValueField = value;
             }
         }
-        
+    
         /// <remarks/>
         public ObjectSecurity Security {
             get {
@@ -3941,7 +3953,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -3950,7 +3962,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     // [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class DataValue : BaseFieldValue {
     }
-    
+
     /// <remarks/>
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(FieldDefault))]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(DataValue))]
@@ -3960,11 +3972,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     // [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class BaseFieldValue {
-        
+    
         private string fieldNameField;
-        
+    
         private string valueField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string FieldName {
@@ -3975,7 +3987,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.fieldNameField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlTextAttribute()]
         public string Value {
@@ -3987,7 +3999,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -3996,7 +4008,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     // [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class FieldDefault : BaseFieldValue {
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -4004,9 +4016,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class ObjectSecurity {
-        
+    
         private ObjectSecurityBreakRoleInheritance breakRoleInheritanceField;
-        
+    
         /// <remarks/>
         public ObjectSecurityBreakRoleInheritance BreakRoleInheritance {
             get {
@@ -4017,7 +4029,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -4025,13 +4037,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class ObjectSecurityBreakRoleInheritance {
-        
+    
         private RoleAssignment[] roleAssignmentField;
-        
+    
         private bool copyRoleAssignmentsField;
-        
+    
         private bool clearSubscopesField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("RoleAssignment")]
         public RoleAssignment[] RoleAssignment {
@@ -4042,7 +4054,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.roleAssignmentField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool CopyRoleAssignments {
@@ -4053,7 +4065,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.copyRoleAssignmentsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool ClearSubscopes {
@@ -4065,7 +4077,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -4073,13 +4085,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class Folder {
-        
+    
         private Folder[] folder1Field;
-        
+    
         private ObjectSecurity securityField;
-        
+    
         private string nameField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("Folder")]
         public Folder[] Folder1 {
@@ -4090,7 +4102,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.folder1Field = value;
             }
         }
-        
+    
         /// <remarks/>
         public ObjectSecurity Security {
             get {
@@ -4100,7 +4112,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.securityField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Name {
@@ -4112,7 +4124,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -4120,11 +4132,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class Features {
-        
+    
         private Feature[] siteFeaturesField;
-        
+    
         private Feature[] webFeaturesField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
         public Feature[] SiteFeatures {
@@ -4135,7 +4147,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.siteFeaturesField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
         public Feature[] WebFeatures {
@@ -4147,7 +4159,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -4155,17 +4167,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class Feature {
-        
+    
         private string idField;
-        
+    
         private bool deactivateField;
-        
+    
         private string descriptionField;
-        
+    
         public Feature() {
             this.deactivateField = false;
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string ID {
@@ -4176,7 +4188,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.idField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -4188,7 +4200,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.deactivateField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Description {
@@ -4200,7 +4212,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -4208,11 +4220,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class CustomActions {
-        
+    
         private CustomAction[] siteCustomActionsField;
-        
+    
         private CustomAction[] webCustomActionsField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
         public CustomAction[] SiteCustomActions {
@@ -4223,7 +4235,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.siteCustomActionsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false)]
         public CustomAction[] WebCustomActions {
@@ -4235,7 +4247,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -4243,41 +4255,41 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class CustomAction {
-        
+    
         private CustomActionCommandUIExtension commandUIExtensionField;
-        
+    
         private string nameField;
-        
+    
         private string descriptionField;
-        
+    
         private string groupField;
-        
+    
         private string locationField;
-        
+    
         private string titleField;
-        
+    
         private int sequenceField;
-        
+    
         private bool sequenceFieldSpecified;
-        
+
         private string rightsField;
-        
+
         private bool rightsFieldSpecified;
-        
+    
         private string urlField;
-        
+    
         private bool enabledField;
-        
+    
         private string scriptBlockField;
-        
+    
         private string imageUrlField;
-        
+    
         private string scriptSrcField;
-        
+    
         public CustomAction() {
             this.enabledField = true;
         }
-        
+    
         /// <remarks/>
         public CustomActionCommandUIExtension CommandUIExtension {
             get {
@@ -4287,7 +4299,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.commandUIExtensionField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Name {
@@ -4298,7 +4310,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.nameField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Description {
@@ -4309,7 +4321,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.descriptionField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Group {
@@ -4320,7 +4332,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.groupField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Location {
@@ -4331,7 +4343,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.locationField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Title {
@@ -4342,7 +4354,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.titleField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public int Sequence {
@@ -4353,7 +4365,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.sequenceField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool SequenceSpecified {
@@ -4364,7 +4376,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.sequenceFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Rights {
@@ -4386,7 +4398,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.rightsFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Url {
@@ -4397,7 +4409,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.urlField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(true)]
@@ -4409,7 +4421,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.enabledField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string ScriptBlock {
@@ -4420,7 +4432,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.scriptBlockField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string ImageUrl {
@@ -4431,7 +4443,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.imageUrlField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string ScriptSrc {
@@ -4443,7 +4455,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -4451,9 +4463,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class CustomActionCommandUIExtension {
-        
+    
         private System.Xml.XmlElement[] anyField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAnyElementAttribute()]
         public System.Xml.XmlElement[] Any {
@@ -4465,7 +4477,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -4473,23 +4485,23 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class File {
-        
+    
         private StringDictionaryItem[] propertiesField;
-        
+    
         private WebPartPageWebPart[] webPartsField;
-        
+    
         private ObjectSecurity securityField;
-        
+    
         private string srcField;
-        
+    
         private string folderField;
-        
+    
         private bool overwriteField;
-        
+    
         public File() {
             this.overwriteField = false;
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("Property", IsNullable=false)]
         public StringDictionaryItem[] Properties {
@@ -4500,7 +4512,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.propertiesField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("WebPart", IsNullable=false)]
         public WebPartPageWebPart[] WebParts {
@@ -4511,7 +4523,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.webPartsField = value;
             }
         }
-        
+    
         /// <remarks/>
         public ObjectSecurity Security {
             get {
@@ -4521,7 +4533,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.securityField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Src {
@@ -4532,7 +4544,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.srcField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Folder {
@@ -4543,7 +4555,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.folderField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -4556,7 +4568,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -4564,15 +4576,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     // [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class WebPartPageWebPart {
-        
+    
         private System.Xml.XmlElement contentsField;
-        
+    
         private string titleField;
-        
+    
         private string zoneField;
-        
+    
         private int orderField;
-        
+    
         /// <remarks/>
         public System.Xml.XmlElement Contents {
             get {
@@ -4582,7 +4594,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.contentsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Title {
@@ -4593,7 +4605,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.titleField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Zone {
@@ -4604,7 +4616,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.zoneField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public int Order {
@@ -4616,31 +4628,81 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
+    public partial class Pages {
+    
+        private Page[] pageField;
+    
+        private ContentPage[] contentPageField;
+    
+        private PublishingPage[] publishingPageField;
+    
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("Page")]
+        public Page[] Page {
+            get {
+                return this.pageField;
+            }
+            set {
+                this.pageField = value;
+            }
+        }
+    
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("ContentPage")]
+        public ContentPage[] ContentPage {
+            get {
+                return this.contentPageField;
+            }
+            set {
+                this.contentPageField = value;
+            }
+        }
+    
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("PublishingPage")]
+        public PublishingPage[] PublishingPage {
+            get {
+                return this.publishingPageField;
+            }
+            set {
+                this.publishingPageField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ContentPage))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(PublishingPage))]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class Page {
-        
+    
         private WikiPageWebPart[] webPartsField;
-        
+    
         private BaseFieldValue[] fieldsField;
-        
+    
         private ObjectSecurity securityField;
-        
+    
         private string urlField;
-        
+    
         private bool overwriteField;
-        
+    
         private WikiPageLayout layoutField;
-        
+    
         public Page() {
             this.overwriteField = false;
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("WebPart", IsNullable=false)]
         public WikiPageWebPart[] WebParts {
@@ -4651,7 +4713,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.webPartsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("Field", IsNullable=false)]
         public BaseFieldValue[] Fields {
@@ -4662,7 +4724,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.fieldsField = value;
             }
         }
-        
+    
         /// <remarks/>
         public ObjectSecurity Security {
             get {
@@ -4672,7 +4734,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.securityField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Url {
@@ -4683,7 +4745,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.urlField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -4695,7 +4757,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.overwriteField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public WikiPageLayout Layout {
@@ -4707,7 +4769,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -4715,15 +4777,19 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     // [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class WikiPageWebPart {
-        
+    
         private System.Xml.XmlElement contentsField;
-        
+    
         private string titleField;
-        
+    
         private int rowField;
-        
+    
         private int columnField;
-        
+    
+        private string zoneField;
+    
+        private int orderField;
+    
         /// <remarks/>
         public System.Xml.XmlElement Contents {
             get {
@@ -4733,7 +4799,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.contentsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Title {
@@ -4744,7 +4810,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.titleField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public int Row {
@@ -4755,7 +4821,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.rowField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public int Column {
@@ -4766,42 +4832,122 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.columnField = value;
             }
         }
-    }
     
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string Zone {
+            get {
+                return this.zoneField;
+            }
+            set {
+                this.zoneField = value;
+            }
+        }
+    
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public int Order {
+            get {
+                return this.orderField;
+            }
+            set {
+                this.orderField = value;
+            }
+        }
+    }
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public enum WikiPageLayout {
-        
+    
         /// <remarks/>
         OneColumn,
-        
+    
         /// <remarks/>
         OneColumnSidebar,
-        
+    
         /// <remarks/>
         TwoColumns,
-        
+    
         /// <remarks/>
         TwoColumnsHeader,
-        
+    
         /// <remarks/>
         TwoColumnsHeaderFooter,
-        
+    
         /// <remarks/>
         ThreeColumns,
-        
+    
         /// <remarks/>
         ThreeColumnsHeader,
-        
+    
         /// <remarks/>
         ThreeColumnsHeaderFooter,
-        
+    
         /// <remarks/>
         Custom,
     }
+
+    /// <remarks/>
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(PublishingPage))]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
+    public partial class ContentPage : Page {
     
+        private string hTMLField;
+    
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string HTML {
+            get {
+                return this.hTMLField;
+            }
+            set {
+                this.hTMLField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
+    public partial class PublishingPage : ContentPage {
+    
+        private string pageTitleField;
+    
+        private string pageLayoutUrlField;
+    
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string PageTitle {
+            get {
+                return this.pageTitleField;
+            }
+            set {
+                this.pageTitleField = value;
+            }
+        }
+    
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string PageLayoutUrl {
+            get {
+                return this.pageLayoutUrlField;
+            }
+            set {
+                this.pageLayoutUrlField = value;
+            }
+        }
+    }
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -4809,19 +4955,19 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class ComposedLook {
-        
+    
         private string nameField;
-        
+    
         private string colorFileField;
-        
+    
         private string fontFileField;
-        
+    
         private string backgroundFileField;
-        
+    
         private int versionField;
-        
+    
         private bool versionFieldSpecified;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Name {
@@ -4832,7 +4978,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.nameField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string ColorFile {
@@ -4843,7 +4989,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.colorFileField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string FontFile {
@@ -4854,7 +5000,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.fontFileField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string BackgroundFile {
@@ -4865,7 +5011,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.backgroundFileField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public int Version {
@@ -4876,7 +5022,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.versionField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool VersionSpecified {
@@ -4888,7 +5034,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -4896,11 +5042,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class Workflows {
-        
+    
         private WorkflowsWorkflowDefinition[] workflowDefinitionsField;
-        
+    
         private WorkflowsWorkflowSubscription[] workflowSubscriptionsField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("WorkflowDefinition", IsNullable=false)]
         public WorkflowsWorkflowDefinition[] WorkflowDefinitions {
@@ -4911,7 +5057,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.workflowDefinitionsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("WorkflowSubscription", IsNullable=false)]
         public WorkflowsWorkflowSubscription[] WorkflowSubscriptions {
@@ -4923,7 +5069,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -4931,43 +5077,43 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class WorkflowsWorkflowDefinition {
-        
+    
         private StringDictionaryItem[] propertiesField;
-        
+    
         private System.Xml.XmlElement formFieldField;
-        
+    
         private string idField;
-        
+    
         private string associationUrlField;
-        
+    
         private string descriptionField;
-        
+    
         private string displayNameField;
-        
+    
         private string draftVersionField;
-        
+    
         private string initiationUrlField;
-        
+    
         private bool publishedField;
-        
+    
         private bool publishedFieldSpecified;
-        
+    
         private bool requiresAssociationFormField;
-        
+    
         private bool requiresAssociationFormFieldSpecified;
-        
+    
         private bool requiresInitiationFormField;
-        
+    
         private bool requiresInitiationFormFieldSpecified;
-        
+    
         private string restrictToScopeField;
-        
+    
         private WorkflowsWorkflowDefinitionRestrictToType restrictToTypeField;
-        
+    
         private bool restrictToTypeFieldSpecified;
-        
+    
         private string xamlPathField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("Property", IsNullable=false)]
         public StringDictionaryItem[] Properties {
@@ -4978,7 +5124,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.propertiesField = value;
             }
         }
-        
+    
         /// <remarks/>
         public System.Xml.XmlElement FormField {
             get {
@@ -4988,7 +5134,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.formFieldField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Id {
@@ -4999,7 +5145,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.idField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string AssociationUrl {
@@ -5010,7 +5156,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.associationUrlField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Description {
@@ -5021,7 +5167,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.descriptionField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string DisplayName {
@@ -5032,7 +5178,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.displayNameField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string DraftVersion {
@@ -5043,7 +5189,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.draftVersionField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string InitiationUrl {
@@ -5054,7 +5200,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.initiationUrlField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool Published {
@@ -5065,7 +5211,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.publishedField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool PublishedSpecified {
@@ -5076,7 +5222,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.publishedFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool RequiresAssociationForm {
@@ -5087,7 +5233,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.requiresAssociationFormField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool RequiresAssociationFormSpecified {
@@ -5098,7 +5244,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.requiresAssociationFormFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool RequiresInitiationForm {
@@ -5109,7 +5255,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.requiresInitiationFormField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool RequiresInitiationFormSpecified {
@@ -5120,7 +5266,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.requiresInitiationFormFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string RestrictToScope {
@@ -5131,7 +5277,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.restrictToScopeField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public WorkflowsWorkflowDefinitionRestrictToType RestrictToType {
@@ -5142,7 +5288,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.restrictToTypeField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool RestrictToTypeSpecified {
@@ -5153,7 +5299,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.restrictToTypeFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string XamlPath {
@@ -5165,23 +5311,23 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public enum WorkflowsWorkflowDefinitionRestrictToType {
-        
+    
         /// <remarks/>
         Universal,
-        
+    
         /// <remarks/>
         List,
-        
+    
         /// <remarks/>
         Site,
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -5189,33 +5335,33 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class WorkflowsWorkflowSubscription {
-        
+    
         private StringDictionaryItem[] propertyDefinitionsField;
-        
+    
         private string definitionIdField;
-        
+    
         private string listIdField;
-        
+    
         private bool enabledField;
-        
+    
         private string eventSourceIdField;
-        
+    
         private bool workflowStartEventField;
-        
+    
         private bool itemAddedEventField;
-        
+    
         private bool itemUpdatedEventField;
-        
+    
         private bool manualStartBypassesActivationLimitField;
-        
+    
         private bool manualStartBypassesActivationLimitFieldSpecified;
-        
+    
         private string nameField;
-        
+    
         private string parentContentTypeIdField;
-        
+    
         private string statusFieldNameField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("PropertyDefinition", IsNullable=false)]
         public StringDictionaryItem[] PropertyDefinitions {
@@ -5226,7 +5372,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.propertyDefinitionsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string DefinitionId {
@@ -5237,7 +5383,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.definitionIdField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string ListId {
@@ -5248,7 +5394,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.listIdField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool Enabled {
@@ -5259,7 +5405,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.enabledField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string EventSourceId {
@@ -5270,7 +5416,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.eventSourceIdField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool WorkflowStartEvent {
@@ -5281,7 +5427,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.workflowStartEventField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool ItemAddedEvent {
@@ -5292,7 +5438,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.itemAddedEventField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool ItemUpdatedEvent {
@@ -5303,7 +5449,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.itemUpdatedEventField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool ManualStartBypassesActivationLimit {
@@ -5314,7 +5460,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.manualStartBypassesActivationLimitField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool ManualStartBypassesActivationLimitSpecified {
@@ -5325,7 +5471,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.manualStartBypassesActivationLimitFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Name {
@@ -5336,7 +5482,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.nameField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string ParentContentTypeId {
@@ -5347,7 +5493,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.parentContentTypeIdField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string StatusFieldName {
@@ -5359,7 +5505,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -5367,15 +5513,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class Publishing {
-        
+    
         private PublishingDesignPackage designPackageField;
-        
+    
         private PublishingWebTemplate[] availableWebTemplatesField;
-        
+    
         private PublishingPageLayouts pageLayoutsField;
-        
+    
         private PublishingAutoCheckRequirements autoCheckRequirementsField;
-        
+    
         /// <remarks/>
         public PublishingDesignPackage DesignPackage {
             get {
@@ -5385,7 +5531,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.designPackageField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("WebTemplate", IsNullable=false)]
         public PublishingWebTemplate[] AvailableWebTemplates {
@@ -5396,7 +5542,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.availableWebTemplatesField = value;
             }
         }
-        
+    
         /// <remarks/>
         public PublishingPageLayouts PageLayouts {
             get {
@@ -5406,7 +5552,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.pageLayoutsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public PublishingAutoCheckRequirements AutoCheckRequirements {
@@ -5418,7 +5564,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -5426,21 +5572,21 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class PublishingDesignPackage {
-        
+    
         private string designPackagePathField;
-        
+    
         private int majorVersionField;
-        
+    
         private bool majorVersionFieldSpecified;
-        
+    
         private int minorVersionField;
-        
+    
         private bool minorVersionFieldSpecified;
-        
+    
         private string packageGuidField;
-        
+    
         private string packageNameField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string DesignPackagePath {
@@ -5451,7 +5597,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.designPackagePathField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public int MajorVersion {
@@ -5462,7 +5608,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.majorVersionField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool MajorVersionSpecified {
@@ -5473,7 +5619,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.majorVersionFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public int MinorVersion {
@@ -5484,7 +5630,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.minorVersionField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool MinorVersionSpecified {
@@ -5495,7 +5641,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.minorVersionFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string PackageGuid {
@@ -5506,7 +5652,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.packageGuidField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string PackageName {
@@ -5518,7 +5664,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -5526,13 +5672,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class PublishingWebTemplate {
-        
+    
         private int languageCodeField;
-        
+    
         private bool languageCodeFieldSpecified;
-        
+    
         private string templateNameField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public int LanguageCode {
@@ -5543,7 +5689,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.languageCodeField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool LanguageCodeSpecified {
@@ -5554,7 +5700,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.languageCodeFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string TemplateName {
@@ -5566,7 +5712,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -5574,11 +5720,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class PublishingPageLayouts {
-        
+    
         private PublishingPageLayoutsPageLayout[] pageLayoutField;
-        
+    
         private string defaultField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("PageLayout")]
         public PublishingPageLayoutsPageLayout[] PageLayout {
@@ -5589,7 +5735,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.pageLayoutField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Default {
@@ -5601,7 +5747,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -5609,9 +5755,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class PublishingPageLayoutsPageLayout {
-        
+    
         private string pathField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Path {
@@ -5623,23 +5769,23 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public enum PublishingAutoCheckRequirements {
-        
+    
         /// <remarks/>
         MakeCompliant,
-        
+    
         /// <remarks/>
         SkipIfNotCompliant,
-        
+    
         /// <remarks/>
         FailIfNotCompliant,
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -5647,11 +5793,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class AddInsAddin {
-        
+    
         private string packagePathField;
-        
+    
         private AddInsAddinSource sourceField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string PackagePath {
@@ -5662,7 +5808,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.packagePathField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public AddInsAddinSource Source {
@@ -5674,32 +5820,32 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public enum AddInsAddinSource {
-        
+    
         /// <remarks/>
         CorporateCatalog,
-        
+    
         /// <remarks/>
         DeveloperSite,
-        
+    
         /// <remarks/>
         InvalidSource,
-        
+    
         /// <remarks/>
         Marketplace,
-        
+    
         /// <remarks/>
         ObjectModel,
-        
+    
         /// <remarks/>
         RemoteObjectModel,
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -5707,17 +5853,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class Provider {
-        
+    
         private System.Xml.XmlNode configurationField;
-        
+    
         private bool enabledField;
-        
+    
         private string handlerTypeField;
-        
+    
         public Provider() {
             this.enabledField = false;
         }
-        
+    
         /// <remarks/>
         public System.Xml.XmlNode Configuration {
             get {
@@ -5727,7 +5873,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.configurationField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(false)]
@@ -5739,7 +5885,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.enabledField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string HandlerType {
@@ -5751,7 +5897,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -5759,45 +5905,45 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class SiteCollection {
-        
+    
         private Templates templatesField;
-        
+    
         private string storageMaximumLevelField;
-        
+    
         private string storageWarningLevelField;
-        
+    
         private string userCodeMaximumLevelField;
-        
+    
         private string userCodeWarningLevelField;
-        
+    
         private string primarySiteCollectionAdminField;
-        
+    
         private string secondarySiteCollectionAdminField;
-        
+    
         private string titleField;
-        
+    
         private string customJSUrlField;
-        
+    
         private bool quickLaunchEnabledField;
-        
+    
         private bool quickLaunchEnabledFieldSpecified;
-        
+    
         private string alternateCssUrlField;
-        
+    
         private string languageField;
-        
+    
         private bool allowDesignerField;
-        
+    
         private bool allowDesignerFieldSpecified;
-        
+    
         private bool membersCanShareField;
-        
+    
         private bool membersCanShareFieldSpecified;
-        
+    
         private string timeZoneField;
-        
+    
         private string urlField;
-        
+    
         /// <remarks/>
         public Templates Templates {
             get {
@@ -5807,7 +5953,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.templatesField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string StorageMaximumLevel {
@@ -5818,7 +5964,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.storageMaximumLevelField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string StorageWarningLevel {
@@ -5829,7 +5975,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.storageWarningLevelField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string UserCodeMaximumLevel {
@@ -5840,7 +5986,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.userCodeMaximumLevelField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string UserCodeWarningLevel {
@@ -5851,7 +5997,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.userCodeWarningLevelField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string PrimarySiteCollectionAdmin {
@@ -5862,7 +6008,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.primarySiteCollectionAdminField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string SecondarySiteCollectionAdmin {
@@ -5873,7 +6019,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.secondarySiteCollectionAdminField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Title {
@@ -5884,7 +6030,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.titleField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string CustomJSUrl {
@@ -5895,7 +6041,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.customJSUrlField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool QuickLaunchEnabled {
@@ -5906,7 +6052,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.quickLaunchEnabledField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool QuickLaunchEnabledSpecified {
@@ -5917,7 +6063,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.quickLaunchEnabledFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string AlternateCssUrl {
@@ -5928,7 +6074,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.alternateCssUrlField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Language {
@@ -5939,7 +6085,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.languageField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool AllowDesigner {
@@ -5950,7 +6096,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.allowDesignerField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool AllowDesignerSpecified {
@@ -5961,7 +6107,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.allowDesignerFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public bool MembersCanShare {
@@ -5972,7 +6118,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.membersCanShareField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         public bool MembersCanShareSpecified {
@@ -5983,7 +6129,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.membersCanShareFieldSpecified = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string TimeZone {
@@ -5994,7 +6140,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.timeZoneField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Url {
@@ -6006,7 +6152,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -6014,23 +6160,23 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class Sequence {
-        
+    
         private SiteCollection[] siteCollectionField;
-        
+    
         private Site[] siteField;
-        
+    
         private TermStore[] termStoreField;
-        
+    
         private System.Xml.XmlElement[] extensionsField;
-        
+    
         private SequenceSequenceType sequenceTypeField;
-        
+    
         private string idField;
-        
+    
         public Sequence() {
             this.sequenceTypeField = SequenceSequenceType.Synchronous;
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("SiteCollection")]
         public SiteCollection[] SiteCollection {
@@ -6041,7 +6187,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.siteCollectionField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("Site")]
         public Site[] Site {
@@ -6052,7 +6198,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.siteField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("TermStore")]
         public TermStore[] TermStore {
@@ -6063,7 +6209,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.termStoreField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("Extensions")]
         public System.Xml.XmlElement[] Extensions {
@@ -6074,7 +6220,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.extensionsField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         [System.ComponentModel.DefaultValueAttribute(SequenceSequenceType.Synchronous)]
@@ -6086,7 +6232,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.sequenceTypeField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute(DataType="ID")]
         public string ID {
@@ -6098,20 +6244,20 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public enum SequenceSequenceType {
-        
+    
         /// <remarks/>
         Synchronous,
-        
+    
         /// <remarks/>
         Asynchronous,
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.81.0")]
     [System.SerializableAttribute()]
@@ -6119,13 +6265,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://schemas.dev.office.com/PnP/2015/12/ProvisioningSchema")]
     public partial class LocalizationsLocalization {
-        
+    
         private int lCIDField;
-        
+    
         private string nameField;
-        
+    
         private string resourceFileField;
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public int LCID {
@@ -6136,7 +6282,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.lCIDField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string Name {
@@ -6147,7 +6293,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
                 this.nameField = value;
             }
         }
-        
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
         public string ResourceFile {

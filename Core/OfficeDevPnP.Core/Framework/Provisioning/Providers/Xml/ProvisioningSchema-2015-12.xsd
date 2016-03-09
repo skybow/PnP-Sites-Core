@@ -596,6 +596,13 @@
       </xsd:annotation>
     </xsd:attribute>
 
+    <xsd:attribute name="WebTemplate" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation xml:lang="en">
+          The Web Template of the Site, optional attribute.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
   </xsd:complexType>
 
   <xsd:complexType name="RegionalSettings">
@@ -1017,7 +1024,11 @@
     </xsd:annotation>
     <xsd:sequence>
       <xsd:element name="Page" type="pnp:Page"
-                    minOccurs="1" maxOccurs="unbounded" />
+                    minOccurs="0" maxOccurs="unbounded" />
+      <xsd:element name="ContentPage" type="pnp:ContentPage"
+                    minOccurs="0" maxOccurs="unbounded" />
+      <xsd:element name="PublishingPage" type="pnp:PublishingPage"
+                    minOccurs="0" maxOccurs="unbounded" />
     </xsd:sequence>
 
   </xsd:complexType>
@@ -2429,6 +2440,33 @@
     </xsd:attribute>
   </xsd:complexType>
 
+  <xsd:complexType name="ContentPage">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        Defines ContentPage.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>      
+      <xsd:extension base="Page">        
+        <xsd:attribute name="HTML" type="xsd:string"></xsd:attribute>
+      </xsd:extension>      
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="PublishingPage">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        Defines PublishingPage.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="ContentPage">
+        <xsd:attribute name="PageTitle" type="xsd:string"></xsd:attribute>
+        <xsd:attribute name="PageLayoutUrl" type="xsd:string"></xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
   <xsd:complexType name="WikiPageWebPart">
     <xsd:annotation>
       <xsd:documentation xml:lang="en">
@@ -2468,6 +2506,20 @@
       <xsd:annotation>
         <xsd:documentation xml:lang="en">
           Defines the column to add the WebPart to, required attribute.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="Zone" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation xml:lang="en">
+          Defines the zone of a WebPart Page to add the webpart to, required attribute.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="Order" type="xsd:int" use="required">
+      <xsd:annotation>
+        <xsd:documentation xml:lang="en">
+          Defines the index of the WebPart in the zone, required attribute.
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>

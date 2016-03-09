@@ -59,6 +59,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512
             this.Title = webPartXml.Attribute("Title").Value;
             this.Row = Int32.Parse(webPartXml.Attribute("Row").Value);
             this.Column = Int32.Parse(webPartXml.Attribute("Column").Value);
+            this.Zone = webPartXml.Attribute("Zone").Value;
+            this.Order = Int32.Parse(webPartXml.Attribute("Order").Value);
 
             XElement webPartContents = webPartXml.Element(ns + "Contents");
             this.Contents = webPartContents.ToXmlElement();
@@ -69,6 +71,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512
             writer.WriteAttributeString("Title", this.Title);
             writer.WriteAttributeString("Row", this.Row.ToString());
             writer.WriteAttributeString("Column", this.Column.ToString());
+            writer.WriteAttributeString("Zone", this.Zone);
+            writer.WriteAttributeString("Order", this.Order.ToString());
+
             writer.WriteStartElement(XMLConstants.PROVISIONING_SCHEMA_PREFIX, "Contents", XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2015_12);
 
             using (XmlReader xr = new XmlNodeReader(this.Contents))

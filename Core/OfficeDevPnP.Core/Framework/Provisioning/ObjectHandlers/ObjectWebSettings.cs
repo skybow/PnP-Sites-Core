@@ -44,6 +44,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 webSettings.SiteLogo = Tokenize(web.SiteLogoUrl, web.Url);
                 webSettings.WelcomePage = Tokenize(web.RootFolder.WelcomePage, web.Url);
                 webSettings.AlternateCSS = Tokenize(web.AlternateCssUrl, web.Url);
+                webSettings.WebTemplate = web.WebTemplate;
                 template.WebSettings = webSettings;
 
                 if (creationInfo.PersistBrandingFiles)

@@ -6,8 +6,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
     {
         public string Html { get; set; }
 
-        public ContentPage(string url, string html, bool overwrite, IEnumerable<WebPart> webParts, bool welcomePage = false, ObjectSecurity security = null)
-            : base(url, overwrite, WikiPageLayout.OneColumn, webParts, welcomePage, security)
+        public ContentPage(string url, string html, bool overwrite, IEnumerable<WebPart> webParts, bool welcomePage = false, ObjectSecurity security = null, Dictionary<string, string> fields = null)
+            : base(url, overwrite, WikiPageLayout.OneColumn, webParts, welcomePage, security, fields)
         {
             Html = html;
         }
