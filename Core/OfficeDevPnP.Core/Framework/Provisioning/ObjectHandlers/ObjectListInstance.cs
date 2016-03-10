@@ -237,7 +237,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                         catch (Exception ex)
                                         {
                                             scope.LogError(CoreResources.Provisioning_ObjectHandlers_ListInstances_Creating_field__0__failed___1_____2_, fieldGuid, ex.Message, ex.StackTrace);
-                                            throw;
                                         }
                                     }
                                     else
@@ -250,7 +249,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                         catch (Exception ex)
                                         {
                                             scope.LogError(CoreResources.Provisioning_ObjectHandlers_ListInstances_Updating_field__0__failed___1_____2_, fieldGuid, ex.Message, ex.StackTrace);
-                                            throw;
                                         }
 
                                     }
@@ -536,7 +534,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             catch (Exception ex)
             {
                 monitoredScope.LogError(CoreResources.Provisioning_ObjectHandlers_ListInstances_Creating_view_failed___0_____1_, ex.Message, ex.StackTrace);
-                throw;
             }
         }
 
