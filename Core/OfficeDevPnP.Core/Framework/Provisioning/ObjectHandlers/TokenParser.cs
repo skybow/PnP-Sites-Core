@@ -260,5 +260,57 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             return input;
         }
+
+        public static string TokenizeUrl( Web web, string url)
+        {
+            url = url.Replace(web.Url, "{site}/");
+            if (url.StartsWith(web.ServerRelativeUrl, System.StringComparison.OrdinalIgnoreCase))
+            {
+                url = CombineUrl("{site}", url.Substring(web.ServerRelativeUrl.Length));
+            }
+            else
+            {
+                var context = web.Context as ClientContext;
+                var site = context.Site;
+                site.EnsureProperties(s => s.Url, s => s.ServerRelativeUrl);
+
+                url = url.Replace(site.Url, "{sitecollection}/");
+
+                if (url.StartsWith(site.ServerRelativeUrl, System.StringComparison.OrdinalIgnoreCase))
+                {
+                    url = CombineUrl("{sitecollection}", url.Substring(site.ServerRelativeUrl.Length));
+                }
+            }
+
+            return url;
+        }
+
+        public static string CombineUrl(string baseUrlPath, string url)
+        {
+            if (string.IsNullOrEmpty(baseUrlPath))
+            {
+                baseUrlPath = "";
+            }
+            if (string.IsNullOrEmpty(url))
+            {
+                url = "";
+            }
+            bool endWithSlash = baseUrlPath.EndsWith("/");
+            bool startWithSlash = url.StartsWith("/");
+            string result = "";
+            if (endWithSlash && startWithSlash)
+            {
+                result = baseUrlPath + url.Substring(1);
+            }
+            else if ((endWithSlash || !startWithSlash) && (!endWithSlash || startWithSlash))
+            {
+                result = baseUrlPath + "/" + url;
+            }
+            else
+            {
+                result = baseUrlPath + url;
+            }
+            return result;
+        }
     }
 }

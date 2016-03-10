@@ -278,26 +278,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             }
         }
 
-        private string Tokenize(Web web, string xml)
-        {
-            var lists = web.Lists;
-            web.Context.Load(web, w => w.ServerRelativeUrl, w => w.Id);
-            web.Context.Load(lists, ls => ls.Include(l => l.Id, l => l.Title));
-            web.Context.ExecuteQueryRetry();
-
-            foreach (var list in lists)
-            {
-                xml = Regex.Replace(xml, list.Id.ToString(), string.Format("{{listid:{0}}}", list.Title), RegexOptions.IgnoreCase);
-            }
-            xml = Regex.Replace(xml, web.Id.ToString(), "{siteid}", RegexOptions.IgnoreCase);
-            if (web.ServerRelativeUrl != "/")
-            {
-                xml = Regex.Replace(xml, web.ServerRelativeUrl, "{site}", RegexOptions.IgnoreCase);
-            }
-
-            return xml;
-        }
-
         private static void SetProperties(string xml, WebPartDefinition defaultWebPart, PnPMonitoredScope scope)
         {
             try
@@ -398,8 +378,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     {
                         var pageUrl = provider.GetUrl();
                         var file = modelProvider.GetFile(pageUrl);
-                        files.Add(file);
-                        this.CreateLocalFile(web, pageUrl, connector);
+                        if (null != file)
+                        {
+                            files.Add(file);
+                            this.CreateLocalFile(web, pageUrl, connector);
+                        }
+                        else
+                        {
+                            scope.LogError("File does not exist. URL:{0}.", pageUrl);
+                        }
                     }
                     catch (Exception exception)
                     {

@@ -20,21 +20,30 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.File
 
         public Model.File GetFile(string pageUrl)
         {
-            var provider = new WebPartsModelProvider(Web);
-            var webPartsModels = provider.Retrieve(pageUrl);
+            Model.File file = null;
+            if (pageUrl.StartsWith(Web.ServerRelativeUrl, StringComparison.OrdinalIgnoreCase))
+            {
+                var provider = new WebPartsModelProvider(Web);
+                var webPartsModels = provider.Retrieve(pageUrl);
 
-            var needToOverride = this.NeedToOverrideFile(Web, pageUrl);
+                var needToOverride = this.NeedToOverrideFile(Web, pageUrl);
 
-            var folderPath = this.GetFolderPath(pageUrl);
+                var folderPath = this.GetFolderPath(pageUrl);
 
-            var localFilePath = this.GetFilePath(pageUrl);
+                var localFilePath = this.GetFilePath(pageUrl);
 
-            return new Model.File(localFilePath, folderPath, needToOverride, webPartsModels, null);
+                file = new Model.File(localFilePath, folderPath, needToOverride, webPartsModels, null);
+            }
+            return file;
         }
 
         private string GetFolderPath(string pageUrl)
         {
-            var folder = pageUrl.Replace(Web.ServerRelativeUrl, "~site");
+            var folder = "";
+            if (pageUrl.StartsWith(Web.ServerRelativeUrl, StringComparison.OrdinalIgnoreCase))
+            {
+                folder = TokenParser.CombineUrl("~site", pageUrl.Substring(Web.ServerRelativeUrl.Length));
+            }
             return folder.Substring(0, folder.LastIndexOf("/", StringComparison.Ordinal));
         }
 
