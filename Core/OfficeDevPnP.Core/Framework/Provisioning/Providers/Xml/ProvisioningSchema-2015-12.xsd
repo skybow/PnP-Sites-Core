@@ -2385,7 +2385,7 @@
       </xsd:documentation>
     </xsd:annotation>
 
-    <xsd:all>
+    <xsd:sequence>
       <xsd:element name="WebParts" minOccurs="0">
         <xsd:annotation>
           <xsd:documentation xml:lang="en">
@@ -2413,7 +2413,7 @@
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="Security" type="pnp:ObjectSecurity" minOccurs="0" maxOccurs="1" />
-    </xsd:all>
+    </xsd:sequence>
 
     <xsd:attribute name="Url" type="xsd:string" use="required">
       <xsd:annotation>
@@ -2447,8 +2447,10 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:complexContent>      
-      <xsd:extension base="Page">        
-        <xsd:attribute name="HTML" type="xsd:string"></xsd:attribute>
+      <xsd:extension base="Page">
+        <xsd:sequence>
+          <xsd:element name="HTML" type="xsd:string"/>
+        </xsd:sequence>
       </xsd:extension>      
     </xsd:complexContent>
   </xsd:complexType>

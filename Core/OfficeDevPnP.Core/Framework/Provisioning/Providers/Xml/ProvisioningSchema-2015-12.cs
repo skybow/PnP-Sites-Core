@@ -4271,11 +4271,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
         private int sequenceField;
     
         private bool sequenceFieldSpecified;
-
+    
         private string rightsField;
 
         private bool rightsFieldSpecified;
-    
+
         private string urlField;
     
         private bool enabledField;
@@ -4902,7 +4902,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
         private string hTMLField;
     
         /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
         public string HTML {
             get {
                 return this.hTMLField;
