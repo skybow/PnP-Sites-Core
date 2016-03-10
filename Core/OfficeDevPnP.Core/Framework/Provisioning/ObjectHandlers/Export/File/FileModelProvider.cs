@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.SharePoint.Client;
 using OfficeDevPnP.Core.Framework.Provisioning.Connectors;
 using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebParts;
+using System.Collections.Generic;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.File
 {
@@ -11,6 +12,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.File
     {
         protected Web Web { get; set; }
         protected FileConnectorBase Connector { get; set; }
+
+        private Dictionary<string, Model.File> m_files = null;
 
         public FileModelProvider(Web web, FileConnectorBase connector)
         {
@@ -26,13 +29,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.File
                 var provider = new WebPartsModelProvider(Web);
                 var webPartsModels = provider.Retrieve(pageUrl);
 
-                var needToOverride = this.NeedToOverrideFile(Web, pageUrl);
-
                 var folderPath = this.GetFolderPath(pageUrl);
 
                 var localFilePath = this.GetFilePath(pageUrl);
 
-                file = new Model.File(localFilePath, folderPath, needToOverride, webPartsModels, null);
+                file = new Model.File(localFilePath, folderPath, false, webPartsModels, null);
+
+                AddFileToSetOverrideFlagStack(file, pageUrl);
             }
             return file;
         }
@@ -55,13 +58,59 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.File
             return Path.Combine(this.Connector.GetConnectionString(), filePath);
         }
 
-        private bool NeedToOverrideFile(Web web, string pageUrl)
+        private void AddFileToSetOverrideFlagStack( Model.File file, string fileUrl )
         {
-            //var file = web.GetFileByServerRelativeUrl(pageUrl);
-            //web.Context.Load(file, f => f.Versions);
-            //web.Context.ExecuteQueryRetry();
-            //return file.Versions.Any();
-            return true;
+            if (null == m_files)
+            {
+                m_files = new Dictionary<string, Model.File>();
+            }
+            m_files.Add( fileUrl, file );
+        }
+
+        internal void UpdateFilesOverwriteFlag()
+        {
+            if( (null != m_files )&&( 0 < m_files.Count ) )
+            {
+                Web web = this.Web;
+                ClientRuntimeContext ctx = web.Context;
+
+                Dictionary<string, Microsoft.SharePoint.Client.File> dictSPFiles = new Dictionary<string, Microsoft.SharePoint.Client.File>();
+                            
+                ExceptionHandlingScope scope = new ExceptionHandlingScope(ctx);
+
+                using (scope.StartScope())
+                {
+                    using (scope.StartTry())
+                    {
+                        foreach (KeyValuePair<string, Model.File> pair in m_files)
+                        {
+                            string fileUrl = pair.Key;
+
+                            var file = web.GetFileByServerRelativeUrl(fileUrl);
+                            web.Context.Load(file, f => f.Versions, f => f.Exists);
+
+                            dictSPFiles.Add(fileUrl, file);
+                        }
+                    }
+                    using (scope.StartCatch())
+                    {
+                    }
+                    using (scope.StartFinally())
+                    {
+                    }
+                }
+                ctx.ExecuteQuery();
+
+                foreach (KeyValuePair<string, Microsoft.SharePoint.Client.File> pair in dictSPFiles)
+                {
+                    Microsoft.SharePoint.Client.File spfile = pair.Value;
+                    if ((null != spfile) && spfile.Exists)
+                    {
+                        Model.File file = m_files[pair.Key];
+                        file.Overwrite = pair.Value.Versions.Any();
+                    }
+                }
+            }
         }
     }
 }

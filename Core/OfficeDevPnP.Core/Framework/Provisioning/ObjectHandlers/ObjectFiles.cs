@@ -394,6 +394,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     }
                 }
 
+                modelProvider.UpdateFilesOverwriteFlag();
+
                 template.Files = files;
 
                 // Impossible to return all files in the site currently
