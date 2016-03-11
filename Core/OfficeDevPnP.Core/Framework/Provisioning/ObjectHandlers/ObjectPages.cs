@@ -176,7 +176,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 }
 
                 var html = parser.ParseString(contentPage.Html);
-                web.AddHtmlToWikiPage(url, html);
+                if (!string.IsNullOrEmpty(html))
+                {
+                    web.AddHtmlToWikiPage(url, html);
+                }
                 file.CheckIn(String.Empty, CheckinType.MajorCheckIn);
                 return;
             }
