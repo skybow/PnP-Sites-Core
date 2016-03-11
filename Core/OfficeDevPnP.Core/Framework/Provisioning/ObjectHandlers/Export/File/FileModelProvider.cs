@@ -10,10 +10,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.File
 {
     internal class FileModelProvider
     {
+        internal class ModelFileData
+        {
+            internal Model.File File { get; set; }
+            internal string FileUrl { get; set; }
+        }
+        public const int FilesCountsRequestScope = 20;
+
         protected Web Web { get; set; }
         protected FileConnectorBase Connector { get; set; }
 
-        private Dictionary<string, Model.File> m_files = null;
+        private List<ModelFileData> m_files = null;
 
         public FileModelProvider(Web web, FileConnectorBase connector)
         {
@@ -62,9 +69,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.File
         {
             if (null == m_files)
             {
-                m_files = new Dictionary<string, Model.File>();
+                m_files = new List<ModelFileData>();
             }
-            m_files.Add( fileUrl, file );
+            m_files.Add(new ModelFileData()
+            {
+                File = file,
+                FileUrl = fileUrl
+            });
         }
 
         internal void UpdateFilesOverwriteFlag()
@@ -76,38 +87,43 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.File
 
                 Dictionary<string, Microsoft.SharePoint.Client.File> dictSPFiles = new Dictionary<string, Microsoft.SharePoint.Client.File>();
                             
-                ExceptionHandlingScope scope = new ExceptionHandlingScope(ctx);
-
-                using (scope.StartScope())
+                int count = m_files.Count;
+                int idx = 0;
+                while (idx < count)
                 {
-                    using (scope.StartTry())
+                    ExceptionHandlingScope scope = new ExceptionHandlingScope(ctx);
+                    using (scope.StartScope())
                     {
-                        foreach (KeyValuePair<string, Model.File> pair in m_files)
+                        using (scope.StartTry())
                         {
-                            string fileUrl = pair.Key;
+                            for (int i = idx; i < Math.Min(m_files.Count, FilesCountsRequestScope + idx); i++)
+                            {
+                                ModelFileData fileData = m_files[i];
 
-                            var file = web.GetFileByServerRelativeUrl(fileUrl);
-                            web.Context.Load(file, f => f.Versions, f => f.Exists);
+                                var file = web.GetFileByServerRelativeUrl(fileData.FileUrl);
+                                ctx.Load(file, f => f.Versions, f => f.Exists);
 
-                            dictSPFiles.Add(fileUrl, file);
+                                dictSPFiles.Add(fileData.FileUrl, file);
+                            }
+                        }
+                        using (scope.StartCatch())
+                        {
+                        }
+                        using (scope.StartFinally())
+                        {
                         }
                     }
-                    using (scope.StartCatch())
-                    {
-                    }
-                    using (scope.StartFinally())
-                    {
-                    }
+                    ctx.ExecuteQuery();
+                    idx += FilesCountsRequestScope;
                 }
-                ctx.ExecuteQuery();
 
-                foreach (KeyValuePair<string, Microsoft.SharePoint.Client.File> pair in dictSPFiles)
+                foreach (var fileData in m_files)
                 {
-                    Microsoft.SharePoint.Client.File spfile = pair.Value;
-                    if ((null != spfile) && spfile.Exists)
+                    string fileUrl = fileData.FileUrl;
+                    Microsoft.SharePoint.Client.File file = null;
+                    if (dictSPFiles.TryGetValue(fileUrl, out file))
                     {
-                        Model.File file = m_files[pair.Key];
-                        file.Overwrite = pair.Value.Versions.Any();
+                        fileData.File.Overwrite = file.Exists && file.Versions.Any();
                     }
                 }
             }
