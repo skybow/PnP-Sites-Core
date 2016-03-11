@@ -10,17 +10,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.File
 {
     internal class FileModelProvider
     {
-        internal class ModelFileData
-        {
-            internal Model.File File { get; set; }
-            internal string FileUrl { get; set; }
-        }
-        public const int FilesCountsRequestScope = 20;
-
         protected Web Web { get; set; }
         protected FileConnectorBase Connector { get; set; }
-
-        private List<ModelFileData> m_files = null;
 
         public FileModelProvider(Web web, FileConnectorBase connector)
         {
@@ -36,13 +27,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.File
                 var provider = new WebPartsModelProvider(Web);
                 var webPartsModels = provider.Retrieve(pageUrl);
 
+                var needToOverride = this.NeedToOverrideFile(Web, pageUrl);
+
                 var folderPath = this.GetFolderPath(pageUrl);
 
                 var localFilePath = this.GetFilePath(pageUrl);
 
-                file = new Model.File(localFilePath, folderPath, false, webPartsModels, null);
-
-                AddFileToSetOverrideFlagStack(file, pageUrl);
+                file = new Model.File(localFilePath, folderPath, needToOverride, webPartsModels, null);
             }
             return file;
         }
@@ -65,68 +56,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.File
             return Path.Combine(this.Connector.GetConnectionString(), filePath);
         }
 
-        private void AddFileToSetOverrideFlagStack( Model.File file, string fileUrl )
+        private bool NeedToOverrideFile(Web web, string pageUrl)
         {
-            if (null == m_files)
-            {
-                m_files = new List<ModelFileData>();
-            }
-            m_files.Add(new ModelFileData()
-            {
-                File = file,
-                FileUrl = fileUrl
-            });
-        }
+            //Commented because List forms and list views does not have versions.
 
-        internal void UpdateFilesOverwriteFlag()
-        {
-            if( (null != m_files )&&( 0 < m_files.Count ) )
-            {
-                Web web = this.Web;
-                ClientRuntimeContext ctx = web.Context;
-
-                Dictionary<string, Microsoft.SharePoint.Client.File> dictSPFiles = new Dictionary<string, Microsoft.SharePoint.Client.File>();
-                            
-                int count = m_files.Count;
-                int idx = 0;
-                while (idx < count)
-                {
-                    ExceptionHandlingScope scope = new ExceptionHandlingScope(ctx);
-                    using (scope.StartScope())
-                    {
-                        using (scope.StartTry())
-                        {
-                            for (int i = idx; i < Math.Min(m_files.Count, FilesCountsRequestScope + idx); i++)
-                            {
-                                ModelFileData fileData = m_files[i];
-
-                                var file = web.GetFileByServerRelativeUrl(fileData.FileUrl);
-                                ctx.Load(file, f => f.Versions, f => f.Exists);
-
-                                dictSPFiles.Add(fileData.FileUrl, file);
-                            }
-                        }
-                        using (scope.StartCatch())
-                        {
-                        }
-                        using (scope.StartFinally())
-                        {
-                        }
-                    }
-                    ctx.ExecuteQuery();
-                    idx += FilesCountsRequestScope;
-                }
-
-                foreach (var fileData in m_files)
-                {
-                    string fileUrl = fileData.FileUrl;
-                    Microsoft.SharePoint.Client.File file = null;
-                    if (dictSPFiles.TryGetValue(fileUrl, out file))
-                    {
-                        fileData.File.Overwrite = file.Exists && file.Versions.Any();
-                    }
-                }
-            }
+            //var file = web.GetFileByServerRelativeUrl(pageUrl);
+            //web.Context.Load(file, f => f.Versions);
+            //web.Context.ExecuteQueryRetry();
+            //return file.Versions.Any();
+            return false;
         }
     }
 }

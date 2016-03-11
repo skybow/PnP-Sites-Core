@@ -20,8 +20,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         private readonly Guid PUBLISHING_FEATURE_WEB = new Guid("94c94ca6-b32f-4da9-a9e3-1f3d343d7ecb");
         private readonly Guid PUBLISHING_FEATURE_SITE = new Guid("f6924d36-2fa8-4f0b-b16d-06b7250180fa");
         private const string PAGE_LAYOUT_CONTENT_TYPE_ID = "0x01010007FF3E057FA8AB4AA42FCB67B453FFC100E214EEE741181F4E9F7ACC43278EE811";
-        private const string MASTER_PAGE_CONTENT_TYPE_ID = "0x010105";
-        private const string URL_TOKEN_REGEX = @"^(?<siteCollectionUrl>(?<webApplicationUrl>http(s)?\:\/\/(\w|\-|\.)+\/)(\w|\-)*\/(?<siteCollection>(\w|\-)+))(\/(?<subSite>(\w|\-)+))*";
+        private const string MASTER_PAGE_CONTENT_TYPE_ID = "0x010105";        
 
         public override string Name
         {
@@ -53,7 +52,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         private void ExtractMasterPagesAndPageLayouts(Web web, ProvisioningTemplate template, PnPMonitoredScope scope, ProvisioningTemplateCreationInformation creationInfo)
         {
-            String webApplicationUrl = GetWebApplicationUrl(web.Url);
+            String webApplicationUrl = GetWebApplicationUrl(web);
 
             if (!String.IsNullOrEmpty(webApplicationUrl))
             {
@@ -192,20 +191,26 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         /// </summary>
         /// <param name="webUrl">The target web site URL</param>
         /// <returns>The Web Application URL</returns>
-        private String GetWebApplicationUrl(String webUrl)
+        private String GetWebApplicationUrl(Web web)
         {
-            String result = null;
+            String webAppUrl = "";
 
-            System.Text.RegularExpressions.Regex regex =
-                new System.Text.RegularExpressions.Regex(URL_TOKEN_REGEX);
+            web.EnsureProperties(w => w.Url, w => w.ServerRelativeUrl);
 
-            var match = regex.Match(webUrl);
-            if (match.Success)
+            if (web.ServerRelativeUrl == "/")
             {
-                result = match.Groups["webApplicationUrl"].Value;
+                webAppUrl = web.Url;
             }
-
-            return (result);
+            else
+            {
+                int idx = web.Url.LastIndexOf(web.ServerRelativeUrl, StringComparison.OrdinalIgnoreCase);
+                if (-1 != idx)
+                {
+                    webAppUrl = web.Url.Substring(0, idx);
+                }
+            }
+            
+            return webAppUrl;
         }
 
         private IEnumerable<PageLayout> GetAvailablePageLayouts(Web web)

@@ -132,9 +132,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                             scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ComposedLooks_ExtractObjects_Creating_SharePointConnector);
                             // Let's create a SharePoint connector since our files anyhow are in SharePoint at this moment
                             TokenParser parser = new TokenParser(web, template);
-                            DownLoadFile(spConnector, spConnectorRoot, creationInfo.FileConnector, web.Url, parser.ParseString(composedLook.BackgroundFile), scope);
-                            DownLoadFile(spConnector, spConnectorRoot, creationInfo.FileConnector, web.Url, parser.ParseString(composedLook.ColorFile), scope);
-                            DownLoadFile(spConnector, spConnectorRoot, creationInfo.FileConnector, web.Url, parser.ParseString(composedLook.FontFile), scope);
+                            DownLoadFile(spConnector, spConnectorRoot, creationInfo.FileConnector, web, parser.ParseString(composedLook.BackgroundFile), scope);
+                            DownLoadFile(spConnector, spConnectorRoot, creationInfo.FileConnector, web, parser.ParseString(composedLook.ColorFile), scope);
+                            DownLoadFile(spConnector, spConnectorRoot, creationInfo.FileConnector, web, parser.ParseString(composedLook.FontFile), scope);
                         }
                         // Create file entries for the custom theme files  
                         if (!string.IsNullOrEmpty(template.ComposedLook.BackgroundFile))
@@ -209,9 +209,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ComposedLooks_ExtractObjects_Creating_SharePointConnector);
                         // Let's create a SharePoint connector since our files anyhow are in SharePoint at this moment
                         // Download the theme/branding specific files
-                        DownLoadFile(spConnector, spConnectorRoot, creationInfo.FileConnector, web.Url, theme.BackgroundImage, scope);
-                        DownLoadFile(spConnector, spConnectorRoot, creationInfo.FileConnector, web.Url, theme.Theme, scope);
-                        DownLoadFile(spConnector, spConnectorRoot, creationInfo.FileConnector, web.Url, theme.Font, scope);
+                        DownLoadFile(spConnector, spConnectorRoot, creationInfo.FileConnector, web, theme.BackgroundImage, scope);
+                        DownLoadFile(spConnector, spConnectorRoot, creationInfo.FileConnector, web, theme.Theme, scope);
+                        DownLoadFile(spConnector, spConnectorRoot, creationInfo.FileConnector, web, theme.Font, scope);
                     }
 
                     // Create file entries for the custom theme files, but only if it's a root site
@@ -252,7 +252,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return template;
         }
 
-        private void DownLoadFile(SharePointConnector reader, SharePointConnector readerRoot, FileConnectorBase writer, string webUrl, string asset, PnPMonitoredScope scope)
+        private void DownLoadFile(SharePointConnector reader, SharePointConnector readerRoot, FileConnectorBase writer, Web web, string asset, PnPMonitoredScope scope)
         {
 
             // No file passed...leave
@@ -267,11 +267,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             SharePointConnector readerToUse;
             Model.File f = GetComposedLookFile(asset);
 
-            // Strip the /sites/root part from /sites/root/lib/folder structure
-            Uri u = new Uri(webUrl);
-            if (f.Folder.IndexOf(u.PathAndQuery, StringComparison.InvariantCultureIgnoreCase) > -1)
+            if (f.Folder.StartsWith(web.ServerRelativeUrl, StringComparison.OrdinalIgnoreCase))
             {
-                f.Folder = f.Folder.Replace(u.PathAndQuery, "");
+                f.Folder = f.Folder.Substring(web.ServerRelativeUrl.Length);
             }
 
             // in case of a theme catalog we need to use the root site reader as that list only exists on root site level

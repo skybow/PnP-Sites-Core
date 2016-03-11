@@ -152,12 +152,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             {
                 SharePointConnector connector = new SharePointConnector(web.Context, web.Url, "dummy");
 
-                Uri u = new Uri(web.Url);
-                if (folderPath.IndexOf(u.PathAndQuery, StringComparison.InvariantCultureIgnoreCase) > -1)
+                if (folderPath.StartsWith( web.ServerRelativeUrl, StringComparison.OrdinalIgnoreCase ) )
                 {
-                    folderPath = folderPath.Replace(u.PathAndQuery, "");
+                    folderPath = folderPath.Substring(web.ServerRelativeUrl.Length);
                 }
-
                 using (Stream s = connector.GetFileStream(fileName, folderPath))
                 {
                     if (s != null)

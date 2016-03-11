@@ -90,7 +90,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebPart
 
         private string TokenizeXml(string xml)
         {
-            if (Web.ServerRelativeUrl != null)
+            if (!string.IsNullOrEmpty(Web.ServerRelativeUrl) && !Web.ServerRelativeUrl.Equals("/"))
             {
                 xml = xml.Replace(Web.ServerRelativeUrl, "{site}");
             }
