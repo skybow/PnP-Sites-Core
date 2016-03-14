@@ -94,10 +94,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 var folderPath = fullUri.Segments.Take(fullUri.Segments.Count() - 1).ToArray().Aggregate((i, x) => i + x).TrimEnd('/');
                                 var fileName = fullUri.Segments[fullUri.Segments.Count() - 1];
 
+                                string fileSrc = (null != template.Connector) ?
+                                    Path.Combine(template.Connector.GetConnectionString(), fileName) : fileName;
                                 var publishingFile = new Model.File()
                                 {
                                     Folder = Tokenize(folderPath, web.Url),
-                                    Src = HttpUtility.UrlDecode(fileName),
+                                    Src = HttpUtility.UrlDecode(fileSrc),
                                     Overwrite = true,
                                 };
 

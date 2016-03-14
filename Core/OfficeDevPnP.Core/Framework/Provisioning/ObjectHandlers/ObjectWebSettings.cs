@@ -57,7 +57,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                             if (PersistFile(web, creationInfo, scope, web.MasterUrl))
                             {
-                                template.Files.Add(GetTemplateFile(web, web.MasterUrl));
+                                template.Files.Add(GetTemplateFile(web, web.MasterUrl, template.Connector));
                             }
                         }
                     }
@@ -68,7 +68,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         {
                             if (PersistFile(web, creationInfo, scope, web.CustomMasterUrl))
                             {
-                                template.Files.Add(GetTemplateFile(web, web.CustomMasterUrl));
+                                template.Files.Add(GetTemplateFile(web, web.CustomMasterUrl, template.Connector));
                             }
                         }
                     }
@@ -76,14 +76,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     {
                         if (PersistFile(web, creationInfo, scope, web.SiteLogoUrl))
                         {
-                            template.Files.Add(GetTemplateFile(web, web.SiteLogoUrl));
+                            template.Files.Add(GetTemplateFile(web, web.SiteLogoUrl, template.Connector));
                         }
                     }
                     if (!string.IsNullOrEmpty(web.AlternateCssUrl))
                     {
                         if (PersistFile(web, creationInfo, scope, web.AlternateCssUrl))
                         {
-                            template.Files.Add(GetTemplateFile(web, web.AlternateCssUrl));
+                            template.Files.Add(GetTemplateFile(web, web.AlternateCssUrl, template.Connector));
                         }
                     }
                 }
@@ -96,7 +96,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         }
 
         //TODO: Candidate for cleanup
-        private Model.File GetTemplateFile(Web web, string serverRelativeUrl)
+        private Model.File GetTemplateFile(Web web, string serverRelativeUrl, FileConnectorBase connector)
         {
 
             var webServerUrl = web.EnsureProperty(w => w.Url);
@@ -110,7 +110,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             var templateFile = new Model.File()
             {
                 Folder = Tokenize(folderPath, web.Url),
-                Src = fileName,
+                Src = (null != connector) ? Path.Combine(connector.GetConnectionString(), fileName) : fileName,
                 Overwrite = true,
             };
 

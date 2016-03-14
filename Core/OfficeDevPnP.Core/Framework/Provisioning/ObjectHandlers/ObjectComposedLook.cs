@@ -139,19 +139,19 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         // Create file entries for the custom theme files  
                         if (!string.IsNullOrEmpty(template.ComposedLook.BackgroundFile))
                         {
-                            var f = GetComposedLookFile(template.ComposedLook.BackgroundFile);
+                            var f = GetComposedLookFile(template.ComposedLook.BackgroundFile, template.Connector);
                             f.Folder = Tokenize(f.Folder, web.Url);
                             template.Files.Add(f);
                         }
                         if (!string.IsNullOrEmpty(template.ComposedLook.ColorFile))
                         {
-                            var f = GetComposedLookFile(template.ComposedLook.ColorFile);
+                            var f = GetComposedLookFile(template.ComposedLook.ColorFile, template.Connector);
                             f.Folder = Tokenize(f.Folder, web.Url);
                             template.Files.Add(f);
                         }
                         if (!string.IsNullOrEmpty(template.ComposedLook.FontFile))
                         {
-                            var f = GetComposedLookFile(template.ComposedLook.FontFile);
+                            var f = GetComposedLookFile(template.ComposedLook.FontFile, template.Connector);
                             f.Folder = Tokenize(f.Folder, web.Url);
                             template.Files.Add(f);
                         }
@@ -220,15 +220,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     {   
                         if (!string.IsNullOrEmpty(template.ComposedLook.BackgroundFile))
                         {
-                            template.Files.Add(GetComposedLookFile(template.ComposedLook.BackgroundFile));
+                            template.Files.Add(GetComposedLookFile(template.ComposedLook.BackgroundFile, template.Connector));
                         }
                         if (!string.IsNullOrEmpty(template.ComposedLook.ColorFile))
                         {
-                            template.Files.Add(GetComposedLookFile(template.ComposedLook.ColorFile));
+                            template.Files.Add(GetComposedLookFile(template.ComposedLook.ColorFile, template.Connector));
                         }
                         if (!string.IsNullOrEmpty(template.ComposedLook.FontFile))
                         {
-                            template.Files.Add(GetComposedLookFile(template.ComposedLook.FontFile));
+                            template.Files.Add(GetComposedLookFile(template.ComposedLook.FontFile, template.Connector));
                         }
                     }
                     // If a base template is specified then use that one to "cleanup" the generated template model
@@ -265,7 +265,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             ;
 
             SharePointConnector readerToUse;
-            Model.File f = GetComposedLookFile(asset);
+            Model.File f = GetComposedLookFile(asset, null);
 
             if (f.Folder.StartsWith(web.ServerRelativeUrl, StringComparison.OrdinalIgnoreCase))
             {
@@ -316,11 +316,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return (result);
         }
 
-        private Model.File GetComposedLookFile(string asset)
+        private Model.File GetComposedLookFile(string asset, FileConnectorBase connector)
         {
             int index = asset.LastIndexOf("/");
             Model.File file = new Model.File();
-            file.Src = FixFileName(asset.Substring(index + 1));
+            string fileSrc = FixFileName(asset.Substring(index + 1));            
+            file.Src = (null != connector)?Path.Combine(connector.GetConnectionString(), fileSrc): fileSrc;
             file.Folder = asset.Substring(0, index);
             file.Overwrite = true;
             file.Security = null;
