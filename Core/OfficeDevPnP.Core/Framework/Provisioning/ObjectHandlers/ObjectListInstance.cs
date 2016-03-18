@@ -1146,6 +1146,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     contentTypesToRemove.AddRange(createdList.ContentTypes);
                 }
 
+                List<ContentType> listCTypes = new List<ContentType>();
+                listCTypes.AddRange(createdList.ContentTypes);
 
                 var contentTypeAdded = false;
                 ContentTypeBinding defaultCtBinding = null;
@@ -1156,7 +1158,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     {
                         // Check if CT is already available
                         var name = contentType.EnsureProperty(ct => ct.Name);
-                        if (!createdList.ContentTypes.AsEnumerable().Any(item => item.Name == name))
+                        if (!listCTypes.Any( ct=> ct.Name == name ) )
                         {
                             if (createdList.ContentTypesEnabled == false)
                             {
@@ -1166,6 +1168,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                             }
 
                             createdList.ContentTypes.AddExistingContentType(contentType);
+                            listCTypes.Add(contentType);
                             contentTypeAdded = true;
                         }
                         if (ctBinding.Default)
