@@ -372,12 +372,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 var providers = this.GetUrlProviders(template.Lists);
                 var files = new OfficeDevPnP.Core.Framework.Provisioning.Model.FileCollection(template);
                 var modelProvider = new FileModelProvider(web, connector);
+                var parser = new TokenParser(web, new ProvisioningTemplate());
                 foreach (var provider in providers)
                 {
                     try
                     {
                         var pageUrl = provider.GetUrl();
-                        var file = modelProvider.GetFile(pageUrl);
+                        var file = modelProvider.GetFile(pageUrl, parser);
                         if (null != file)
                         {
                             files.Add(file);

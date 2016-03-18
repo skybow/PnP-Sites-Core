@@ -214,6 +214,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             {
                 var lists = this.GetListsWithPages(template);
                 var pages = new PageCollection(template);
+                var parser = new TokenParser(web, new ProvisioningTemplate());
 
                 var homePageUrl = web.GetHomePageRelativeUrl();
                 foreach (var list in lists)
@@ -224,7 +225,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                         var fileItems = listItems.AsEnumerable().Where(x => x.IsFile());
 
-                        pages.AddRange(fileItems.AsEnumerable().Select(x => GetProvider(x, homePageUrl, web).GetPage(x)));
+                        pages.AddRange(fileItems.AsEnumerable().Select(x => GetProvider(x, homePageUrl, web).GetPage(x, parser)));
                     }
                     catch (Exception exception)
                     {

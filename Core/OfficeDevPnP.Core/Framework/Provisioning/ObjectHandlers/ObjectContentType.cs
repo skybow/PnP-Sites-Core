@@ -44,7 +44,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                     foreach (var ct in template.ContentTypes.OrderBy(ct => ct.Id)) // ordering to handle references to parent content types that can be in the same template
                     {
-
                         try
                         {
 
@@ -81,14 +80,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         catch (Exception ex)
                         {
                             Log.Error(Constants.LOGGING_SOURCE_FRAMEWORK_PROVISIONING, "Could not provision content type: {0} - {1}", ex.Message, ex.StackTrace);
+
                         }
                     }
 
                 }
                 catch (Exception ex)
                 {
-
                     Log.Error(Constants.LOGGING_SOURCE_FRAMEWORK_PROVISIONING, "Could not load content type: {0} - {1}", ex.Message, ex.StackTrace);
+
                 }
             }
             return parser;
@@ -251,6 +251,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             var group = parser.ParseString(templateContentType.Group);
 
             var createdCT = web.CreateContentType(name, description, id, group);
+
             foreach (var fieldRef in templateContentType.FieldRefs)
             {
                 try

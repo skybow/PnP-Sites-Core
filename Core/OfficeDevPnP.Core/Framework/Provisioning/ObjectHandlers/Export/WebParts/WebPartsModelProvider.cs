@@ -22,13 +22,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebPart
             Web = web;
         }
 
-        public List<ModelWebPart> Retrieve(string pageUrl)
+        public List<ModelWebPart> Retrieve(string pageUrl, TokenParser parser)
         {
+            if (parser == null) { 
+                parser = new TokenParser(this.Web, new Model.ProvisioningTemplate());
+            }
             var xml = Web.GetWebPartsXml(pageUrl);
             var pageContent = Web.GetPageContent(pageUrl);
             var result = new List<ModelWebPart>();
             if (string.IsNullOrEmpty(xml)) return result;
-            xml = this.TokenizeXml(xml);
             var maches = GetWebPartXmlReqex.Matches(xml);
 
             var webPartDefinitions = this.GetWebPartDefinitionsWithServiceCall(pageUrl);
@@ -58,7 +60,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebPart
                 }
 
                 webPartXml = this.SetWebPartIdToXml(wpExportId, webPartXml);
-
+                webPartXml = this.TokenizeWebPartXml(webPartXml, parser);
                 var entity = new ModelWebPart
                 {
                     Contents = webPartXml,
@@ -83,18 +85,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebPart
         {
             var element = XElement.Parse(xml);
             element.SetAttributeValue("webpartid", id);
-            var reader = element.CreateReader();
-            reader.MoveToContent();
-            return reader.ReadOuterXml();
+            return element.ToString();
         }
 
-        private string TokenizeXml(string xml)
+        private string TokenizeWebPartXml(string xml, TokenParser parser)
         {
-            if (!string.IsNullOrEmpty(Web.ServerRelativeUrl) && !Web.ServerRelativeUrl.Equals("/"))
-            {
-                xml = xml.Replace(Web.ServerRelativeUrl, "{site}");
-            }
-            return xml.Replace(Web.Id.ToString(), "{siteid}");
+            //TODO tokenize specific properties for specific webparts
+            //Todo fix server relateive url "/" problem
+            var tokenizer = WebPartTokenizeManager.GetWebPartTokenizer(xml);
+            return tokenizer.Tokenize(xml, parser);
         }
 
         private List<WebPartDefinition> GetWebPartDefinitionsWithServiceCall(string pageUrl)

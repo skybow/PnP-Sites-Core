@@ -11,6 +11,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.Page
 {
     internal interface IPageModelProvider
     {
-        ContentPage GetPage(ListItem item);
+        ContentPage GetPage(ListItem item, TokenParser parser);
     }
 }

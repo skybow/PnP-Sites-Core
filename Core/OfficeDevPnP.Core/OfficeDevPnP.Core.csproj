@@ -549,8 +549,14 @@
     <Compile Include="Framework\Provisioning\ObjectHandlers\Export\Page\PublishingPageModelProvider.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\IWebPartTokenizer.cs" />
+    <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\V2\V2DefaultWebPartTokenizer.cs" />
+    <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\V2\V2WebPartTokenizerManager.cs" />
+    <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\V3\V3WebPartTokenizerManager.cs" />
+    <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\V3\V3DefaultWebPartTokenizer.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\WebPartsModelProvider.cs" />
     <Compile Include="Framework\Provisioning\Model\WorkflowSubscriptionCollection.cs" />
+    <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\WebPartTokenizeManager.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Extensions\PnPMonitoredScopeExtensions.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Extensions\SecurableObjectExtensions.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\ObjectContentHandlerBase.cs" />
@@ -859,6 +865,7 @@
     <Content Include="Framework\Provisioning\BaseTemplates\v16_0\STS1Template.xml" />
     <Content Include="Framework\Provisioning\BaseTemplates\v16_0\VISPRUS0Template.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <TFSBaseBuildYear>2014</TFSBaseBuildYear>
