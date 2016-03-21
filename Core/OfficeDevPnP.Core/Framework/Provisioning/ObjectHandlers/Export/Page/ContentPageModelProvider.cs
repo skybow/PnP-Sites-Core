@@ -17,7 +17,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.Page
             Provider = new WebPartsModelProvider(web);
         }
 
-        public ContentPage GetPage(ListItem item)
+        public ContentPage GetPage(ListItem item, TokenParser parser)
         {
             var html = string.Empty;
             var fieldValues = item.FieldValues;
@@ -29,7 +29,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.Page
             var isHomePage = HomePageUrl.Equals(url);
             var needToOverwrite = item.File.Versions.Any();
 
-            var webParts = Provider.Retrieve(url);
+            var webParts = Provider.Retrieve(url, parser);
             url = TokenParser.TokenizeUrl( this.Web,url);
 
             return new ContentPage(url, html, needToOverwrite, webParts, isHomePage);

@@ -19,13 +19,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.File
             Connector = connector;
         }
 
-        public Model.File GetFile(string pageUrl)
+        public Model.File GetFile(string pageUrl, TokenParser parser)
         {
             Model.File file = null;
             if (pageUrl.StartsWith(Web.ServerRelativeUrl, StringComparison.OrdinalIgnoreCase))
             {
                 var provider = new WebPartsModelProvider(Web);
-                var webPartsModels = provider.Retrieve(pageUrl);
+                var webPartsModels = provider.Retrieve(pageUrl, parser);
 
                 var needToOverride = this.NeedToOverrideFile(Web, pageUrl);
 

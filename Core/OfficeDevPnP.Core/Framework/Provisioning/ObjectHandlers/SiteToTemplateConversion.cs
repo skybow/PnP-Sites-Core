@@ -189,20 +189,28 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                 foreach (var handler in objectHandlers)
                 {
-                    if (handler.WillProvision(web, template))
+                    try
                     {
-                        if (messagesDelegate != null)
+                        if (handler.WillProvision(web, template))
                         {
-                            handler.MessagesDelegate = messagesDelegate;
-                        }
-                        if (handler.ReportProgress && progressDelegate != null)
-                        {
-                            progressDelegate(handler.Name, step, count);
-                            step++;
-                        }
-                        tokenParser = handler.ProvisionObjects(web, template, tokenParser, provisioningInfo);
+                            if (messagesDelegate != null)
+                            {
+                                handler.MessagesDelegate = messagesDelegate;
+                            }
+                            if (handler.ReportProgress && progressDelegate != null)
+                            {
+                                progressDelegate(handler.Name, step, count);
+                                step++;
+                            }
+                            tokenParser = handler.ProvisionObjects(web, template, tokenParser, provisioningInfo);
 
+                        }
                     }
+                    catch (System.Exception ex)
+                    {
+                        throw ex;
+                    }
+
                 }
             }
         }

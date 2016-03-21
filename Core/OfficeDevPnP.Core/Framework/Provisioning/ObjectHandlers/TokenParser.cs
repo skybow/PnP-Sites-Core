@@ -8,6 +8,7 @@ using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitions;
 using System.Resources;
 using System.Collections;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 {
@@ -258,6 +259,31 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 }
             }
 
+            return input;
+        }
+
+        public string TokenizeString(string input)
+        {
+            if (!string.IsNullOrEmpty(input))
+            {
+                foreach (var token in _tokens)
+                {
+                    try
+                    {
+                        var replaceValue = token.GetReplaceValue();
+                        var tokenToSet = token.GetTokens().FirstOrDefault();
+                        if (tokenToSet != null && !string.IsNullOrEmpty(replaceValue) && replaceValue != "/")
+                        {
+                            var regex = new Regex(replaceValue, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                            input = regex.Replace(input, tokenToSet);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                }
+            }
             return input;
         }
 

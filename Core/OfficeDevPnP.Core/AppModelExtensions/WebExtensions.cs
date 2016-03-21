@@ -1028,8 +1028,7 @@ namespace Microsoft.SharePoint.Client
         /// <param name="applyingInformation">Specified additional settings and or properties</param>
         public static void ApplyProvisioningTemplate(this Web web, ProvisioningTemplate template, ProvisioningTemplateApplyingInformation applyingInformation = null)
         {
-            // Call actual handler
-            new SiteToTemplateConversion().ApplyRemoteTemplate(web, template, applyingInformation);
+                new SiteToTemplateConversion().ApplyRemoteTemplate(web, template, applyingInformation);
         }
 
         /// <summary>
