@@ -26,58 +26,58 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     try
                     {
 
-                        bool executeQueryNeeded = false;
-                        if (executeQueryNeeded)
-                        {
-                            web.Context.ExecuteQueryRetry();
-                        }
-
-                        if (String.IsNullOrEmpty(template.ComposedLook.ColorFile) &&
-                            String.IsNullOrEmpty(template.ComposedLook.FontFile) &&
-                            String.IsNullOrEmpty(template.ComposedLook.BackgroundFile))
-                        {
-                            // Apply OOB theme
-                            web.SetComposedLookByUrl(template.ComposedLook.Name);
-                        }
-                        else
-                        {
-                            // Apply custom theme
-                            string colorFile = null;
-                            if (!string.IsNullOrEmpty(template.ComposedLook.ColorFile))
-                            {
-                                colorFile = parser.ParseString(template.ComposedLook.ColorFile);
-                            }
-                            string backgroundFile = null;
-                            if (!string.IsNullOrEmpty(template.ComposedLook.BackgroundFile))
-                            {
-                                backgroundFile = parser.ParseString(template.ComposedLook.BackgroundFile);
-                            }
-                            string fontFile = null;
-                            if (!string.IsNullOrEmpty(template.ComposedLook.FontFile))
-                            {
-                                fontFile = parser.ParseString(template.ComposedLook.FontFile);
-                            }
-
-                            string masterUrl = null;
-                            if (template.WebSettings != null && !string.IsNullOrEmpty(template.WebSettings.MasterPageUrl))
-                            {
-                                masterUrl = parser.ParseString(template.WebSettings.MasterPageUrl);
-                            }
-                            web.CreateComposedLookByUrl(template.ComposedLook.Name, colorFile, fontFile, backgroundFile, masterUrl);
-                            web.SetComposedLookByUrl(template.ComposedLook.Name, colorFile, fontFile, backgroundFile, masterUrl);
-
-                            var composedLookJson = JsonConvert.SerializeObject(template.ComposedLook);
-
-                            web.SetPropertyBagValue("_PnP_ProvisioningTemplateComposedLookInfo", composedLookJson);
-                        }
-
-                        // Persist composed look info in property bag
-
+                    bool executeQueryNeeded = false;
+                    if (executeQueryNeeded)
+                    {
+                        web.Context.ExecuteQueryRetry();
                     }
+
+                    if (String.IsNullOrEmpty(template.ComposedLook.ColorFile) &&
+                        String.IsNullOrEmpty(template.ComposedLook.FontFile) &&
+                        String.IsNullOrEmpty(template.ComposedLook.BackgroundFile))
+                    {
+                        // Apply OOB theme
+                        web.SetComposedLookByUrl(template.ComposedLook.Name);
+                    }
+                    else
+                    {
+                        // Apply custom theme
+                        string colorFile = null;
+                        if (!string.IsNullOrEmpty(template.ComposedLook.ColorFile))
+                        {
+                            colorFile = parser.ParseString(template.ComposedLook.ColorFile);
+                        }
+                        string backgroundFile = null;
+                        if (!string.IsNullOrEmpty(template.ComposedLook.BackgroundFile))
+                        {
+                            backgroundFile = parser.ParseString(template.ComposedLook.BackgroundFile);
+                        }
+                        string fontFile = null;
+                        if (!string.IsNullOrEmpty(template.ComposedLook.FontFile))
+                        {
+                            fontFile = parser.ParseString(template.ComposedLook.FontFile);
+                        }
+
+                        string masterUrl = null;
+                        if (template.WebSettings != null && !string.IsNullOrEmpty(template.WebSettings.MasterPageUrl))
+                        {
+                            masterUrl = parser.ParseString(template.WebSettings.MasterPageUrl);
+                        }
+                        web.CreateComposedLookByUrl(template.ComposedLook.Name, colorFile, fontFile, backgroundFile, masterUrl);
+                        web.SetComposedLookByUrl(template.ComposedLook.Name, colorFile, fontFile, backgroundFile, masterUrl);
+
+                        var composedLookJson = JsonConvert.SerializeObject(template.ComposedLook);
+
+                        web.SetPropertyBagValue("_PnP_ProvisioningTemplateComposedLookInfo", composedLookJson);
+                    }
+
+                    // Persist composed look info in property bag
+
+                }
                     catch (Exception ex)
                     {
                         Log.Error(Constants.LOGGING_SOURCE_FRAMEWORK_PROVISIONING, "Could not provision ComposedLook: {0} - {1}", ex.Message, ex.StackTrace);
-                    }
+            }
 
                 }
             }

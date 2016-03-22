@@ -765,7 +765,7 @@ namespace Microsoft.SharePoint.Client
 
             // Ensure other content-type properties
             contentType.EnsureProperties(c => c.Id, c => c.SchemaXml, c => c.FieldLinks.Include(fl => fl.Id, fl => fl.Required, fl => fl.Hidden));
-            field.EnsureProperties(f => f.Id, f => f.SchemaXml);
+            field.EnsureProperties(f => f.Id, f => f.SchemaXmlWithResourceTokens);
 
             Log.Info(Constants.LOGGING_SOURCE, CoreResources.FieldAndContentTypeExtensions_AddField0ToContentType1, field.Id, contentType.Id);
 
@@ -774,8 +774,7 @@ namespace Microsoft.SharePoint.Client
             var flink = contentType.FieldLinks.FirstOrDefault(fld => fld.Id == field.Id);
             if (flink == null)
             {
-                XElement fieldElement = XElement.Parse(field.SchemaXml);
-
+                XElement fieldElement = XElement.Parse(field.SchemaXmlWithResourceTokens);
                 //can't update field if it was deployed with a version attribute
                 if (fieldElement.Attribute("Version") == null)
                 {
@@ -1230,6 +1229,30 @@ namespace Microsoft.SharePoint.Client
         }
 
         /// <summary>
+        /// Searches for the content type with the closest match to the value of the specified content type ID. 
+        /// If the search finds two matches, the shorter ID is returned. 
+        /// </summary>
+        /// <param name="contentTypes">Content type collection to search</param>
+        /// <param name="contentTypeId">Complete ID for the content type to search</param>
+        /// <returns>Content type Id object or null if was not found</returns>
+        public static ContentTypeId BestMatch(this ContentTypeCollection contentTypes, string contentTypeId)
+        {
+            if (string.IsNullOrEmpty(contentTypeId))
+            {
+                throw new ArgumentNullException("contentTypeId");
+            }
+            var ctx = contentTypes.Context;
+            contentTypes.EnsureProperties(c => c.Include(ct => ct.Id));
+
+            var res = contentTypes.Where(c => c.Id.StringValue.StartsWith(contentTypeId)).OrderBy(c => c.Id.StringValue.Length).FirstOrDefault();
+            if (res != null)
+            {
+                return res.Id;
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Removes content type from list
         /// </summary>
         /// <param name="web">Site to be processed - can be root web or sub site</param>
@@ -1480,7 +1503,7 @@ namespace Microsoft.SharePoint.Client
         /// <param name="descriptionResource">Localized value for the Description property</param>
         public static void SetLocalizationForContentType(this ContentType contentType, string cultureName, string nameResource, string descriptionResource)
         {
-            if (contentType.IsObjectPropertyInstantiated("TitleResource"))
+            if (!contentType.IsObjectPropertyInstantiated("NameResource"))
             {
                 contentType.Context.Load(contentType);
                 contentType.Context.ExecuteQueryRetry();
