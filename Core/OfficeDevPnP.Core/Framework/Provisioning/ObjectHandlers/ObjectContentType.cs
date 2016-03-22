@@ -33,56 +33,56 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 try
                 {
 
-                    web.Context.Load(web.ContentTypes, ct => ct.IncludeWithDefaultProperties(c => c.StringId, c => c.FieldLinks,
-                                                                                             c => c.FieldLinks.Include(fl => fl.Id, fl => fl.Required, fl => fl.Hidden)));
-                    web.Context.Load(web.Fields, fld => fld.IncludeWithDefaultProperties(f => f.Id));
+                web.Context.Load(web.ContentTypes, ct => ct.IncludeWithDefaultProperties(c => c.StringId, c => c.FieldLinks,
+                                                                                         c => c.FieldLinks.Include(fl => fl.Id, fl => fl.Required, fl => fl.Hidden)));
+                web.Context.Load(web.Fields, fld => fld.IncludeWithDefaultProperties(f => f.Id));
 
-                    web.Context.ExecuteQueryRetry();
+                web.Context.ExecuteQueryRetry();
 
-                    var existingCTs = web.ContentTypes.ToList();
-                    var existingFields = web.Fields.ToList();
+                var existingCTs = web.ContentTypes.ToList();
+                var existingFields = web.Fields.ToList();
 
-                    foreach (var ct in template.ContentTypes.OrderBy(ct => ct.Id)) // ordering to handle references to parent content types that can be in the same template
-                    {
+                foreach (var ct in template.ContentTypes.OrderBy(ct => ct.Id)) // ordering to handle references to parent content types that can be in the same template
+                {
                         try
                         {
 
-                            var existingCT = existingCTs.FirstOrDefault(c => c.StringId.Equals(ct.Id, StringComparison.OrdinalIgnoreCase));
-                            if (existingCT == null)
+                    var existingCT = existingCTs.FirstOrDefault(c => c.StringId.Equals(ct.Id, StringComparison.OrdinalIgnoreCase));
+                    if (existingCT == null)
+                    {
+                        scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ContentTypes_Creating_new_Content_Type___0_____1_, ct.Id, ct.Name);
+                        var newCT = CreateContentType(web, ct, parser, template.Connector ?? null, existingCTs, existingFields);
+                        if (newCT != null)
+                        {
+                            existingCTs.Add(newCT);
+                        }
+                    }
+                    else
+                    {
+                        if (ct.Overwrite)
+                        {
+                            scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ContentTypes_Recreating_existing_Content_Type___0_____1_, ct.Id, ct.Name);
+                            existingCT.DeleteObject();
+                            web.Context.ExecuteQueryRetry();
+                            var newCT = CreateContentType(web, ct, parser, template.Connector ?? null, existingCTs, existingFields);
+                            if (newCT != null)
                             {
-                                scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ContentTypes_Creating_new_Content_Type___0_____1_, ct.Id, ct.Name);
-                                var newCT = CreateContentType(web, ct, parser, template.Connector ?? null, existingCTs, existingFields);
-                                if (newCT != null)
-                                {
-                                    existingCTs.Add(newCT);
-                                }
-                            }
-                            else
-                            {
-                                if (ct.Overwrite)
-                                {
-                                    scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ContentTypes_Recreating_existing_Content_Type___0_____1_, ct.Id, ct.Name);
-                                    existingCT.DeleteObject();
-                                    web.Context.ExecuteQueryRetry();
-                                    var newCT = CreateContentType(web, ct, parser, template.Connector ?? null, existingCTs, existingFields);
-                                    if (newCT != null)
-                                    {
-                                        existingCTs.Add(newCT);
-                                    }
-                                }
-                                else
-                                {
-                                    scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ContentTypes_Updating_existing_Content_Type___0_____1_, ct.Id, ct.Name);
-                                    UpdateContentType(web, existingCT, ct, parser, scope);
-                                }
+                                existingCTs.Add(newCT);
                             }
                         }
+                        else
+                        {
+                            scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ContentTypes_Updating_existing_Content_Type___0_____1_, ct.Id, ct.Name);
+                            UpdateContentType(web, existingCT, ct, parser, scope);
+                        }
+                    }
+                }
                         catch (Exception ex)
                         {
                             Log.Error(Constants.LOGGING_SOURCE_FRAMEWORK_PROVISIONING, "Could not provision content type: {0} - {1}", ex.Message, ex.StackTrace);
 
                         }
-                    }
+            }
 
                 }
                 catch (Exception ex)
@@ -256,9 +256,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             {
                 try
                 {
-                    var field = web.Fields.GetById(fieldRef.Id);
-                    web.AddFieldToContentType(createdCT, field, fieldRef.Required, fieldRef.Hidden);
-                }
+                var field = web.Fields.GetById(fieldRef.Id);
+                web.AddFieldToContentType(createdCT, field, fieldRef.Required, fieldRef.Hidden);
+            }
                 catch (Exception ex)
                 {
                     Log.Error(Constants.LOGGING_SOURCE_FRAMEWORK_PROVISIONING, "Could not add field to content type: {0} - {1}", ex.Message, ex.StackTrace);
@@ -285,8 +285,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             //In this case the new Content Type has all field of the original Content Type and missing fields 
             //will be added at the end. To fix this issue we ordering the fields once more.
             createdCT.FieldLinks.Reorder(templateContentType.FieldRefs.Select(fld => fld.Name).ToArray());
-            createdCT.Update(true);
-            web.Context.ExecuteQueryRetry();
 
             createdCT.ReadOnly = templateContentType.ReadOnly;
             createdCT.Hidden = templateContentType.Hidden;
@@ -307,6 +305,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             {
                 createdCT.DisplayFormUrl = templateContentType.DisplayFormUrl;
             }
+
+            createdCT.Update(true);
+            web.Context.ExecuteQueryRetry();
 
             // If the CT is a DocumentSet
             if (templateContentType.DocumentSetTemplate != null)

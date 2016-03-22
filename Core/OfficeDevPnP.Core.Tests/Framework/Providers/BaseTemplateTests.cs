@@ -131,7 +131,7 @@ namespace OfficeDevPnP.Core.Tests.Framework.Providers
                                 Title = "Template Site",
                                 Template = template.Template,
                                 Url = siteUrl,
-                            }, false, true);
+                            }, true, true);
                         }
 
                         if (template.SubSiteTemplate.Length > 0)
@@ -166,6 +166,8 @@ namespace OfficeDevPnP.Core.Tests.Framework.Providers
                     // Export the base templates
                     using (ClientContext cc = ctx.Clone(siteUrl))
                     {
+                        cc.RequestTimeout = Timeout.Infinite;
+
                         // Specify null as base template since we do want "everything" in this case
                         ProvisioningTemplateCreationInformation creationInfo = new ProvisioningTemplateCreationInformation(cc.Web);
                         creationInfo.BaseTemplate = null;

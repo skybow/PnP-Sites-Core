@@ -20,7 +20,7 @@ OfficeDevPnP.Core | Office Developer PnP team
 ### Version history ###
 Version  | Date | Comments
 ---------| -----| --------
-0.1  | May 6th 2014 | Initial release
+2.x  | Frist Friday of each month | Monthly release
 
 ### Disclaimer ###
 **THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS 
@@ -38,6 +38,7 @@ Core component solution structure follows the generic structure like all PnP pro
 
 ## Additional documentation ##
 Additional PnP Core component documentation.  
+- [Class and method documentation](Documentation.md)
 - [SAML support](SAML authentication.md)
 - [PnP Core nuget package](nuget.md)
 - [Timer job framework](TimerJob Framework.md)
@@ -259,7 +260,7 @@ All code should be version independent, meaning that code should not assume that
 ```C#
 #if !CLIENTSDKV15
 
-//your SharePoint version 15 specific code goes here
+//your SharePoint version 16 specific code goes here
 
 #endif
 ```

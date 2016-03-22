@@ -11,6 +11,7 @@ using OfficeDevPnP.Core.Entities;
 using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers;
 using OfficeDevPnP.Core.Framework.Provisioning.Model;
 using OfficeDevPnP.Core.Diagnostics;
+using OfficeDevPnP.Core.Utilities;
 using System.Reflection;
 
 namespace Microsoft.SharePoint.Client
@@ -1028,7 +1029,7 @@ namespace Microsoft.SharePoint.Client
         /// <param name="applyingInformation">Specified additional settings and or properties</param>
         public static void ApplyProvisioningTemplate(this Web web, ProvisioningTemplate template, ProvisioningTemplateApplyingInformation applyingInformation = null)
         {
-                new SiteToTemplateConversion().ApplyRemoteTemplate(web, template, applyingInformation);
+            new SiteToTemplateConversion().ApplyRemoteTemplate(web, template, applyingInformation);
         }
 
         /// <summary>

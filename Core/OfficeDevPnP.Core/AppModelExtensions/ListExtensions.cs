@@ -11,6 +11,7 @@ using OfficeDevPnP.Core.Entities;
 using OfficeDevPnP.Core.Enums;
 using Microsoft.SharePoint.Client.WebParts;
 using OfficeDevPnP.Core.Diagnostics;
+using OfficeDevPnP.Core.Utilities;
 
 namespace Microsoft.SharePoint.Client
 {
@@ -730,6 +731,33 @@ namespace Microsoft.SharePoint.Client
             return foundList;
         }
 
+        /// <summary>
+        /// Gets the publishing pages library of the web based on site language
+        /// </summary>
+        /// <param name="web">The web.</param>
+        /// <returns>The publishing pages library. Returns null if library was not found.</returns>
+        /// <exception cref="System.InvalidOperationException">
+        /// Could not load pages library URL name from 'cmscore' resources file.
+        /// </exception>
+        public static List GetPagesLibrary(this Web web)
+        {
+            if (web == null) throw new ArgumentNullException("web");
+
+            var context = web.Context;
+            int language = (int)web.EnsureProperty(w => w.Language);
+
+            var result = Microsoft.SharePoint.Client.Utilities.Utility.GetLocalizedString(context, "$Resources:List_Pages_UrlName", "cmscore", language);
+            context.ExecuteQueryRetry();
+            string pagesLibraryName = result.Value;
+
+            if (string.IsNullOrEmpty(pagesLibraryName))
+            {
+                throw new InvalidOperationException("Could not load pages library URL name from 'cmscore' resources file.");
+            }
+
+            return web.GetListByUrl(pagesLibraryName) ?? web.GetListByTitle(pagesLibraryName);
+        }
+
         #region List Permissions
 
         /// <summary>
@@ -1113,7 +1141,7 @@ namespace Microsoft.SharePoint.Client
                     if (list.GetEventReceiverByName("LocationBasedMetadataDefaultsReceiver ItemAdded") == null)
                     {
                         EventReceiverDefinitionCreationInformation eventCi = new EventReceiverDefinitionCreationInformation();
-                        eventCi.Synchronization = EventReceiverSynchronization.DefaultSynchronization;
+                        eventCi.Synchronization = EventReceiverSynchronization.Synchronous;
                         eventCi.EventType = EventReceiverType.ItemAdded;
 #if !CLIENTSDKV15
                         eventCi.ReceiverAssembly = "Microsoft.Office.DocumentManagement, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c";

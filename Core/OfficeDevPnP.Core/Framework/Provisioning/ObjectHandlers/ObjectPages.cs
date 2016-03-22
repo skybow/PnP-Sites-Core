@@ -14,6 +14,7 @@ using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitions;
 using File = Microsoft.SharePoint.Client.File;
 using WebPart = OfficeDevPnP.Core.Framework.Provisioning.Model.WebPart;
 using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitions;
+using OfficeDevPnP.Core.Utilities;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 {
@@ -55,7 +56,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         {
                             exists = false;
                         }
-                    }                    
+                    }
                     if (exists)
                     {
                         if (page.Overwrite)
@@ -71,7 +72,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 file.DeleteObject();
                                 web.Context.ExecuteQueryRetry();
                                 this.AddPage(web, url, page, parser);
-                            }
+                                }
                             catch (Exception ex)
                             {
                                 scope.LogError(CoreResources.Provisioning_ObjectHandlers_Pages_Overwriting_existing_page__0__failed___1_____2_, url, ex.Message, ex.StackTrace);
@@ -115,28 +116,28 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         //TODO: move to class
         private void AddPage(Web web, string url, Page page, TokenParser parser)
-        {
+                        {
 
             var publishingPage = page as PublishingPage;
             if (publishingPage != null)
-            {
+                            {
                 string layoutUrl = parser.ParseString(publishingPage.PageLayoutUrl);
                 web.AddPublishingPageByUrl(url, layoutUrl, publishingPage.PageTitle);
 
                 return;
-            }
+                            }
 
             var contentPage = page as ContentPage;
             if (contentPage != null)
-            {
+                        {
                 web.AddWikiPageByUrl(url);
 
                 return;
-            }
+                        }
 
             web.AddWikiPageByUrl(url);
             web.AddLayoutToWikiPage(page.Layout, url);
-        }
+                    }
 
         //TODO: refactor this
         private void AddWebParts(Web web, Page page, TokenParser parser)
@@ -156,7 +157,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         string oldId = null;
                         string newId = null;
                         if (!WebPartsModelProvider.IsV3FormatXml(model.Contents))
-                        {
+                    {
                             var id = WebPartsModelProvider.GetWebPartControlId(model.Contents);
                             var idToReplace = GetNewControlId();
                             model.Contents = model.Contents.Replace(id, idToReplace);
@@ -170,28 +171,28 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         parser.AddToken(new IdToken(web, newId, oldId));
                     }
                     catch (Exception ex)
-                    {
+                        {
                         Log.Error(Constants.LOGGING_SOURCE_FRAMEWORK_PROVISIONING, "Could not add webpart: {0} - {1}", ex.Message, ex.StackTrace);
+                        }
                     }
-                }
 
                 var html = parser.ParseString(contentPage.Html);
                 if (!string.IsNullOrEmpty(html))
-                {
+                    {
                     web.AddHtmlToWikiPage(url, html);
                 }
                 file.CheckIn(String.Empty, CheckinType.MajorCheckIn);
                 return;
             }
-        }
+                    }
         private string GetNewControlId()
         {
             return string.Format("g_{0}", Guid.NewGuid().ToString("D").Replace("-", "_"));
-        }
+                }
         private string GetIdFromControlId(string controlId)
         {
             return controlId.Replace("g_", string.Empty).Replace("_", "-");
-        }
+            }
 
         private WebPartDefinition AddWebPart(Web web, WebPart webPart, File pageFile)
         {
