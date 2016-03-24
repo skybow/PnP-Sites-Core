@@ -545,6 +545,8 @@
     <Compile Include="Framework\Provisioning\Model\Workflows.cs" />
     <Compile Include="Framework\Provisioning\Model\WorkflowSubscription.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Export\File\FileModelProvider.cs" />
+    <Compile Include="Framework\Provisioning\ObjectHandlers\Export\ListContent\FieldValueProvider.cs" />
+    <Compile Include="Framework\Provisioning\ObjectHandlers\Export\ListContent\ListItemsProvider.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Export\Page\ContentPageModelProvider.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Export\Page\IPageModelProvider.cs">
       <SubType>Code</SubType>

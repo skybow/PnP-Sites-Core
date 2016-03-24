@@ -21,6 +21,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         private List<String> propertyBagPropertiesToPreserve;
         private bool persistPublishingFiles = false;
         private bool includeNativePublishingFiles = false;
+        private List<Guid> listWithContent;
 
         private Handlers handlersToProcess = Handlers.All;
 
@@ -31,6 +32,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             this.baseTemplate = web.GetBaseTemplate();
             this.propertyBagPropertiesToPreserve = new List<String>();
+            this.listWithContent = new List<Guid>();
         }
 
         /// <summary>
@@ -141,6 +143,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             get { return this.propertyBagPropertiesToPreserve; }
             set { this.propertyBagPropertiesToPreserve = value; }
+        }
+
+        public List<Guid> ListsWithContent
+        {
+            get { return this.listWithContent; }
+            set { this.listWithContent = value; }
         }
 
         public bool IncludeSiteGroups
