@@ -1416,7 +1416,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 continue;
                             }
                         }
+                    }
+
+                    if (null != creationInfo.ListInstanceFilter)
+                    {
+                        if (!creationInfo.ListInstanceFilter(siteList))
+                        {
+                            continue;
                         }
+                    }
 
                     string documentTemplateContent = string.Empty;
                     if (!String.IsNullOrEmpty(siteList.DocumentTemplateUrl)) {

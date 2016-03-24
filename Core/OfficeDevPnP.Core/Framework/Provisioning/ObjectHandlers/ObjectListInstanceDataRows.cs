@@ -68,12 +68,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             {
                 foreach (var listInstance in template.Lists)
                 {
-                    if( creationInfo.ListsWithContent.Contains(listInstance.ID) )
-                    {
-                        List list = web.Lists.GetById(listInstance.ID);
-                        web.Context.Load(list, l => l.Fields, l => l.ContentTypesEnabled, l => l.Id);
-                        web.Context.ExecuteQueryRetry();
+                    List list = web.Lists.GetById(listInstance.ID);
+                    web.Context.Load(list);
+                    web.Context.ExecuteQueryRetry();
 
+                    if ((null != creationInfo.ListContentFilter) && creationInfo.ListContentFilter(list))
+                    {
                         ListItemsProvider provider = new ListItemsProvider(list, web, template);
                         List<DataRow> dataRows = provider.ExtractItems();
                         listInstance.DataRows.AddRange(dataRows);
@@ -96,7 +96,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             if (!_willExtract.HasValue)
             {
-                _willExtract = creationInfo.ListsWithContent.Any();
+                _willExtract = (null != creationInfo.ListContentFilter);
             }
             return _willExtract.Value;
         }

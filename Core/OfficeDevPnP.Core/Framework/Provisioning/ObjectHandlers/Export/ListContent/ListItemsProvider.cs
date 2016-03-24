@@ -136,8 +136,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
                 DatesInUtc = true,
                 ViewXml = "" //Should be recursive
             };
-            ListItemCollection items = this.List.GetItems(query);
-            this.Context.Load(items);
+            ListItemCollection items = this.List.GetItems(query);            
+            this.Context.Load(items);            
             this.Context.ExecuteQueryRetry();
 
             List<Field> fields = GetListContentSerializableFields(true);
@@ -286,8 +286,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
                 
         private List<Field> GetListContentSerializableFields(bool serialize)
         {
+            Microsoft.SharePoint.Client.FieldCollection spfields = this.List.Fields;
+            this.Context.Load(spfields);
+            this.Context.ExecuteQueryRetry();
+
             List<Field> fields = new List<Field>();
-            foreach (Field field in this.List.Fields)
+            foreach (Field field in spfields)
             {
                 if (CanFieldContentBeIncluded(field, serialize))
                 {
