@@ -6,6 +6,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitio
 {
     public abstract class TokenDefinition
     {
+        protected bool ValueRetrieved = false;
         protected string CacheValue;
         private readonly string[] _tokens;
 

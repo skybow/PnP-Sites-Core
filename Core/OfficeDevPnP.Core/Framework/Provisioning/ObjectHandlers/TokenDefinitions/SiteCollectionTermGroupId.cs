@@ -13,18 +13,24 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitio
 
         public override string GetReplaceValue()
         {
-            if (string.IsNullOrEmpty(CacheValue))
+            if (!ValueRetrieved)
             {
-                // The token is requested. Check if the group exists and if not, create it
-                var site = (Web.Context as ClientContext).Site;
-                var session = TaxonomySession.GetTaxonomySession(site.Context);
-                var termstore = session.GetDefaultSiteCollectionTermStore();
-                var termGroup = termstore.GetSiteCollectionGroup(site, true);
-                site.Context.Load(termGroup);
-                site.Context.ExecuteQueryRetry();
+                ValueRetrieved = true;
+                try
+                {
+                    // The token is requested. Check if the group exists and if not, create it
+                    var site = (Web.Context as ClientContext).Site;
+                    var session = TaxonomySession.GetTaxonomySession(site.Context);
+                    var termstore = session.GetDefaultSiteCollectionTermStore();
+                    var termGroup = termstore.GetSiteCollectionGroup(site, true);
+                    site.Context.Load(termGroup);
+                    site.Context.ExecuteQueryRetry();
 
-                CacheValue = termGroup.Id.ToString();
-
+                    CacheValue = termGroup.Id.ToString();
+                }
+                catch (Exception)
+                {
+                }
             }
             return CacheValue;
         }
