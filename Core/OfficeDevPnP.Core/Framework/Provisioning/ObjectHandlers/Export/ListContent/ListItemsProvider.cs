@@ -136,14 +136,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
                 DatesInUtc = true,
                 ViewXml = "" //Should be recursive
             };
-            ListItemCollection items = this.List.GetItems(query);            
-            this.Context.Load(items);            
+            ListItemCollection items = this.List.GetItems(query);
+            this.Context.Load(items, col => col.IncludeWithDefaultProperties(i => i.HasUniqueRoleAssignments));
             this.Context.ExecuteQueryRetry();
 
             List<Field> fields = GetListContentSerializableFields(true);
             foreach (ListItem item in items)
             {
-                DataRow row = new DataRow();
+                Dictionary<string, string> values = new Dictionary<string, string>();
                 foreach (Field field in fields)
                 {
                     if (CanFieldContentBeIncluded(field, true))
@@ -173,13 +173,29 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
                             }
                             if (!string.IsNullOrEmpty(str))
                             {
-                                row.Values.Add(field.InternalName, str);
+                                values.Add(field.InternalName, str);
                             }
                         }
-                    }
+                    }                    
                 }
-                if (row.Values.Any())
+
+                if (values.Any())
                 {
+                    ObjectSecurity security = null;
+                    if (item.HasUniqueRoleAssignments)
+                    {
+                        try
+                        {
+                            security = item.GetSecurity();
+                            security.ClearSubscopes = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex, Constants.LOGGING_SOURCE, "Failed to get item security. Item ID: {0}, List: '{1}'.", item.Id, this.List.Title);
+                        }
+                    }
+
+                    DataRow row = new DataRow( values, security );
                     dataRows.Add(row);
                 }
             }
@@ -304,7 +320,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
         private bool CanFieldContentBeIncluded(Field field, bool serialize)
         {
             bool result = false;
-            if (field.InternalName.Equals("ID", StringComparison.OrdinalIgnoreCase) || field.InternalName.Equals("Author", StringComparison.OrdinalIgnoreCase))
+            if (field.InternalName.Equals("ID", StringComparison.OrdinalIgnoreCase))
             {
                 result = serialize;
             }
