@@ -12,15 +12,23 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitio
 
         public override string GetReplaceValue()
         {
-            if (CacheValue == null)
+            if (!ValueRetrieved)
             {
-                TaxonomySession session = TaxonomySession.GetTaxonomySession(Web.Context);
-                var termStore = session.GetDefaultSiteCollectionTermStore();
-                Web.Context.Load(termStore, t => t.Id);
-                Web.Context.ExecuteQueryRetry();
-                if (termStore != null)
+                ValueRetrieved = true;
+                try
                 {
-                    CacheValue = termStore.Id.ToString();
+                    TaxonomySession session = TaxonomySession.GetTaxonomySession(Web.Context);
+                    var termStore = session.GetDefaultSiteCollectionTermStore();
+                    Web.Context.Load(termStore, t => t.Id);
+                    Web.Context.ExecuteQueryRetry();
+                    if (termStore != null)
+                    {
+                        CacheValue = termStore.Id.ToString();
+                    }
+                }
+                catch (System.Exception)
+                {
+
                 }
             }
             return CacheValue;

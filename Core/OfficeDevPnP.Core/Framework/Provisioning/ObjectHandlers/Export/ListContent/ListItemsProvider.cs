@@ -136,7 +136,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
                 DatesInUtc = true,
                 ViewXml = "" //Should be recursive
             };
-            ListItemCollection items = this.List.GetItems(query);
+            ListItemCollection items = this.List.GetItems(query);            
             this.Context.Load(items, col => col.IncludeWithDefaultProperties(i => i.HasUniqueRoleAssignments));
             this.Context.ExecuteQueryRetry();
 
@@ -175,9 +175,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
                             {
                                 values.Add(field.InternalName, str);
                             }
+                            }
                         }
-                    }                    
-                }
+                    }
 
                 if (values.Any())
                 {
@@ -188,9 +188,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
                         {
                             security = item.GetSecurity();
                             security.ClearSubscopes = true;
-                        }
+                }
                         catch (Exception ex)
-                        {
+                {
                             Log.Error(ex, Constants.LOGGING_SOURCE, "Failed to get item security. Item ID: {0}, List: '{1}'.", item.Id, this.List.Title);
                         }
                     }

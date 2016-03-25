@@ -17,6 +17,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         public Web _web;
 
         private List<TokenDefinition> _tokens = new List<TokenDefinition>();
+        private List<TokenDefinition> _tokensSortedByCacheValueLength = new List<TokenDefinition>();
         private List<Localization> _localizations = new List<Localization>();
 
         public List<TokenDefinition> Tokens
@@ -38,6 +39,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                select t;
 
             _tokens = sortedTokens.ToList();
+
+            var sortedTokensByReplaceValueLength = _tokens.OrderByDescending(t => t.GetReplaceValue() == null ? 0 : t.GetReplaceValue().Length);
+            _tokensSortedByCacheValueLength = sortedTokensByReplaceValueLength.ToList();
         }
 
         public TokenParser(Web web, ProvisioningTemplate template)
@@ -46,7 +50,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             
             _web = web;
             _tokens = new List<TokenDefinition>();
-
+            _tokensSortedByCacheValueLength = new List<TokenDefinition>();
             _tokens.Add(new SiteCollectionToken(web));
             _tokens.Add(new SiteToken(web));
             _tokens.Add(new MasterPageCatalogToken(web));
@@ -69,7 +73,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             foreach (var list in web.Lists)
             {
                 _tokens.Add(new ListIdToken(web, list.Title, list.Id));
-                _tokens.Add(new ListUrlToken(web, list.Title, list.RootFolder.ServerRelativeUrl.Substring(web.ServerRelativeUrl.Length + 1)));
+                _tokens.Add(new ListUrlToken(web, list.Title, list.RootFolder.ServerRelativeUrl.Substring(web.ServerRelativeUrl.Length + ( web.ServerRelativeUrl == "/" ? 0 : 1))));
                 var templateList = template.Lists.FirstOrDefault(x => x.ServerRelativeUrl != null &&list.RootFolder.ServerRelativeUrl.EndsWith(x.Url));
                 if (templateList != null)
                 {
@@ -160,6 +164,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                select t;
 
             _tokens = sortedTokens.ToList();
+
+            var sortedTokensByReplaceValueLength = _tokens.OrderByDescending(t => t.GetReplaceValue() == null ? 0 : t.GetReplaceValue().Length);
+            _tokensSortedByCacheValueLength = sortedTokensByReplaceValueLength.ToList();
         }
 
      
@@ -264,9 +271,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         public string TokenizeString(string input)
         {
+            string notReplaceZoneBorder = "**";
+            string regExpPattern = @"(?<=^([^*\r\n]|\*(?!\*)|\*\*([^*\\\r\n]|\\.|\*(?!\*))*\*\*)*){0}";
             if (!string.IsNullOrEmpty(input))
             {
-                foreach (var token in _tokens)
+                foreach (var token in _tokensSortedByCacheValueLength)
                 {
                     try
                     {
@@ -274,8 +283,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         var tokenToSet = token.GetTokens().FirstOrDefault();
                         if (tokenToSet != null && !string.IsNullOrEmpty(replaceValue) && replaceValue != "/")
                         {
-                            var regex = new Regex(replaceValue, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                            input = regex.Replace(input, tokenToSet);
+                            string stringRegExp = string.Format(regExpPattern, replaceValue);
+                            var regex = new Regex(stringRegExp, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                            input = regex.Replace(input, string.Format("{1}{0}{1}", tokenToSet, notReplaceZoneBorder));
                         }
                     }
                     catch (Exception ex)
@@ -283,7 +293,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                     }
                 }
+                input = input.Replace(notReplaceZoneBorder, string.Empty);
             }
+
             return input;
         }
 
