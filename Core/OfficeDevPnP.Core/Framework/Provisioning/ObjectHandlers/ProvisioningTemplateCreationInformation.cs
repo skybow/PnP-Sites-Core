@@ -21,6 +21,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         private List<String> propertyBagPropertiesToPreserve;
         private bool persistPublishingFiles = false;
         private bool includeNativePublishingFiles = false;
+        private Func<List, bool> fnListContentFilter;
+        private Func<List, bool> fnListInstanceFilter;
 
         private Handlers handlersToProcess = Handlers.All;
 
@@ -30,7 +32,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         public ProvisioningTemplateCreationInformation(Web web)
         {
             this.baseTemplate = web.GetBaseTemplate();
-            this.propertyBagPropertiesToPreserve = new List<String>();
+            this.propertyBagPropertiesToPreserve = new List<String>();            
         }
 
         /// <summary>
@@ -141,6 +143,18 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             get { return this.propertyBagPropertiesToPreserve; }
             set { this.propertyBagPropertiesToPreserve = value; }
+        }
+
+        public Func<List,bool> ListContentFilter
+        {
+            get { return this.fnListContentFilter; }
+            set { this.fnListContentFilter = value; }
+        }
+
+        public Func<List, bool> ListInstanceFilter
+        {
+            get { return this.fnListInstanceFilter; }
+            set { this.fnListInstanceFilter = value; }
         }
 
         public bool IncludeSiteGroups
