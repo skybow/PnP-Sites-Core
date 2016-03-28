@@ -70,14 +70,21 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
         {
             Microsoft.SharePoint.Client.FieldCollection fields = this.List.Fields;
             this.Context.Load(fields);
+            this.Context.Load(this.List, l => l.RootFolder.ServerRelativeUrl);
             this.Context.ExecuteQueryRetry();
+
+            ItemPathProvider itemPathProvider = new ItemPathProvider(this.List, this.Web);
 
             foreach (var dataRow in dataRows)
             {
                 try
                 {
                     scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ListInstancesDataRows_Creating_list_item__0_, dataRows.IndexOf(dataRow) + 1);
-                    var listitemCI = new ListItemCreationInformation();
+                    var listitemCI = itemPathProvider.GetItemCreationInformation(dataRow);
+                    if (null == listitemCI)
+                    {
+                        continue;
+                    }
                     var listitem = this.List.AddItem(listitemCI);
 
                     foreach (var dataValue in dataRow.Values)
@@ -109,7 +116,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
                                 }
                             }                                                     
                         }
-                    }
+                    }                    
                     listitem.Update();
                     this.Context.ExecuteQueryRetry(); // TODO: Run in batches?
 
@@ -131,14 +138,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
         {
             List<DataRow> dataRows = new List<DataRow>();
 
-            CamlQuery query = new CamlQuery()
-            {
-                DatesInUtc = true,
-                ViewXml = "" //Should be recursive
-            };
+            CamlQuery query = CamlQuery.CreateAllItemsQuery();
+            query.DatesInUtc = true;
             ListItemCollection items = this.List.GetItems(query);            
             this.Context.Load(items, col => col.IncludeWithDefaultProperties(i => i.HasUniqueRoleAssignments));
+            this.Context.Load(this.List.Fields);
+            this.Context.Load(this.List, l=> l.RootFolder.ServerRelativeUrl);
             this.Context.ExecuteQueryRetry();
+
+            ItemPathProvider itemPathProvider = new ItemPathProvider(this.List, this.Web);
 
             List<Field> fields = GetListContentSerializableFields(true);
             foreach (ListItem item in items)
@@ -175,9 +183,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
                             {
                                 values.Add(field.InternalName, str);
                             }
-                            }
                         }
                     }
+                }
+
+                itemPathProvider.ExtractItemPathValues(item, values);
 
                 if (values.Any())
                 {
@@ -188,14 +198,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
                         {
                             security = item.GetSecurity();
                             security.ClearSubscopes = true;
-                }
+                        }
                         catch (Exception ex)
-                {
+                        {
                             Log.Error(ex, Constants.LOGGING_SOURCE, "Failed to get item security. Item ID: {0}, List: '{1}'.", item.Id, this.List.Title);
                         }
                     }
 
-                    DataRow row = new DataRow( values, security );
+                    DataRow row = new DataRow(values, security);
                     dataRows.Add(row);
                 }
             }
@@ -303,9 +313,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
         private List<Field> GetListContentSerializableFields(bool serialize)
         {
             Microsoft.SharePoint.Client.FieldCollection spfields = this.List.Fields;
-            this.Context.Load(spfields);
-            this.Context.ExecuteQueryRetry();
-
             List<Field> fields = new List<Field>();
             foreach (Field field in spfields)
             {
