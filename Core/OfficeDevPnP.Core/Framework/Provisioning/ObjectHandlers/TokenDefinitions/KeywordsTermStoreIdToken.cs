@@ -1,5 +1,7 @@
 using Microsoft.SharePoint.Client;
 using Microsoft.SharePoint.Client.Taxonomy;
+using OfficeDevPnP.Core.Diagnostics;
+using System;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitions
 {
@@ -12,13 +14,22 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitio
 
         public override string GetReplaceValue()
         {
-            if (CacheValue == null)
+            if (!ValueRetrieved)
             {
-                TaxonomySession session = TaxonomySession.GetTaxonomySession(Web.Context);
-                var termStore = session.GetDefaultKeywordsTermStore();
-                Web.Context.Load(termStore, t => t.Id);
-                Web.Context.ExecuteQueryRetry();
-                CacheValue = termStore.Id.ToString();
+                ValueRetrieved = true;
+                try
+                {
+                    TaxonomySession session = TaxonomySession.GetTaxonomySession(Web.Context);
+                    var termStore = session.GetDefaultKeywordsTermStore();
+                    Web.Context.Load(termStore, t => t.Id);
+                    Web.Context.ExecuteQueryRetry();
+                    CacheValue = termStore.Id.ToString();
+                }
+                catch( Exception ex )
+                {
+                    Log.Error(ex, Constants.LOGGING_SOURCE, 
+                        "Failed to retrive {0} token value.", String.Join( ", ", GetTokens() ));
+                }
             }
             return CacheValue;
         }

@@ -1,5 +1,7 @@
 using Microsoft.SharePoint.Client;
 using Microsoft.SharePoint.Client.Taxonomy;
+using OfficeDevPnP.Core.Diagnostics;
+using System;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitions
 {
@@ -26,9 +28,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitio
                         CacheValue = termStore.Id.ToString();
                     }
                 }
-                catch (System.Exception)
+                catch (Exception ex)
                 {
-
+                    Log.Error(ex, Constants.LOGGING_SOURCE,
+                        "Failed to retrive {0} token value.", String.Join(", ", GetTokens()));
                 }
             }
             return CacheValue;
