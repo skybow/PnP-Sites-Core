@@ -1143,11 +1143,12 @@ namespace Microsoft.SharePoint.Client
 
             PublishingPageInformation publishingPageInfo = new PublishingPageInformation();
             publishingPageInfo.Name = pageName;
-            publishingPageInfo.PageLayoutListItem = layoutItem;
+            publishingPageInfo.PageLayoutListItem = layoutItem;            
 
             PublishingPage publishingPage = publishingWeb.AddPublishingPage(publishingPageInfo);
 
-            publishingPage.ListItem.FieldValues["Title"] = title;
+            publishingPage.ListItem["Title"] = title;
+            publishingPage.ListItem.Update();
 
             publishingPage.ListItem.File.CheckIn(string.Empty, CheckinType.MajorCheckIn);
 
