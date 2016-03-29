@@ -1,14 +1,12 @@
 ﻿using Microsoft.SharePoint.Client;
 using OfficeDevPnP.Core.Diagnostics;
 using OfficeDevPnP.Core.Framework.Provisioning.Model;
+using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Field = Microsoft.SharePoint.Client.Field;
 using List = Microsoft.SharePoint.Client.List;
-using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Extensions;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListContent
 {
@@ -66,7 +64,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
 
         #region Methods
 
-        public void AddListItems(DataRowCollection dataRows, TokenParser parser, PnPMonitoredScope scope)
+        public void AddListItems(DataRowCollection dataRows, ProvisioningTemplate template, TokenParser parser, PnPMonitoredScope scope)
         {
             Microsoft.SharePoint.Client.FieldCollection fields = this.List.Fields;
             this.Context.Load(fields);
@@ -80,12 +78,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
                 try
                 {
                     scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ListInstancesDataRows_Creating_list_item__0_, dataRows.IndexOf(dataRow) + 1);
-                    var listitemCI = itemPathProvider.GetItemCreationInformation(dataRow);
-                    if (null == listitemCI)
+                    var listitem = itemPathProvider.CreateListItem(dataRow, template);
+                    if (null == listitem)
                     {
                         continue;
                     }
-                    var listitem = this.List.AddItem(listitemCI);
 
                     foreach (var dataValue in dataRow.Values)
                     {
@@ -118,7 +115,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
                         }
                     }                    
                     listitem.Update();
-                    this.Context.ExecuteQueryRetry(); // TODO: Run in batches?
+                    this.Context.Load(listitem);
+                    this.Context.Load(listitem.File);
+                    this.Context.ExecuteQueryRetry(); // TODO: Run in batches?                    
+
+                    itemPathProvider.CheckInIOfNeeded(listitem);
 
                     AddIDMappingEntry(listitem, dataRow);
 
@@ -134,7 +135,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
             }
         }
 
-        public List<DataRow> ExtractItems()
+        public List<DataRow> ExtractItems(ProvisioningTemplateCreationInformation creationInfo, PnPMonitoredScope scope)
         {
             List<DataRow> dataRows = new List<DataRow>();
 
@@ -151,69 +152,77 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
             List<Field> fields = GetListContentSerializableFields(true);
             foreach (ListItem item in items)
             {
-                Dictionary<string, string> values = new Dictionary<string, string>();
-                foreach (Field field in fields)
+                try
                 {
-                    if (CanFieldContentBeIncluded(field, true))
+                    Dictionary<string, string> values = new Dictionary<string, string>();
+                    foreach (Field field in fields)
                     {
-                        string str = "";
-                        object value = null; ;
-                        try
+                        if (CanFieldContentBeIncluded(field, true))
                         {
-                            value = item[field.InternalName];
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Warning(Constants.LOGGING_SOURCE, ex,
-                                "Failed to read item field value. List:{0}, Item ID:{1}, Field: {2}", this.List.Title, item.Id, field.InternalName);
-                        }
-                        if (null != value)
-                        {
+                            string str = "";
+                            object value = null; ;
                             try
                             {
-                                FieldValueProvider provider = GetFieldValueProvider(field, this.Web);
-                                str = provider.GetValidatedValue(value);
+                                value = item[field.InternalName];
                             }
                             catch (Exception ex)
                             {
-                                Log.Warning(Constants.LOGGING_SOURCE, ex,
-                                    "Failed to serialize item field value. List:{0}, Item ID:{1}, Field: {2}", this.List.Title, item.Id, field.InternalName);
+                                scope.LogWarning(ex,
+                                    "Failed to read item field value. List:{0}, Item ID:{1}, Field: {2}", this.List.Title, item.Id, field.InternalName);
                             }
-                            if (!string.IsNullOrEmpty(str))
+                            if (null != value)
                             {
-                                values.Add(field.InternalName, str);
+                                try
+                                {
+                                    FieldValueProvider provider = GetFieldValueProvider(field, this.Web);
+                                    str = provider.GetValidatedValue(value);
+                                }
+                                catch (Exception ex)
+                                {
+                                    scope.LogWarning(ex,
+                                        "Failed to serialize item field value. List:{0}, Item ID:{1}, Field: {2}", this.List.Title, item.Id, field.InternalName);
+                                }
+                                if (!string.IsNullOrEmpty(str))
+                                {
+                                    values.Add(field.InternalName, str);
+                                }
                             }
                         }
+                    }
+
+                    string fileSrc;
+                    itemPathProvider.ExtractItemPathValues(item, values, creationInfo, out fileSrc);
+
+                    if (values.Any())
+                    {
+                        ObjectSecurity security = null;
+                        if (item.HasUniqueRoleAssignments)
+                        {
+                            try
+                            {
+                                security = item.GetSecurity();
+                                security.ClearSubscopes = true;
+                            }
+                            catch (Exception ex)
+                            {
+                                scope.LogWarning(ex, "Failed to get item security. Item ID: {0}, List: '{1}'.", item.Id, this.List.Title);
+                            }
+                        }
+
+                        DataRow row = new DataRow(values, security, fileSrc);
+                        dataRows.Add(row);
                     }
                 }
-
-                itemPathProvider.ExtractItemPathValues(item, values);
-
-                if (values.Any())
+                catch (Exception ex)
                 {
-                    ObjectSecurity security = null;
-                    if (item.HasUniqueRoleAssignments)
-                    {
-                        try
-                        {
-                            security = item.GetSecurity();
-                            security.ClearSubscopes = true;
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Error(ex, Constants.LOGGING_SOURCE, "Failed to get item security. Item ID: {0}, List: '{1}'.", item.Id, this.List.Title);
-                        }
-                    }
-
-                    DataRow row = new DataRow(values, security);
-                    dataRows.Add(row);
+                    scope.LogError(ex, "Failed to save item in template. Item ID: {0}, List: '{1}'.", item.Id, this.List.Title);
                 }
             }
 
             return dataRows;
         }
 
-        public void UpdateLookups(Func<Guid, ListItemsProvider> fnGetLookupDependentProvider)
+        public void UpdateLookups(Func<Guid, ListItemsProvider> fnGetLookupDependentProvider, PnPMonitoredScope scope)
         {
             if (null != m_lookups)
             {
@@ -230,7 +239,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
                         }
                         catch (Exception ex)
                         {
-                            Log.Error(ex, Constants.LOGGING_SOURCE, "Failed to get source list for lookup field. Field Name: {0}, Source List: {1}.",
+                            scope.LogError(ex, "Failed to get source list for lookup field. Field Name: {0}, Source List: {1}.",
                                 lookupData.Field.InternalName, lookupData.Field.LookupList);
                         }
                         if (!Guid.Empty.Equals(sourceListId))
@@ -300,7 +309,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
                     catch (Exception ex)
                     {
                         string lookupFieldNames = string.Join(", ", m_lookups.Select(pair => pair.Value.Field.InternalName).ToArray());
-                        Log.Error(ex, Constants.LOGGING_SOURCE, "Failed to set lookup values. List: '{0}', Lookup Fields: {1}.", this.List.Title, lookupFieldNames);
+                        scope.LogError(ex, "Failed to set lookup values. List: '{0}', Lookup Fields: {1}.", this.List.Title, lookupFieldNames);
                     }
                 }
             }

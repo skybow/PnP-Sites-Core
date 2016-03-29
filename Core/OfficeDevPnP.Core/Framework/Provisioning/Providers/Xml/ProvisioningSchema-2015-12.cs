@@ -3932,6 +3932,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
     
         private ObjectSecurity securityField;
     
+        private string srcField;
+    
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("DataValue")]
         public DataValue[] DataValue {
@@ -3950,6 +3952,18 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
             set {
                 this.securityField = value;
+            }
+        }
+    
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute(),
+        System.ComponentModel.DefaultValueAttribute("")]
+        public string Src {
+            get {
+                return this.srcField;
+            }
+            set {
+                this.srcField = value;
             }
         }
     }
@@ -4271,11 +4285,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
         private int sequenceField;
     
         private bool sequenceFieldSpecified;
-    
+
         private string rightsField;
 
         private bool rightsFieldSpecified;
-
+    
         private string urlField;
     
         private bool enabledField;
@@ -4285,7 +4299,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
         private string imageUrlField;
     
         private string scriptSrcField;
-    
+        
         public CustomAction() {
             this.enabledField = true;
         }
@@ -4388,16 +4402,16 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             }
         }
         
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool RightsSpecified {
-            get {
-                return this.rightsFieldSpecified;
+            /// <remarks/>
+            [System.Xml.Serialization.XmlIgnoreAttribute()]
+            public bool RightsSpecified {
+                get {
+                    return this.rightsFieldSpecified;
+                }
+                set {
+                    this.rightsFieldSpecified = value;
+                }
             }
-            set {
-                this.rightsFieldSpecified = value;
-            }
-        }
     
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
@@ -4453,7 +4467,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.V201512 {
             set {
                 this.scriptSrcField = value;
             }
-        }
+        }    
     }
 
     /// <remarks/>

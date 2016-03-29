@@ -44,7 +44,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                             web.Context.ExecuteQueryRetry();
                             
                             ListItemsProvider provider = new ListItemsProvider(list, web, template);                            
-                            provider.AddListItems(listInstance.DataRows, parser, scope);
+                            provider.AddListItems(listInstance.DataRows, template, parser, scope);
                             if (null == m_listContentProviders)
                             {
                                 m_listContentProviders = new Dictionary<Guid, ListItemsProvider>();
@@ -53,7 +53,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         }
                     }
 
-                    UpdateLookupValues(web, template);
+                    UpdateLookupValues(web, scope);
 
                     #endregion
                 }
@@ -75,7 +75,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     if ((null != creationInfo.ListContentFilter) && creationInfo.ListContentFilter(list))
                     {
                         ListItemsProvider provider = new ListItemsProvider(list, web, template);
-                        List<DataRow> dataRows = provider.ExtractItems();
+                        List<DataRow> dataRows = provider.ExtractItems(creationInfo, scope);
                         listInstance.DataRows.AddRange(dataRows);
                     }
                 }
@@ -101,7 +101,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return _willExtract.Value;
         }
 
-        private void UpdateLookupValues(Web web, ProvisioningTemplate template)
+        private void UpdateLookupValues(Web web, PnPMonitoredScope scope)
         {
             if (null != m_listContentProviders)
             {
@@ -110,7 +110,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     Guid listId = pair.Key;
                     ListItemsProvider provider = pair.Value;
 
-                    provider.UpdateLookups( GetLookupDependentProvider);
+                    provider.UpdateLookups(GetLookupDependentProvider, scope);
                 }                
             }
         }

@@ -71,6 +71,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
             this.Security = security;
         }
 
+        public DataRow(Dictionary<string, string> values, ObjectSecurity security, string fileSrc) :
+            this(values, security)
+        {
+            this.FileSrc = fileSrc;
+        }
+
         #endregion
 
         #region Comparison code
@@ -105,5 +111,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         }
 
         #endregion
+
+        public string FileSrc { get; set; }
     }
 }

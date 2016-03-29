@@ -556,7 +556,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                                  DataValue = dr.Values.Count > 0 ?
                                     (from value in dr.Values
                                      select new DataValue { FieldName = value.Key, Value = value.Value }).ToArray() : null,
-                                 Security = dr.Security.FromTemplateToSchemaObjectSecurityV201512()
+                                 Security = dr.Security.FromTemplateToSchemaObjectSecurityV201512(),
+                                 Src = dr.FileSrc
                              }).ToArray() : null,
                          Security = list.Security.FromTemplateToSchemaObjectSecurityV201512(),
                          Folders = list.Folders.Count > 0 ?
@@ -1504,7 +1505,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                                      select new Model.DataRow(
                                  (from dataValue in dataRow.DataValue
                                   select dataValue).ToDictionary(k => k.FieldName, v => v.Value),
-                                 dataRow.Security.FromSchemaToTemplateObjectSecurityV201512()
+                                 dataRow.Security.FromSchemaToTemplateObjectSecurityV201512(),
+                                 dataRow.Src
                              )).ToList() : null),
                         (list.FieldDefaults != null ?
                             (from fd in list.FieldDefaults

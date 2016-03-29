@@ -2,92 +2,213 @@
 using OfficeDevPnP.Core.Framework.Provisioning.Model;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using List = Microsoft.SharePoint.Client.List;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListContent
 {
     public class ItemPathProvider
     {
+        #region Constants
+
         public const string FIELD_ItemDir = "FileDirRef";
         public const string FIELD_ItemName = "FileLeafRef";
         public const string FIELD_ItemType = "FSObjType";
 
-        public const string FIELD_ItemType_FolderValue = "1";
-        
+        public const string FIELD_ItemType_FolderValue = "Folder";
+        public const string FIELD_ItemType_FileValue = "File";
+
+        #endregion //Constants
+
+        #region Fields
+
         private string m_listServerRelativeUrl = null;
-        private List m_list = null;
-        private Web m_web = null;
+
+        #endregion //Fields
+
+        #region Constructors
 
         public ItemPathProvider(List list, Web web)
         {
             var fields = list.Fields;
 
             m_listServerRelativeUrl = list.RootFolder.ServerRelativeUrl;
-            m_list = list;
-            m_web = web;
+            this.List = list;
+            this.Web = web;
         }
-        
-        public ListItemCreationInformation GetItemCreationInformation(DataRow dataRow)
+
+        #endregion //Constructors
+
+        #region Properties
+
+        public List List { get; private set; }
+        public Web Web { get; private set; }
+
+        public ClientRuntimeContext Context
         {
-            ListItemCreationInformation creationInfo = null;
+            get
+            {
+                return this.Web.Context;
+            }
+        }
+
+        #endregion //Properties
+
+        #region Methods
+
+        public ListItem CreateListItem(DataRow dataRow, ProvisioningTemplate template)
+        {
+            ListItem listitem = null;
 
             string dir = null;
             string dirValue;
             if (dataRow.Values.TryGetValue(FIELD_ItemDir, out dirValue) && !string.IsNullOrEmpty(dirValue))
             {
-                dir = TokenParser.CombineUrl(this.m_web.ServerRelativeUrl, dirValue);                
+                dir = TokenParser.CombineUrl(this.Web.ServerRelativeUrl, dirValue);
             }
 
             string objType;
-            if (dataRow.Values.TryGetValue(FIELD_ItemType, out objType))
+            if (!dataRow.Values.TryGetValue(FIELD_ItemType, out objType))
             {
-                if (objType == FIELD_ItemType_FolderValue)
-                {
-                    string name;
-                    if (dataRow.Values.TryGetValue(FIELD_ItemName, out name))
+                objType = "";
+            }
+            switch (objType)
+            {
+                case FIELD_ItemType_FolderValue:
                     {
-                        creationInfo = new ListItemCreationInformation()
+                        string name;
+                        if (dataRow.Values.TryGetValue(FIELD_ItemName, out name))
                         {
-                            UnderlyingObjectType = FileSystemObjectType.Folder,
-                            LeafName = name,
+                            ListItemCreationInformation creationInfo = new ListItemCreationInformation()
+                            {
+                                UnderlyingObjectType = FileSystemObjectType.Folder,
+                                LeafName = name,
+                                FolderUrl = dir
+                            };
+                            listitem = this.List.AddItem(creationInfo);
+                        }
+                        break;
+                    }
+                case FIELD_ItemType_FileValue:
+                    {
+                        string name;
+                        if (dataRow.Values.TryGetValue(FIELD_ItemName, out name) && !string.IsNullOrEmpty( dataRow.FileSrc ) )
+                        {
+                            using (Stream stream = template.Connector.GetFileStream(dataRow.FileSrc))
+                            {
+                                if (string.IsNullOrEmpty(dir))
+                                {
+                                    dir = this.List.RootFolder.ServerRelativeUrl;
+                                }
+                                FileCreationInformation creationInfo = new FileCreationInformation()
+                                {
+                                    Overwrite = true,
+                                    ContentStream = stream,
+                                    Url = TokenParser.CombineUrl(dir, name)
+                                };
+                                var newFile = this.List.RootFolder.Files.Add(creationInfo);
+                                this.Context.Load(newFile);
+                                this.Context.ExecuteQueryRetry();
+
+                                listitem = newFile.ListItemAllFields;
+                            }
+                        }
+                            
+                        break;
+                    }
+                default:
+                    {
+                        ListItemCreationInformation creationInfo = new ListItemCreationInformation()
+                        {
                             FolderUrl = dir
                         };
+                        listitem = this.List.AddItem(creationInfo);
+                        break;
+                    }
+            }
+
+            return listitem;
+        }
+
+        public void CheckInIOfNeeded(ListItem listitem)
+        {
+            if ((listitem.FileSystemObjectType == FileSystemObjectType.File) &&
+                        (null != listitem.File.ServerObjectIsNull) && (!(bool)listitem.File.ServerObjectIsNull) &&
+                        (listitem.File.CheckOutType != CheckOutType.None))
+            {
+                listitem.File.CheckIn("", CheckinType.MajorCheckIn);
+                this.Context.ExecuteQueryRetry();
+            }
+        }
+
+        public void ExtractItemPathValues(ListItem item, Dictionary<string, string> dataRowValues, ProvisioningTemplateCreationInformation creationInfo, out string fileSrc)
+        {
+            fileSrc = null;
+
+            string dir = item[FIELD_ItemDir] as string;
+            string dirWebRel = "";
+            if (!string.IsNullOrEmpty(dir) &&
+                dir.StartsWith(this.Web.ServerRelativeUrl, StringComparison.OrdinalIgnoreCase))
+            {
+                dirWebRel = dir.Substring(this.Web.ServerRelativeUrl.Length).TrimStart('/');
+            }
+            if (!string.IsNullOrEmpty(dirWebRel))
+            {
+                if (!dir.Equals(m_listServerRelativeUrl, StringComparison.OrdinalIgnoreCase))
+                {
+                    dataRowValues[FIELD_ItemDir] = dirWebRel;
+                }
+
+                if (item.FileSystemObjectType == FileSystemObjectType.Folder)
+                {
+                    dataRowValues[FIELD_ItemType] = FIELD_ItemType_FolderValue;
+                    dataRowValues[FIELD_ItemName] = item[FIELD_ItemName] as string;
+                }
+                else if (item.FileSystemObjectType == FileSystemObjectType.File)
+                {
+                    string fileName = item[FIELD_ItemName] as string;
+                    if (!string.IsNullOrEmpty(fileName))
+                    {
+                        string fileRelUrl = TokenParser.CombineUrl(dirWebRel, fileName);
+                        fileSrc = DownloadFile(fileRelUrl, item, creationInfo);
+                        if (!string.IsNullOrEmpty(fileSrc))
+                        {
+                            dataRowValues[FIELD_ItemName] = fileName;
+                            dataRowValues[FIELD_ItemType] = FIELD_ItemType_FileValue;
+                        }
+                    }
+                }
+            }
+        }        
+
+        #endregion //Methods
+
+        #region Implementation
+
+        private string DownloadFile(string fileWebRelURL, ListItem item, ProvisioningTemplateCreationInformation creationInfo)
+        {
+            string src = "";
+
+            if (null != creationInfo.FileConnector)
+            {
+                this.Context.Load(item.File);
+                this.Context.ExecuteQueryRetry();
+                if ((null != item.File.ServerObjectIsNull) &&
+                    !(bool)item.File.ServerObjectIsNull)
+                {
+                    ClientResult<Stream> streamResult = item.File.OpenBinaryStream();
+                    this.Context.ExecuteQueryRetry();
+                    using (Stream stream = streamResult.Value)
+                    {
+                        creationInfo.FileConnector.SaveFileStream(fileWebRelURL, streamResult.Value);
+
+                        src = Path.Combine(creationInfo.FileConnector.GetConnectionString(),
+                            Path.GetDirectoryName(fileWebRelURL), Path.GetFileName(fileWebRelURL));
                     }
                 }
             }
 
-            if( null == creationInfo )
-            {
-                creationInfo = new ListItemCreationInformation()
-                {
-                    FolderUrl = dir
-                };
-            }
-
-            return creationInfo;
-        }
-
-        public void ExtractItemPathValues(ListItem item, Dictionary<string,string> dataRowValues)
-        {
-            string dir = item[FIELD_ItemDir] as string; ;
-            if (!string.IsNullOrEmpty(dir) && 
-                !dir.Equals(m_listServerRelativeUrl, StringComparison.OrdinalIgnoreCase) &&
-                dir.StartsWith(m_web.ServerRelativeUrl, StringComparison.OrdinalIgnoreCase))
-            {
-                dataRowValues[FIELD_ItemDir] = dir.Substring(m_web.ServerRelativeUrl.Length);
-            }
-
-            string sObjType = item[FIELD_ItemType] as string;
-            if (sObjType == FIELD_ItemType_FolderValue) //Folder
-            {
-                dataRowValues[FIELD_ItemType] = FIELD_ItemType_FolderValue;                
-                
-                string name = item[FIELD_ItemName] as string;
-                if (!string.IsNullOrEmpty(name))
-                {
-                    dataRowValues[FIELD_ItemName] = name;
-                }
-            }
+            return src;
         }
 
         /*
@@ -141,5 +262,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
 
             return currentFolder;
         }*/
+
+        #endregion //Implementation
     }
 }

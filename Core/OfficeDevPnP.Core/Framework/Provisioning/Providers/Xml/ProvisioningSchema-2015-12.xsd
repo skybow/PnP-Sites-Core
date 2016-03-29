@@ -1483,6 +1483,7 @@
                     </xsd:annotation>
                   </xsd:element>
                 </xsd:sequence>
+                <xsd:attribute name="Src" type="xsd:string" default=""></xsd:attribute>
               </xsd:complexType>
             </xsd:element>
           </xsd:sequence>
