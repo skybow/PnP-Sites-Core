@@ -122,7 +122,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             if (publishingPage != null)
                             {
                 string layoutUrl = parser.ParseString(publishingPage.PageLayoutUrl);
-                web.AddPublishingPageByUrl(url, layoutUrl, publishingPage.PageTitle);
+                web.AddPublishingPageByUrl(url, layoutUrl, publishingPage.PageTitle, publishingPage.Html);
 
                 return;
                             }

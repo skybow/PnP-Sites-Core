@@ -598,6 +598,7 @@
     <Compile Include="Framework\Provisioning\ObjectHandlers\ProvisioningMessageType.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\ProvisioningTemplateApplyingInformation.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\ProvisioningTemplateCreationInformation.cs" />
+    <Compile Include="Framework\Provisioning\ObjectHandlers\ProvisioningEventExecutor.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\SiteToTemplateConversion.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\TokenDefinitions\BaseListProvisionToken.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\TokenDefinitions\CDATAEndToken.cs" />

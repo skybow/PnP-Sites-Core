@@ -9,7 +9,8 @@ using System.Threading.Tasks;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 {
-    public class ProvisioningTemplateCreationInformation
+    public class ProvisioningTemplateCreationInformation:
+        ProvisioningEventExecutor
     {
         private ProvisioningTemplate baseTemplate;
         private FileConnectorBase fileConnector;
@@ -21,9 +22,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         private List<String> propertyBagPropertiesToPreserve;
         private bool persistPublishingFiles = false;
         private bool includeNativePublishingFiles = false;
-        private Func<List, bool> fnListContentFilter;
-        private Func<List, bool> fnListInstanceFilter;
-
+        
         private Handlers handlersToProcess = Handlers.All;
 
         public ProvisioningProgressDelegate ProgressDelegate { get; set; }
@@ -34,7 +33,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             this.baseTemplate = web.GetBaseTemplate();
             this.propertyBagPropertiesToPreserve = new List<String>();            
         }
-
+        
         /// <summary>
         /// Base template used to compare against when we're "getting" a template
         /// </summary>
@@ -144,19 +143,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             get { return this.propertyBagPropertiesToPreserve; }
             set { this.propertyBagPropertiesToPreserve = value; }
         }
-
-        public Func<List,bool> ListContentFilter
-        {
-            get { return this.fnListContentFilter; }
-            set { this.fnListContentFilter = value; }
-        }
-
-        public Func<List, bool> ListInstanceFilter
-        {
-            get { return this.fnListInstanceFilter; }
-            set { this.fnListInstanceFilter = value; }
-        }
-
+        
         public bool IncludeSiteGroups
         {
             get
@@ -188,6 +175,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             {
                 handlersToProcess = value;
             }
-        }
+        }       
     }
 }
