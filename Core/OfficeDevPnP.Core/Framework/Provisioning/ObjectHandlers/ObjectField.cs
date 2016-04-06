@@ -325,19 +325,21 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 {
                     if (!BuiltInFieldId.Contains(field.Id))
                     {
-                        var fieldXml = field.SchemaXml;
-                        XElement element = XElement.Parse(fieldXml);
-
-                        // Check if the field contains a reference to a list. If by Guid, rewrite the value of the attribute to use web relative paths
-                        var listIdentifier = element.Attribute("List") != null ? element.Attribute("List").Value : null;
-                        if (!string.IsNullOrEmpty(listIdentifier))
+                        if (creationInfo.ExecutePreProvisionEvent<Field,SPField>(Handlers.Fields, template, null, field))
                         {
-                            var listGuid = Guid.Empty;
-                            fieldXml = ParseFieldSchema(fieldXml, web.Lists);
-                            element = XElement.Parse(fieldXml);
-                            //if (Guid.TryParse(listIdentifier, out listGuid))
-                            //{
-                            //    fieldXml = ParseListSchema(fieldXml, web.Lists);
+                            var fieldXml = field.SchemaXml;
+                            XElement element = XElement.Parse(fieldXml);
+
+                            // Check if the field contains a reference to a list. If by Guid, rewrite the value of the attribute to use web relative paths
+                            var listIdentifier = element.Attribute("List") != null ? element.Attribute("List").Value : null;
+                            if (!string.IsNullOrEmpty(listIdentifier))
+                            {
+                                var listGuid = Guid.Empty;
+                                fieldXml = ParseFieldSchema(fieldXml, web.Lists);
+                                element = XElement.Parse(fieldXml);
+                                //if (Guid.TryParse(listIdentifier, out listGuid))
+                                //{
+                                //    fieldXml = ParseListSchema(fieldXml, web.Lists);
                                 //if (newfieldXml == fieldXml)
                                 //{
                                 //    var list = web.Lists.GetById(listGuid);
@@ -348,23 +350,27 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 //    element.Attribute("List").SetValue(listUrl);
                                 //    fieldXml = element.ToString();
                                 //}
-                            //}
+                                //}
+                            }
+                            // Check if the field is of type TaxonomyField
+                            if (field.TypeAsString.StartsWith("TaxonomyField"))
+                            {
+                                var taxField = (TaxonomyField)field;
+                                web.Context.Load(taxField, tf => tf.TextField, tf => tf.Id);
+                                web.Context.ExecuteQueryRetry();
+                                taxTextFieldsToMoveUp.Add(taxField.TextField);
+                            }
+                            // Check if we have version attribute. Remove if exists 
+                            if (element.Attribute("Version") != null)
+                            {
+                                element.Attributes("Version").Remove();
+                                fieldXml = element.ToString();
+                            }
+                            Field templateField = new Field() { SchemaXml = fieldXml };
+                            template.SiteFields.Add(templateField);
+
+                            creationInfo.ExecutePostProvisionEvent<Field, SPField>(Handlers.Fields, template, templateField, field);
                         }
-                        // Check if the field is of type TaxonomyField
-                        if (field.TypeAsString.StartsWith("TaxonomyField"))
-                        {
-                            var taxField = (TaxonomyField)field;
-                            web.Context.Load(taxField, tf => tf.TextField, tf => tf.Id);
-                            web.Context.ExecuteQueryRetry();
-                            taxTextFieldsToMoveUp.Add(taxField.TextField);
-                        }
-                        // Check if we have version attribute. Remove if exists 
-                        if (element.Attribute("Version") != null)
-                        {
-                            element.Attributes("Version").Remove();
-                            fieldXml = element.ToString();
-                        }
-                        template.SiteFields.Add(new Field() { SchemaXml = fieldXml });
                     }
                 }
                 // move hidden taxonomy text fields to the top of the list
@@ -387,7 +393,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             foreach (var field in baseTemplate.SiteFields)
             {
-
                 XDocument xDoc = XDocument.Parse(field.SchemaXml);
                 var id = xDoc.Root.Attribute("ID") != null ? xDoc.Root.Attribute("ID").Value : null;
                 if (id != null)

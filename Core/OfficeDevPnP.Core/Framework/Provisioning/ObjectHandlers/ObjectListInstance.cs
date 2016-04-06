@@ -1418,12 +1418,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         }
                     }
 
-                    if (null != creationInfo.ListInstanceFilter)
+                    if (!creationInfo.ExecutePreProvisionEvent<ListInstance, List>(Handlers.Lists, template, null, siteList))
                     {
-                        if (!creationInfo.ListInstanceFilter(siteList))
-                        {
-                            continue;
-                        }
+                        continue;
                     }
 
                     string documentTemplateContent = string.Empty;
@@ -1502,6 +1499,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         }
 
                     }
+
+                    creationInfo.ExecutePostProvisionEvent<ListInstance, List>(Handlers.Lists, template, list, siteList);
+
                     if (logCTWarning)
                     {
                         scope.LogWarning("You are extracting a template from a subweb. List '{0}' refers to content types. Content types are not exported when extracting a template from a subweb", list.Title);
