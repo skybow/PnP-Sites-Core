@@ -1418,7 +1418,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         }
                     }
 
-                    if (!creationInfo.ExecutePreProvisionEvent(Handlers.Lists, template, null, siteList))
+                    if (!creationInfo.ExecutePreProvisionEvent<ListInstance, List>(Handlers.Lists, template, null, siteList))
                     {
                         continue;
                     }
@@ -1500,7 +1500,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                     }
 
-                    creationInfo.ExecutePostProvisionEvent(Handlers.Lists, template, list, siteList);
+                    creationInfo.ExecutePostProvisionEvent<ListInstance, List>(Handlers.Lists, template, list, siteList);
 
                     if (logCTWarning)
                     {

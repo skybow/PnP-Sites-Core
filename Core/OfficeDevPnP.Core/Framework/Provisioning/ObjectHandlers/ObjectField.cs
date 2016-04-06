@@ -325,7 +325,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 {
                     if (!BuiltInFieldId.Contains(field.Id))
                     {
-                        if (creationInfo.ExecutePreProvisionEvent(Handlers.Fields, template, null, field))
+                        if (creationInfo.ExecutePreProvisionEvent<Field,SPField>(Handlers.Fields, template, null, field))
                         {
                             var fieldXml = field.SchemaXml;
                             XElement element = XElement.Parse(fieldXml);
@@ -369,7 +369,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                             Field templateField = new Field() { SchemaXml = fieldXml };
                             template.SiteFields.Add(templateField);
 
-                            creationInfo.ExecutePostProvisionEvent(Handlers.Fields, template, templateField, field);
+                            creationInfo.ExecutePostProvisionEvent<Field, SPField>(Handlers.Fields, template, templateField, field);
                         }
                     }
                 }

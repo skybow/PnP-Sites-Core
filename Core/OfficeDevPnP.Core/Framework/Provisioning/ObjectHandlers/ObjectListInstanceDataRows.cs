@@ -72,13 +72,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     web.Context.Load(list);
                     web.Context.ExecuteQueryRetry();
 
-                    if( creationInfo.ExecutePreProvisionEvent(Handlers.ListContents, template, listInstance, list ) )                    
+                    if (creationInfo.ExecutePreProvisionEvent<ListInstance, List>(Handlers.ListContents, template, listInstance, list))                    
                     {
                         ListItemsProvider provider = new ListItemsProvider(list, web, template);
                         List<DataRow> dataRows = provider.ExtractItems(creationInfo, scope);
                         listInstance.DataRows.AddRange(dataRows);
 
-                        creationInfo.ExecutePostProvisionEvent(Handlers.ListContents, template, listInstance, list);
+                        creationInfo.ExecutePostProvisionEvent<ListInstance, List>(Handlers.ListContents, template, listInstance, list);
                     }
                 }
             }

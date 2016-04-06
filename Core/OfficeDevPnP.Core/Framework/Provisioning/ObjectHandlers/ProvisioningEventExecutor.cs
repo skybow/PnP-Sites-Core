@@ -1,5 +1,7 @@
 ﻿using Microsoft.SharePoint.Client;
+using MSClient = Microsoft.SharePoint.Client;
 using OfficeDevPnP.Core.Framework.Provisioning.Model;
+using Model = OfficeDevPnP.Core.Framework.Provisioning.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,15 +10,17 @@ using System.Threading.Tasks;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 {
-    public class ProvisioningEventArgs:
+    public class ProvisioningEventArgs<TModel, TClient> :
         EventArgs
+        where TModel : BaseModel
+        where TClient : ClientObject
     {
-        public BaseModel Model { get; private set; }
-        public ClientObject ClientObject { get; private set; }
+        public TModel Model { get; private set; }
+        public TClient ClientObject { get; private set; }
 
         public bool Cancel { get; set; }
 
-        public ProvisioningEventArgs(BaseModel model, ClientObject clientObj)
+        public ProvisioningEventArgs(TModel model, TClient clientObj)
         {
             this.Cancel = false;
             this.Model = model;
@@ -24,80 +28,109 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         }
     }
 
+    public enum ProvisionEventType
+    {
+        PreProcessor,
+        PostProcessor
+    }
+
     public class ProvisioningEventExecutor
     {
-        private enum ProvisionEventType
+        private interface IProvisioningEventEntry
         {
-            PreEvent,
-            PostEvent
-        }        
+            ProvisionEventType EventType { get; set; }
+            Handlers HandlerType { get; set; }
+        }
 
-        private class ProvisioningEventEntry
+        private class ProvisioningEventEntry<TModel,TClient>:
+            IProvisioningEventEntry
+            where TModel: BaseModel
+            where TClient: ClientObject
         {
             public ProvisionEventType EventType { get; set; }
             public Handlers HandlerType { get; set; }
-            public Action<ProvisioningEventArgs> Action { get; set; }
 
-            public bool Execute(ProvisioningTemplate template, BaseModel model, ClientObject clientObject)
+            public Action<ProvisioningEventArgs<TModel, TClient>> Action { get; set; }
+
+            public bool Execute(ProvisioningTemplate template, TModel model, TClient clientObject)
             {
-                ProvisioningEventArgs eventArgs = new ProvisioningEventArgs(model, clientObject);
+                ProvisioningEventArgs<TModel, TClient> eventArgs = new ProvisioningEventArgs<TModel, TClient>(model, clientObject);
                 this.Action(eventArgs);
 
                 return !eventArgs.Cancel;
             }
         }
 
-        private List<ProvisioningEventEntry> m_events = null;
+        private List<IProvisioningEventEntry> m_events = null;
 
-        public void RegisterPreProvisionEvent(Handlers handler, Action<ProvisioningEventArgs> fn)
+        public void AttachListEvent(ProvisionEventType eventType, Action<ProvisioningEventArgs<ListInstance, List>> fn)
         {
-            RegisterEvent(handler, fn, ProvisionEventType.PreEvent);
+            RegisterEvent(Handlers.Lists, fn, eventType);
         }
 
-        public void RegisterPostProvisionEvent(Handlers handler, Action<ProvisioningEventArgs> fn)
+        public void AttachListContentEvent(ProvisionEventType eventType, Action<ProvisioningEventArgs<ListInstance, List>> fn)
         {
-            RegisterEvent(handler, fn, ProvisionEventType.PostEvent);
+            RegisterEvent(Handlers.ListContents, fn, eventType);
         }
 
-        public bool ExecutePreProvisionEvent(Handlers handler, ProvisioningTemplate template, BaseModel model, ClientObject clientObject)
+        public void AttachFieldEvent(ProvisionEventType eventType, 
+            Action<ProvisioningEventArgs<Model.Field, MSClient.Field>> fn)
         {
-            bool result = ExecuteEvent(handler, template, model, clientObject, ProvisionEventType.PreEvent);
+            RegisterEvent(Handlers.Fields, fn, eventType);
+        }        
+
+        public bool ExecutePreProvisionEvent<TModel, TClient>(Handlers handler, ProvisioningTemplate template, TModel model, TClient clientObject)
+            where TModel : BaseModel
+            where TClient : ClientObject
+        {
+            bool result = ExecuteEvent(handler, template, model, clientObject, ProvisionEventType.PreProcessor);
             return result;
         }
 
-        public void ExecutePostProvisionEvent(Handlers handler, ProvisioningTemplate template, BaseModel model, ClientObject clientObject)
+        public void ExecutePostProvisionEvent<TModel, TClient>(Handlers handler, ProvisioningTemplate template, TModel model, TClient clientObject)
+            where TModel : BaseModel
+            where TClient : ClientObject
         {
-            ExecuteEvent(handler, template, model, clientObject, ProvisionEventType.PostEvent);
+            ExecuteEvent(handler, template, model, clientObject, ProvisionEventType.PostProcessor);
         }
 
-        private void RegisterEvent(Handlers handler, Action<ProvisioningEventArgs> fn, ProvisionEventType eventType)
+        private void RegisterEvent<TModel, TClient>(Handlers handler, Action<ProvisioningEventArgs<TModel, TClient>> fn, ProvisionEventType eventType)
+            where TModel : BaseModel
+            where TClient : ClientObject
         {
             if (null == m_events)
             {
-                m_events = new List<ProvisioningEventEntry>();
+                m_events = new List<IProvisioningEventEntry>();
             }
-            m_events.Add(new ProvisioningEventEntry()
+            m_events.Add(new ProvisioningEventEntry<TModel,TClient>()
             {
                 HandlerType = handler,
-                Action = fn,
-                EventType = eventType
+                EventType = eventType,
+                Action = fn       
             });
         }
 
-        private bool ExecuteEvent( Handlers handler, ProvisioningTemplate template, BaseModel model, ClientObject clientObject, ProvisionEventType eventType)
+        private bool ExecuteEvent<TModel, TClient>(Handlers handler, ProvisioningTemplate template, TModel model, TClient clientObject, ProvisionEventType eventType)
+            where TModel : BaseModel
+            where TClient : ClientObject
         {
             bool success = true;
+                        
             if (null != m_events)
             {
                 for (var i = 0; i < m_events.Count; ++i)
                 {
-                    ProvisioningEventEntry eventEntry = m_events[i];
+                    IProvisioningEventEntry eventEntry = m_events[i];
                     if ((eventEntry.EventType == eventType) &&
-                        (eventEntry.HandlerType.HasFlag( handler )))
+                        (eventEntry.HandlerType == handler))
                     {
-                        if (!eventEntry.Execute(template, model, clientObject))
+                        ProvisioningEventEntry<TModel, TClient> eventEntryTyped = m_events[i] as ProvisioningEventEntry<TModel, TClient>;
+                        if (null != eventEntryTyped)
                         {
-                            success = false;
+                            if (!eventEntryTyped.Execute(template, model, clientObject))
+                            {
+                                success = false;
+                            }
                         }
                     }
                 }
