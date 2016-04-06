@@ -39,6 +39,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 var context = web.Context as ClientContext;
 
                 web.EnsureProperties(w => w.ServerRelativeUrl, w => w.Url);
+                List<string> filesList = new List<string>();
 
                 foreach (var file in template.Files)
                 {
@@ -99,7 +100,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                             if (file.WebParts != null && file.WebParts.Any())
                             {
                                 targetFile.EnsureProperties(f => f.ServerRelativeUrl);
-
+                                filesList.Add(targetFile.ServerRelativeUrl);
                                 var existingWebParts = web.GetWebParts(targetFile.ServerRelativeUrl);
 
                                 var enumerator = existingWebParts.GetEnumerator();
@@ -163,8 +164,52 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         
                     }
                 }
+
+                FixViewsAfterAddingWebParts(web, filesList, parser, template);
             }
             return parser;
+        }
+
+        protected void FixViewsAfterAddingWebParts(Web web, List<string> files, TokenParser parser, ProvisioningTemplate template)
+        {
+            web.Context.Load(web.Lists, w => w.IncludeWithDefaultProperties(l => l.Views));
+            web.Context.ExecuteQuery();
+            bool isDirty = false;
+
+            foreach (var list in web.Lists)
+            {
+                var views = list.Views;
+                bool viewUpdated = false;
+                foreach (var view in views)
+                {
+                    var url = view.ServerRelativeUrl;
+                    bool exist = files.Any(f => f.Equals(url, System.StringComparison.InvariantCultureIgnoreCase));
+                    var listFromTemplate = template.Lists.FirstOrDefault(l => l.Title == list.Title);
+                    Model.View viewFromTemplate = listFromTemplate == null || listFromTemplate.Views == null 
+                        ? null 
+                        : listFromTemplate.Views.FirstOrDefault(v => 
+                            v.PageUrl.EndsWith(url.Substring(web.ServerRelativeUrl.Length))
+                            );
+                    if (exist && viewFromTemplate != null && string.IsNullOrEmpty(view.Title)) { 
+                        var viewElement = XElement.Parse(viewFromTemplate.SchemaXml);
+                        var displayNameElement = viewElement.Attribute("DisplayName");
+                        view.Title = displayNameElement == null ? Path.GetFileNameWithoutExtension(viewFromTemplate.PageUrl) : displayNameElement.Value;
+                        view.Hidden = false;
+                        view.Update();
+                        isDirty = true;
+                        viewUpdated = true;
+                    }
+                }
+                if (viewUpdated)
+                {
+                    list.Update();
+                }
+            }
+
+            if (isDirty) {
+                web.Context.ExecuteQuery();
+            }
+
         }
 
         public void SetFileProperties(File file, IDictionary<string, string> properties, bool checkoutIfRequired = true)
@@ -375,9 +420,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 var parser = new TokenParser(web, new ProvisioningTemplate());
                 foreach (var provider in providers)
                 {
+                    var pageUrl = provider.GetUrl();
                     try
                     {
-                        var pageUrl = provider.GetUrl();
                         var file = modelProvider.GetFile(pageUrl, parser);
                         if (null != file)
                         {
@@ -391,7 +436,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     }
                     catch (Exception exception)
                     {
-                        scope.LogError(exception, "Export file error");
+                        scope.LogError(exception, "Export file error: {0}", pageUrl);
                     }
                 }
 

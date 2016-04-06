@@ -58,13 +58,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.File
 
         private bool NeedToOverrideFile(Web web, string pageUrl)
         {
-            //Commented because List forms and list views does not have versions.
-
-            //var file = web.GetFileByServerRelativeUrl(pageUrl);
-            //web.Context.Load(file, f => f.Versions);
-            //web.Context.ExecuteQueryRetry();
-            //return file.Versions.Any();
-            return false;
+            var file = web.GetFileByServerRelativeUrl(pageUrl);
+            web.Context.Load(file, f => f.CustomizedPageStatus);
+            web.Context.ExecuteQueryRetry();
+            return file.CustomizedPageStatus == CustomizedPageStatus.Customized;
         }
     }
 }
