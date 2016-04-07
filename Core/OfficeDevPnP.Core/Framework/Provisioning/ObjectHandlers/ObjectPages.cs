@@ -116,28 +116,27 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         //TODO: move to class
         private void AddPage(Web web, string url, Page page, TokenParser parser)
-                        {
-
+        {
             var publishingPage = page as PublishingPage;
             if (publishingPage != null)
-                            {
+            {
                 string layoutUrl = parser.ParseString(publishingPage.PageLayoutUrl);
                 web.AddPublishingPageByUrl(url, layoutUrl, publishingPage.PageTitle, publishingPage.Html);
-
-                return;
-                            }
-
-            var contentPage = page as ContentPage;
-            if (contentPage != null)
-                        {
-                web.AddWikiPageByUrl(url);
-
-                return;
-                        }
-
-            web.AddWikiPageByUrl(url);
-            web.AddLayoutToWikiPage(page.Layout, url);
-                    }
+            }
+            else
+            {
+                var contentPage = page as ContentPage;
+                if (contentPage != null)
+                {
+                    web.AddWikiPageByUrl(url);
+                }
+                else
+                {
+                    web.AddWikiPageByUrl(url);
+                    web.AddLayoutToWikiPage(page.Layout, url);
+                }
+            }
+        }
 
         //TODO: refactor this
         private void AddWebParts(Web web, Page page, TokenParser parser)
@@ -214,7 +213,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             using (var scope = new PnPMonitoredScope(this.Name))
             {
                 var lists = this.GetListsWithPages(template);
-                var pages = new PageCollection(template);
+                template.Pages = new PageCollection(template);
                 var parser = new TokenParser(web, new ProvisioningTemplate());
 
                 var homePageUrl = web.GetHomePageRelativeUrl();
@@ -222,19 +221,41 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 {
                     try
                     {
-                        var listItems = GetListItems(web, list);
+                        List splist = web.Lists.GetById(list.ID);
+                        web.Context.Load(splist);
+                        web.Context.ExecuteQueryRetry();
+                        if (!creationInfo.ExecutePreProvisionEvent<ListInstance, List>(Handlers.Pages, template, list, null))
+                        {
+                            continue;
+                        }
 
+                        var listItems = GetListPages(web, splist);
                         var fileItems = listItems.AsEnumerable().Where(x => x.IsFile());
+                        foreach (ListItem item in fileItems)
+                        {
+                            try
+                            {
+                                IPageModelProvider provider = GetProvider(item, homePageUrl, web, parser);
+                                if (null != provider)
+                                {
+                                    provider.AddPage(item, template);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                var message = string.Format("Error in export page for list: {0}", list.ServerRelativeUrl);
+                                scope.LogError(ex, message);
+                            }
+                        }
 
-                        pages.AddRange(fileItems.AsEnumerable().Select(x => GetProvider(x, homePageUrl, web).GetPage(x, parser)));
+                        creationInfo.ExecutePostProvisionEvent<ListInstance, List>(Handlers.Pages, template, list, splist);
                     }
                     catch (Exception exception)
                     {
                         var message = string.Format("Error in export publishing page for list: {0}", list.ServerRelativeUrl);
                         scope.LogError(exception, message);
                     }
-                }
-                template.Pages = pages;
+                }                
                 // Impossible to return all files in the site currently
 
                 // If a base template is specified then use that one to "cleanup" the generated template model
@@ -246,46 +267,41 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return template;
         }
 
-        private IPageModelProvider GetProvider(ListItem item, string homePageUrl, Web web)
+        internal static IPageModelProvider GetProvider(ListItem item, string homePageUrl, Web web, TokenParser parser)
         {
             var fieldValues = item.FieldValues;
             IPageModelProvider provider = null;
 
-            if (fieldValues.ContainsKey("PublishingPageContent"))
+            if (fieldValues.ContainsKey("PublishingPageContent") && 
+                fieldValues.ContainsKey("PublishingPageLayout") && (null != fieldValues["PublishingPageLayout"]))
             {
-                provider = new PublishingPageModelProvider(homePageUrl, web);
+                provider = new PublishingPageModelProvider(homePageUrl, web, parser);
             }
             else if (fieldValues.ContainsKey("WikiField"))
             {
-                provider = new ContentPageModelProvider(homePageUrl, web);
+                provider = new ContentPageModelProvider(homePageUrl, web, parser);
+            }
+            else
+            {
+                provider = new WebPartPageModelProvider(homePageUrl, web, parser);
             }
 
             return provider;
         }
 
-        private ListItemCollection GetListItems(Web web, ListInstance list)
+        private IEnumerable<ListItem> GetListPages(Web web, List list)
         {
-            var caml = GetCamlQuery(list.ServerRelativeUrl);
-            var listItems = web.Lists.GetById(list.ID).GetItems(caml);
+            var caml = CamlQuery.CreateAllItemsQuery();
+            var listItems = list.GetItems(caml);
 
             web.Context.Load(listItems, includes => includes.Include(i => i.File.Versions));
             web.Context.Load(listItems);
             web.Context.ExecuteQueryRetry();
-            return listItems;
+
+            var fileItems = listItems.AsEnumerable().Where(x => x.IsFile());
+            return fileItems;
         }
 
-        private CamlQuery GetCamlQuery(string relativeUrl)
-        {
-            var caml = new CamlQuery
-            {
-                FolderServerRelativeUrl = relativeUrl,
-                ViewXml = @"<View Scope='RecursiveAll'>
-                                    <Query>
-                                    </Query>
-                                </View>"
-            };
-            return caml;
-        }
 
         private IEnumerable<ListInstance> GetListsWithPages(ProvisioningTemplate template)
         {

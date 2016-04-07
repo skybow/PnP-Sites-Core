@@ -9,44 +9,43 @@ using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebParts;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.Page
 {
-    internal class PublishingPageModelProvider : IPageModelProvider
+    internal class PublishingPageModelProvider :
+        PageProviderBase,
+        IPageModelProvider
     {
-        protected string HomePageUrl { get; private set; }
-        protected Web Web { get; private set; }
-        protected WebPartsModelProvider Provider;
-        public PublishingPageModelProvider(string homePageUrl, Web web)
-        {
-            HomePageUrl = homePageUrl;
-            this.Web = web;
-            Provider = new WebPartsModelProvider(web);
+        public PublishingPageModelProvider(string homePageUrl, Web web, TokenParser parser) :
+            base(homePageUrl, web, parser)
+        {            
         }
 
-        public ContentPage GetPage(ListItem item, TokenParser parser)
+        public override void AddPage(ListItem item, ProvisioningTemplate template)
         {
-            var html = string.Empty;
-            var fieldValues = item.FieldValues;
-            var title = fieldValues["Title"] == null ? string.Empty : fieldValues["Title"].ToString();
-            if (fieldValues.ContainsKey("PublishingPageContent"))
+            string url = GetUrl(item, true);
+            if (null == template.Pages.Find((p) => string.Equals(p.Url, url, System.StringComparison.OrdinalIgnoreCase)))
             {
-                html = fieldValues["PublishingPageContent"] == null ? " " : fieldValues["PublishingPageContent"].ToString();
+                var fieldValues = item.FieldValues;
+
+                var pageLayoutUrl = string.Empty;
+                if (fieldValues.ContainsKey("PublishingPageLayout"))
+                {
+                    pageLayoutUrl = fieldValues["PublishingPageLayout"] == null ? "" : (fieldValues["PublishingPageLayout"] as FieldUrlValue).Url;
+                }
+                pageLayoutUrl = TokenParser.TokenizeUrl(this.Web, pageLayoutUrl);
+
+                string html = "";
+                if (fieldValues.ContainsKey("PublishingPageContent"))
+                {
+                    html = fieldValues["PublishingPageContent"] == null ? " " : fieldValues["PublishingPageContent"].ToString();
+                }
+
+                var title = fieldValues["Title"] == null ? "" : fieldValues["Title"].ToString();
+
+                bool needToOverwrite = NeedOverride(item);
+                var webParts = GetWebParts(item);
+                bool isHomePage = IsWelcomePage(item);
+                PublishingPage page = new PublishingPage(url, title, html, pageLayoutUrl, needToOverwrite, webParts, isHomePage);
+                template.Pages.Add(page);
             }
-
-            var pageLayoutUrl = string.Empty;
-            if (fieldValues.ContainsKey("PublishingPageLayout"))
-            {
-                pageLayoutUrl = fieldValues["PublishingPageLayout"] == null ? "" : (fieldValues["PublishingPageLayout"] as FieldUrlValue).Url;
-            }
-
-            pageLayoutUrl = TokenParser.TokenizeUrl( this.Web, pageLayoutUrl);
-
-            var url = fieldValues["FileRef"].ToString();
-            var isHomePage = HomePageUrl.Equals(url);
-            var needToOverwrite = item.File.Versions.Any();
-
-            var webParts = Provider.Retrieve(url, parser);
-            url = TokenParser.TokenizeUrl( this.Web, url);
-
-            return new PublishingPage(url, title, html, pageLayoutUrl, needToOverwrite, webParts, isHomePage);
-        }        
+        }
     }
 }

@@ -427,7 +427,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         if (null != file)
                         {
                             files.Add(file);
-                            this.CreateLocalFile(web, pageUrl, connector);
+                            CreateLocalFile(web, pageUrl, connector);
                         }
                         else
                         {
@@ -463,7 +463,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return result;
         }
 
-        private void CreateLocalFile(Web web, string pageUrl, FileConnectorBase connector)
+        internal static void CreateLocalFile(Web web, string pageUrl, FileConnectorBase connector)
         {
             var fileContent = web.GetPageContentXmlWithoutWebParts(pageUrl);
             var fileName = Path.GetFileName(pageUrl);

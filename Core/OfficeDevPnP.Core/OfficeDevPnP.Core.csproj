@@ -555,6 +555,7 @@
     <Compile Include="Framework\Provisioning\ObjectHandlers\Export\Page\PublishingPageModelProvider.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Framework\Provisioning\ObjectHandlers\Export\Page\WebPartPageModelProvider.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\IWebPartTokenizer.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\V2\V2DefaultWebPartTokenizer.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\V2\V2WebPartTokenizerManager.cs" />

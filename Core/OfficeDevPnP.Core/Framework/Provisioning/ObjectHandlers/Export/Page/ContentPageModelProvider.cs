@@ -5,34 +5,34 @@ using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebParts;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.Page
 {
-    internal class ContentPageModelProvider : IPageModelProvider
+    internal class ContentPageModelProvider :
+        PageProviderBase,
+        IPageModelProvider
     {
-        protected string HomePageUrl { get; private set; }
-        protected Web Web { get; private set; }
-        protected WebPartsModelProvider Provider;
-        public ContentPageModelProvider(string homePageUrl, Web web)
-        {
-            HomePageUrl = homePageUrl;
-            this.Web = web;
-            Provider = new WebPartsModelProvider(web);
+        public ContentPageModelProvider(string homePageUrl, Web web, TokenParser parser) :
+            base(homePageUrl, web, parser)
+        {            
         }
 
-        public ContentPage GetPage(ListItem item, TokenParser parser)
+        public override void AddPage(ListItem item, ProvisioningTemplate template)
         {
-            var html = string.Empty;
-            var fieldValues = item.FieldValues;
-            if (fieldValues.ContainsKey("WikiField"))
+            string url = GetUrl(item, true);
+            if (null == template.Pages.Find((p) => string.Equals(p.Url, url, System.StringComparison.OrdinalIgnoreCase)))
             {
-                html = fieldValues["WikiField"] == null ? " " : fieldValues["WikiField"].ToString();
+                var fieldValues = item.FieldValues;
+                string html = "";
+                if (fieldValues.ContainsKey("WikiField"))
+                {
+                    html = fieldValues["WikiField"] == null ? " " : fieldValues["WikiField"].ToString();
+                }
+                var title = fieldValues["Title"] == null ? "" : fieldValues["Title"].ToString();
+                bool needToOverwrite = NeedOverride(item);
+                var webParts = GetWebParts(item);
+                bool isHomePage = IsWelcomePage(item);
+
+                ContentPage page = new ContentPage(url, html, needToOverwrite, webParts, isHomePage);
+                template.Pages.Add(page);
             }
-            var url = fieldValues["FileRef"].ToString();
-            var isHomePage = HomePageUrl.Equals(url);
-            var needToOverwrite = item.File.Versions.Any();
-
-            var webParts = Provider.Retrieve(url, parser);
-            url = TokenParser.TokenizeUrl( this.Web,url);
-
-            return new ContentPage(url, html, needToOverwrite, webParts, isHomePage);
         }
     }
 }
