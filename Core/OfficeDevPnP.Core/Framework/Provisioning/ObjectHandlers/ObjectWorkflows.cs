@@ -16,7 +16,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             get { return "Workflows"; }
         }
-        public override ProvisioningTemplate ExtractObjects(Web web, ProvisioningTemplate template, ProvisioningTemplateCreationInformation creationInfo)
+        public override ProvisioningTemplate ExtractObjects(Web web, ProvisioningTemplate template, TokenParser parser, ProvisioningTemplateCreationInformation creationInfo)
         {
             if (template.Workflows == null)
             {

@@ -208,13 +208,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return new Regex(@"(?<=webpartid="").*?(?="")", RegexOptions.Singleline).Match(xml).Value;
         }
 
-        public override ProvisioningTemplate ExtractObjects(Web web, ProvisioningTemplate template, ProvisioningTemplateCreationInformation creationInfo)
+        public override ProvisioningTemplate ExtractObjects(Web web, ProvisioningTemplate template, TokenParser parser, ProvisioningTemplateCreationInformation creationInfo)
         {
             using (var scope = new PnPMonitoredScope(this.Name))
             {
                 var lists = this.GetListsWithPages(template);
                 template.Pages = new PageCollection(template);
-                var parser = new TokenParser(web, new ProvisioningTemplate());
 
                 var homePageUrl = web.GetHomePageRelativeUrl();
                 foreach (var list in lists)

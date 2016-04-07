@@ -33,7 +33,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return parser;
         }
 
-        public override ProvisioningTemplate ExtractObjects(Web web, ProvisioningTemplate template, ProvisioningTemplateCreationInformation creationInfo)
+        public override ProvisioningTemplate ExtractObjects(Web web, ProvisioningTemplate template, TokenParser parser, ProvisioningTemplateCreationInformation creationInfo)
         {
             using (var scope = new PnPMonitoredScope(this.Name))
             {
@@ -55,7 +55,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     var listItem = file.EnsureProperty(f => f.ListItemAllFields);
                     if (listItem != null)
                     {
-                        TokenParser parser = new TokenParser(web, new ProvisioningTemplate());
                         Export.Page.IPageModelProvider provider = ObjectPages.GetProvider(listItem, homepageUrl, web, parser);
                         if (null != provider)
                         {
@@ -73,7 +72,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     else
                     {
                         // Page does not belong to a list, extract the file as is
-                        template = GetFileContents(web, template, welcomePageUrl, creationInfo, scope);
+                        template = GetFileContents(web, template, parser, welcomePageUrl, creationInfo, scope);
                         welcomePageAdded = true;
                     }
                 }
@@ -95,8 +94,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             }
             return template;
         }
-        
-        private ProvisioningTemplate GetFileContents(Web web, ProvisioningTemplate template, string welcomePageUrl, ProvisioningTemplateCreationInformation creationInfo, PnPMonitoredScope scope)
+
+        private ProvisioningTemplate GetFileContents(Web web, ProvisioningTemplate template, TokenParser parser, string welcomePageUrl, ProvisioningTemplateCreationInformation creationInfo, PnPMonitoredScope scope)
         {
             var fullUri = new Uri(UrlUtility.Combine(web.Url, web.RootFolder.WelcomePage));
 
@@ -117,7 +116,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             //RetrieveFieldValues(web, file, homeFile);
 
             WebPartsModelProvider webpartsProvider = new WebPartsModelProvider(web);
-            var webparts = webpartsProvider.Retrieve(welcomePageUrl, new TokenParser(web, new ProvisioningTemplate()));
+            var webparts = webpartsProvider.Retrieve(welcomePageUrl, parser);
             homeFile.WebParts.AddRange(webparts);
 
             template.Files.Add(homeFile);

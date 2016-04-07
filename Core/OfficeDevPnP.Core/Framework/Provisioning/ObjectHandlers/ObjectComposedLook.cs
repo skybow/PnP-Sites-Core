@@ -84,7 +84,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return parser;
         }
 
-        public override ProvisioningTemplate ExtractObjects(Web web, ProvisioningTemplate template, ProvisioningTemplateCreationInformation creationInfo)
+        public override ProvisioningTemplate ExtractObjects(Web web, ProvisioningTemplate template, TokenParser parser, ProvisioningTemplateCreationInformation creationInfo)
         {
             using (var scope = new PnPMonitoredScope(this.Name))
             {
@@ -131,7 +131,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         {
                             scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ComposedLooks_ExtractObjects_Creating_SharePointConnector);
                             // Let's create a SharePoint connector since our files anyhow are in SharePoint at this moment
-                            TokenParser parser = new TokenParser(web, template);
                             DownLoadFile(spConnector, spConnectorRoot, creationInfo.FileConnector, web, parser.ParseString(composedLook.BackgroundFile), scope);
                             DownLoadFile(spConnector, spConnectorRoot, creationInfo.FileConnector, web, parser.ParseString(composedLook.ColorFile), scope);
                             DownLoadFile(spConnector, spConnectorRoot, creationInfo.FileConnector, web, parser.ParseString(composedLook.FontFile), scope);
