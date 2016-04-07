@@ -135,11 +135,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
             }
         }
 
-        public List<DataRow> ExtractItems(ProvisioningTemplateCreationInformation creationInfo, PnPMonitoredScope scope)
+        public List<DataRow> ExtractItems( ProvisioningTemplateCreationInformation creationInfo, PnPMonitoredScope scope)
         {
             List<DataRow> dataRows = new List<DataRow>();
 
-            CamlQuery query = CamlQuery.CreateAllItemsQuery();
+            bool isPageLib = (List.BaseTemplate == (int)ListTemplateType.WebPageLibrary) ||
+                (List.BaseTemplate == (int)ListTemplateType.HomePageLibrary) ||
+                (List.BaseTemplate == (int)ListTemplateType.PublishingPages);
+
+            CamlQuery query = isPageLib ? CamlQuery.CreateAllFoldersQuery() : CamlQuery.CreateAllItemsQuery();                
             query.DatesInUtc = true;
             ListItemCollection items = this.List.GetItems(query);            
             this.Context.Load(items, col => col.IncludeWithDefaultProperties(i => i.HasUniqueRoleAssignments));

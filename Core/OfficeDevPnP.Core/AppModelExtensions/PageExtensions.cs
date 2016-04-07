@@ -1095,7 +1095,7 @@ namespace Microsoft.SharePoint.Client
             File file = folder.Files.AddTemplateFile(serverRelativePageUrl, TemplateFileType.WikiPage);
 
             web.Context.ExecuteQueryRetry();
-            if (html != null)
+            if (!string.IsNullOrEmpty(html))
             {
                 web.AddHtmlToWikiPage(serverRelativePageUrl, html);
             }
@@ -1139,9 +1139,14 @@ namespace Microsoft.SharePoint.Client
             PublishingWeb publishingWeb = PublishingWeb.GetPublishingWeb(context, web);
             context.Load(publishingWeb);
 
-            string pageName = serverRelativePageUrl.Substring(serverRelativePageUrl.LastIndexOf('/') + 1);
+            int idx = serverRelativePageUrl.LastIndexOf('/');
+            string folderUrl = serverRelativePageUrl.Substring(0, idx);
+            string pageName = serverRelativePageUrl.Substring(idx + 1);
+
+            Folder folder = web.GetFolderByServerRelativeUrl(folderUrl);
 
             PublishingPageInformation publishingPageInfo = new PublishingPageInformation();
+            publishingPageInfo.Folder = folder;
             publishingPageInfo.Name = pageName;
             publishingPageInfo.PageLayoutListItem = layoutItem;            
 
@@ -1149,20 +1154,16 @@ namespace Microsoft.SharePoint.Client
 
             publishingPage.ListItem["Title"] = title;
             publishingPage.ListItem.Update();
-
-            publishingPage.ListItem.File.CheckIn(string.Empty, CheckinType.MajorCheckIn);
-
-            publishingPage.ListItem.File.Publish(string.Empty);
-
-            //publishingPage.ListItem.File.Approve(string.Empty);
-
-            context.Load(publishingPage);
-            context.Load(publishingPage.ListItem.File, obj => obj.ServerRelativeUrl);
             context.ExecuteQueryRetry();
-            if (html != null)
+            if (!string.IsNullOrEmpty(html))
             {
                 web.AddHtmlToWikiPage(serverRelativePageUrl, html);
             }
+
+            publishingPage.ListItem.File.CheckIn(string.Empty, CheckinType.MajorCheckIn);
+            publishingPage.ListItem.File.Publish(string.Empty);            
+
+            context.ExecuteQueryRetry();
         }
 
         /// <summary>

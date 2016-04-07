@@ -409,7 +409,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return file.ListItemAllFields.FieldValues.Any();
         }
 
-        public override ProvisioningTemplate ExtractObjects(Web web, ProvisioningTemplate template, ProvisioningTemplateCreationInformation creationInfo)
+        public override ProvisioningTemplate ExtractObjects(Web web, ProvisioningTemplate template, TokenParser parser, ProvisioningTemplateCreationInformation creationInfo)
         {
             web.EnsureProperties(x => x.Url, x => x.Id);
             using (var scope = new PnPMonitoredScope(this.Name))
@@ -418,7 +418,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 var providers = this.GetUrlProviders(template.Lists);
                 var files = new OfficeDevPnP.Core.Framework.Provisioning.Model.FileCollection(template);
                 var modelProvider = new FileModelProvider(web, connector);
-                var parser = new TokenParser(web, new ProvisioningTemplate());
                 foreach (var provider in providers)
                 {
                     var pageUrl = provider.GetUrl();
@@ -428,7 +427,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         if (null != file)
                         {
                             files.Add(file);
-                            this.CreateLocalFile(web, pageUrl, connector);
+                            CreateLocalFile(web, pageUrl, connector);
                         }
                         else
                         {
@@ -464,7 +463,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return result;
         }
 
-        private void CreateLocalFile(Web web, string pageUrl, FileConnectorBase connector)
+        internal static void CreateLocalFile(Web web, string pageUrl, FileConnectorBase connector)
         {
             var fileContent = web.GetPageContentXmlWithoutWebParts(pageUrl);
             var fileName = Path.GetFileName(pageUrl);

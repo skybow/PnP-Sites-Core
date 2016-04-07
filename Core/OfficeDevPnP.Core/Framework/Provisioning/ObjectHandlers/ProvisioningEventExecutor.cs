@@ -72,11 +72,16 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             RegisterEvent(Handlers.ListContents, fn, eventType);
         }
-
+                
         public void AttachFieldEvent(ProvisionEventType eventType, 
             Action<ProvisioningEventArgs<Model.Field, MSClient.Field>> fn)
         {
             RegisterEvent(Handlers.Fields, fn, eventType);
+        }
+
+        public void AttachPagesEvent(ProvisionEventType eventType, Action<ProvisioningEventArgs<ListInstance, List>> fn)
+        {
+            RegisterEvent(Handlers.Pages, fn, eventType);
         }        
 
         public bool ExecutePreProvisionEvent<TModel, TClient>(Handlers handler, ProvisioningTemplate template, TModel model, TClient clientObject)

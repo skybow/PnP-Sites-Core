@@ -93,7 +93,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 int step = 1;
 
                 var count = objectHandlers.Count(o => o.ReportProgress && o.WillExtract(web, template, creationInfo));
-
+                var tokenParser = new TokenParser(web, new ProvisioningTemplate());
                 foreach (var handler in objectHandlers)
                 {
                     if (handler.WillExtract(web, template, creationInfo))
@@ -107,7 +107,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                             progressDelegate(handler.Name, step, count);
                             step++;
                         }
-                        template = handler.ExtractObjects(web, template, creationInfo);
+                        template = handler.ExtractObjects(web, template, tokenParser, creationInfo);
                     }
                 }
                 return template;

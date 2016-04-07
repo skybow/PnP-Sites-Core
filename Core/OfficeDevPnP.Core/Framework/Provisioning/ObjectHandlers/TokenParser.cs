@@ -301,7 +301,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         public static string TokenizeUrl( Web web, string url)
         {
-            url = url.Replace(web.Url, "{site}/");
+            url = url.Replace(web.Url.TrimEnd('/'), "{site}");
             if (url.StartsWith(web.ServerRelativeUrl, System.StringComparison.OrdinalIgnoreCase))
             {
                 url = CombineUrl("{site}", url.Substring(web.ServerRelativeUrl.Length));
@@ -312,7 +312,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 var site = context.Site;
                 site.EnsureProperties(s => s.Url, s => s.ServerRelativeUrl);
 
-                url = url.Replace(site.Url, "{sitecollection}/");
+                url = url.Replace(site.Url.TrimEnd('/'), "{sitecollection}");
 
                 if (url.StartsWith(site.ServerRelativeUrl, System.StringComparison.OrdinalIgnoreCase))
                 {
