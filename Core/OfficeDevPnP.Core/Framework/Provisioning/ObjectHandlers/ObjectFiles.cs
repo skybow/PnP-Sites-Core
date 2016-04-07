@@ -173,6 +173,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         protected void FixViewsAfterAddingWebParts(Web web, List<string> files, TokenParser parser, ProvisioningTemplate template)
         {
             web.Context.Load(web.Lists, w => w.IncludeWithDefaultProperties(l => l.Views));
+            web.Context.Load(web, w => w.ServerRelativeUrl);
             web.Context.ExecuteQuery();
             bool isDirty = false;
 
@@ -188,7 +189,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     Model.View viewFromTemplate = listFromTemplate == null || listFromTemplate.Views == null 
                         ? null 
                         : listFromTemplate.Views.FirstOrDefault(v => 
-                            v.PageUrl.EndsWith(url.Substring(web.ServerRelativeUrl.Length))
+                            v.PageUrl != null && v.PageUrl.EndsWith(url.Substring(web.ServerRelativeUrl.Length))
                             );
                     if (exist && viewFromTemplate != null && string.IsNullOrEmpty(view.Title)) { 
                         var viewElement = XElement.Parse(viewFromTemplate.SchemaXml);
