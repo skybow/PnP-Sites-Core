@@ -1095,7 +1095,7 @@ namespace Microsoft.SharePoint.Client
             File file = folder.Files.AddTemplateFile(serverRelativePageUrl, TemplateFileType.WikiPage);
 
             web.Context.ExecuteQueryRetry();
-            if (html != null)
+            if (!string.IsNullOrEmpty(html))
             {
                 web.AddHtmlToWikiPage(serverRelativePageUrl, html);
             }

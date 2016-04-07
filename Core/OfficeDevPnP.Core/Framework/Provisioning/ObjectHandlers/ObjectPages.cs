@@ -128,7 +128,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 var contentPage = page as ContentPage;
                 if (contentPage != null)
                 {
-                    web.AddWikiPageByUrl(url);
+                    web.AddWikiPageByUrl(url, contentPage.Html);
                 }
                 else
                 {
