@@ -135,7 +135,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
             }
         }
 
-        public List<DataRow> ExtractItems( ProvisioningTemplateCreationInformation creationInfo, PnPMonitoredScope scope)
+        public List<DataRow> ExtractItems( ProvisioningTemplateCreationInformation creationInfo, TokenParser parser, PnPMonitoredScope scope)
         {
             List<DataRow> dataRows = new List<DataRow>();
 
@@ -204,7 +204,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
                         {
                             try
                             {
-                                security = item.GetSecurity();
+                                security = item.GetSecurity(parser);
                                 security.ClearSubscopes = true;
                             }
                             catch (Exception ex)

@@ -75,7 +75,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     if (creationInfo.ExecutePreProvisionEvent<ListInstance, List>(Handlers.ListContents, template, listInstance, list))                    
                     {
                         ListItemsProvider provider = new ListItemsProvider(list, web, template);
-                        List<DataRow> dataRows = provider.ExtractItems(creationInfo, scope);
+                        List<DataRow> dataRows = provider.ExtractItems(creationInfo, parser, scope);
                         listInstance.DataRows.AddRange(dataRows);
 
                         creationInfo.ExecutePostProvisionEvent<ListInstance, List>(Handlers.ListContents, template, listInstance, list);

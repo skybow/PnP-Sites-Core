@@ -69,9 +69,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                             ct => ct.Id, 
                             ct => ct.StringId, 
                             ct => ct.Name));
-                    web.Context.Load(web,
-                        w => w.SiteGroups.Include(g => g.LoginName),
-                        w => w.RoleDefinitions);
 
                     web.Context.ExecuteQueryRetry();
 
@@ -802,7 +799,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             try
             {
                 web.Context.Load(existingList, l => l.Forms);
-            web.Context.ExecuteQueryRetry();
+                web.Context.ExecuteQueryRetry();
             }
             catch (Exception ex)
             {
@@ -1005,8 +1002,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 {
                     try
                     {
-                        SetSecurity(web, existingList, parser, templateList.Security);                        
-                }
+                        existingList.SetSecurity(parser, templateList.Security);
+                    }
                     catch (Exception ex)
                     {
                         scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ListInstances_Updating_list__0__failed___1_____2_, templateList.Title, ex.Message, ex.StackTrace);
@@ -1247,7 +1244,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             {
                 try
                 {
-                    SetSecurity(web, createdList, parser, list.Security);
+                    if (list.Security != null && list.Security.RoleAssignments.Count != 0)
+                    {
+                        createdList.SetSecurity(parser, list.Security);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -1255,39 +1255,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 }
             }
             return Tuple.Create(createdList, parser);
-        }
-
-        public static void SetSecurity(Web web, SecurableObject securable, TokenParser parser, ObjectSecurity security)
-        {
-            // If there's no role assignments we're returning
-            if (security.RoleAssignments.Count == 0) return;
-
-            var context = securable.Context as ClientContext;
-
-            var groups = context.Web.SiteGroups.AsEnumerable();
-            var webRoleDefinitions = context.Web.RoleDefinitions.AsEnumerable();
-
-            securable.BreakRoleInheritance(security.CopyRoleAssignments, security.ClearSubscopes);
-
-            foreach (var roleAssignment in security.RoleAssignments)
-            {
-                Principal principal = groups.FirstOrDefault(g => g.LoginName == parser.ParseString(roleAssignment.Principal));
-                if (principal == null)
-                {
-                    principal = context.Web.EnsureUser(roleAssignment.Principal);
-                }
-
-                var roleDefinitionBindingCollection = new RoleDefinitionBindingCollection(context);
-
-                var roleDefinition = webRoleDefinitions.FirstOrDefault(r => r.Name == roleAssignment.RoleDefinition);
-
-                if (roleDefinition != null)
-                {
-                    roleDefinitionBindingCollection.Add(roleDefinition);
-                }
-                securable.RoleAssignments.Add(principal, roleDefinitionBindingCollection);
-            }
-            context.ExecuteQueryRetry();
         }
 
         private void CreateFolderInList(Microsoft.SharePoint.Client.Folder parentFolder, Model.Folder folder, TokenParser parser, PnPMonitoredScope scope)
@@ -1349,7 +1316,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 web.Context.Load(lists,
                     lc => lc.IncludeWithDefaultProperties(
                         l => l.ContentTypes.IncludeWithDefaultProperties(
-                            ct => ct.Parent, 
+                            ct => ct.Parent,
                             ct => ct.Parent.StringId,
                             ct => ct.FieldLinks
                             ),
@@ -1368,15 +1335,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                             f => f.Hidden,
                             f => f.InternalName,
                             f => f.Required),
-                        l => l.HasUniqueRoleAssignments,
-                        l => l.RoleAssignments.Include(
-                            r => r.Member.LoginName,
-                            r => r.RoleDefinitionBindings.Include(
-                                rdb => rdb.Name,
-                                rdb => rdb.RoleTypeKind
-                                ))));
+                        l => l.HasUniqueRoleAssignments));
 
-                web.Context.Load(web, w => w.AssociatedMemberGroup.Title, w => w.AssociatedOwnerGroup.Title, w => w.AssociatedVisitorGroup.Title);
                 web.Context.ExecuteQueryRetry();
 
                 // Let's see if there are workflow subscriptions
@@ -1472,9 +1432,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                     list = ExtractFields(web, siteList, contentTypeFields, list, lists, siteColumns);
 
-                    //Performance improvements: using custom GetSecurity instead of SecurableObjectExtension.GetSecurity()
-                    //list.Security = siteList.GetSecurity();
-                    list.Security = ExtractListSecurity(web, siteList);
+                    if (siteList.HasUniqueRoleAssignments)
+                    {
+                        list.Security = siteList.GetSecurity(parser);
+                    }
 
                     var logCTWarning = false;
                     if (baseTemplateList != null)
@@ -1727,46 +1688,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 }
             }
             return list;
-        }
-
-
-        private ObjectSecurity ExtractListSecurity(Web web, List securable)
-        {
-            ObjectSecurity security = null;
-            var context = securable.Context as ClientContext;
-
-            if (securable.HasUniqueRoleAssignments)
-            {
-                security = new ObjectSecurity();
-
-                foreach (var roleAssignment in securable.RoleAssignments)
-                {
-                    if (roleAssignment.Member.LoginName != "Excel Services Viewers")
-                    {
-                        foreach (var roleDefinition in roleAssignment.RoleDefinitionBindings)
-                        {
-                            if (roleDefinition.RoleTypeKind != RoleType.Guest)
-                            {
-                                security.RoleAssignments.Add(new Model.RoleAssignment()
-                                {
-                                    Principal = ReplaceGroupTokens(context.Web, roleAssignment.Member.LoginName),
-                                    RoleDefinition = roleDefinition.Name
-                                });
-                            }
-                        }
-                    }
-                }
-            }
-
-            return security;
-        }
-
-        private static string ReplaceGroupTokens(Web web, string loginName)
-        {
-            loginName = loginName.Replace(web.AssociatedOwnerGroup.Title, "{associatedownergroup}");
-            loginName = loginName.Replace(web.AssociatedMemberGroup.Title, "{associatedmembergroup}");
-            loginName = loginName.Replace(web.AssociatedVisitorGroup.Title, "{associatedvisitorgroup}");
-            return loginName;
         }
 
         private string ParseFieldSchema(string schemaXml, ListCollection lists)

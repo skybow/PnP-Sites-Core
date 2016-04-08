@@ -51,7 +51,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Extensions
             context.ExecuteQueryRetry();
         }
 
-        public static ObjectSecurity GetSecurity(this SecurableObject securable)
+        public static ObjectSecurity GetSecurity(this SecurableObject securable, TokenParser parser)
         {
             ObjectSecurity security = null;
             using (var scope = new PnPMonitoredScope("Get Security"))
@@ -59,7 +59,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Extensions
                 var context = securable.Context as ClientContext;
 
                 context.Load(securable, sec => sec.HasUniqueRoleAssignments);
-                context.Load(context.Web, w => w.AssociatedMemberGroup.Title, w => w.AssociatedOwnerGroup.Title, w => w.AssociatedVisitorGroup.Title);
                 var roleAssignments = context.LoadQuery(securable.RoleAssignments.Include(
                     r => r.Member.LoginName,
                     r => r.RoleDefinitionBindings.Include(
@@ -82,7 +81,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Extensions
                                 {
                                     security.RoleAssignments.Add(new Model.RoleAssignment()
                                     {
-                                        Principal = ReplaceGroupTokens(context.Web, roleAssignment.Member.LoginName),
+                                        Principal = parser.TokenizePrincipalLogin(roleAssignment.Member.LoginName),
                                         RoleDefinition = roleDefinition.Name
                                     });
                                 }
@@ -92,23 +91,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Extensions
                 }
             }
             return security;
-        }
-
-        internal static string ReplaceGroupTokens(Web web, string loginName)
-        {
-            if (web.AssociatedOwnerGroup.ServerObjectIsNull.HasValue && !web.AssociatedOwnerGroup.ServerObjectIsNull.Value)
-            {
-			loginName = loginName.Replace(web.AssociatedOwnerGroup.Title, "{associatedownergroup}");
-            }
-            if (web.AssociatedMemberGroup.ServerObjectIsNull.HasValue && !web.AssociatedMemberGroup.ServerObjectIsNull.Value)
-            {
-			loginName = loginName.Replace(web.AssociatedMemberGroup.Title, "{associatedmembergroup}");
-            }
-            if (web.AssociatedVisitorGroup.ServerObjectIsNull.HasValue && !web.AssociatedVisitorGroup.ServerObjectIsNull.Value)
-            {
-			loginName = loginName.Replace(web.AssociatedVisitorGroup.Title, "{associatedvisitorgroup}");
-            }
-            return loginName;
         }
     }
 }

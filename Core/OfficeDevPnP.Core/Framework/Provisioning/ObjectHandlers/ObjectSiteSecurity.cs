@@ -379,7 +379,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                             AllowRequestToJoinLeave = group.AllowRequestToJoinLeave,
                             Description = group.Description,
                             OnlyAllowMembersViewMembership = group.OnlyAllowMembersViewMembership,
-                            Owner = ReplaceGroupTokens(web, group.Owner.LoginName),
+                            Owner = parser.TokenizePrincipalLogin(group.Owner.LoginName),
                             RequestToJoinLeaveEmailSetting = group.RequestToJoinLeaveEmailSetting
                         };
 
@@ -443,7 +443,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 {
                                     var modelRoleAssignment = new Model.RoleAssignment();
                                     modelRoleAssignment.RoleDefinition = roleDefinition.Name;
-                                    modelRoleAssignment.Principal = ReplaceGroupTokens(web, webRoleAssignment.Member.LoginName);
+                                    modelRoleAssignment.Principal = parser.TokenizePrincipalLogin(webRoleAssignment.Member.LoginName);
                                     siteSecurity.SiteSecurityPermissions.RoleAssignments.Add(modelRoleAssignment);
                                 }
                             }
@@ -460,11 +460,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 }
             }
             return template;
-        }
-
-        private string ReplaceGroupTokens(Web web, string loginName)
-        {
-            return SecurableObjectExtensions.ReplaceGroupTokens(web, loginName);
         }
 
         private ProvisioningTemplate CleanupEntities(ProvisioningTemplate template, ProvisioningTemplate baseTemplate)

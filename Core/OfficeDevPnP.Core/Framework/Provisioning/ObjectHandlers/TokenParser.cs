@@ -59,9 +59,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             _tokens.Add(new ThemeCatalogToken(web));
             _tokens.Add(new SiteNameToken(web));
             _tokens.Add(new SiteIdToken(web));
-            _tokens.Add(new AssociatedGroupToken(web, AssociatedGroupToken.AssociatedGroupType.owners));
-            _tokens.Add(new AssociatedGroupToken(web, AssociatedGroupToken.AssociatedGroupType.members));
-            _tokens.Add(new AssociatedGroupToken(web, AssociatedGroupToken.AssociatedGroupType.visitors));
+            _tokens.AddRange(AssociatedGroupToken.CreateAssociatedGroupsTokens(web));
             _tokens.Add(new GuidToken(web));
             _tokens.Add(new CurrentUserIdToken(web));
             _tokens.Add(new CurrentUserLoginNameToken(web));
@@ -299,6 +297,29 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return input;
         }
 
+        public string TokenizePrincipalLogin(string input)
+        {
+            string result = "";
+            if (!string.IsNullOrEmpty(input))
+            {
+                var groupsTokens = _tokensSortedByCacheValueLength.Where(t => t is AssociatedGroupToken);
+                foreach (var token in groupsTokens)
+                {
+                    string replaceValue = token.GetReplaceValue();
+                    if (string.Equals(input, replaceValue, StringComparison.OrdinalIgnoreCase))
+                    {
+                        string tokenKey = token.GetTokens().FirstOrDefault();
+                        if( !string.IsNullOrEmpty(tokenKey ) )
+                        {
+                            result = tokenKey;
+                            break;
+                        }                        
+                    }
+                }
+            }
+            return result;
+        }
+
         public static string TokenizeUrl( Web web, string url)
         {
             url = url.Replace(web.Url.TrimEnd('/'), "{site}");
@@ -321,7 +342,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             }
 
             return url;
-        }
+        }        
 
         public static string CombineUrl(string baseUrlPath, string url)
         {
