@@ -22,7 +22,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
 
         #region Fields
 
-        private string m_listServerRelativeUrl = null;
+        private string m_listServerRelativeUrl = "";
 
         #endregion //Fields
 
@@ -32,7 +32,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
         {
             var fields = list.Fields;
 
-            m_listServerRelativeUrl = list.RootFolder.ServerRelativeUrl;
+            m_listServerRelativeUrl = list.RootFolder.ServerRelativeUrl;                        
             this.List = list;
             this.Web = web;
         }
@@ -92,26 +92,21 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
                 case FIELD_ItemType_FileValue:
                     {
                         string name;
-                        if (dataRow.Values.TryGetValue(FIELD_ItemName, out name) && !string.IsNullOrEmpty( dataRow.FileSrc ) )
+                        if (dataRow.Values.TryGetValue(FIELD_ItemName, out name) && !string.IsNullOrEmpty(dataRow.FileSrc))
                         {
-                            using (Stream stream = template.Connector.GetFileStream(dataRow.FileSrc))
-                            {
-                                if (string.IsNullOrEmpty(dir))
-                                {
-                                    dir = this.List.RootFolder.ServerRelativeUrl;
-                                }
-                                FileCreationInformation creationInfo = new FileCreationInformation()
-                                {
-                                    Overwrite = true,
-                                    ContentStream = stream,
-                                    Url = TokenParser.CombineUrl(dir, name)
-                                };
-                                var newFile = this.List.RootFolder.Files.Add(creationInfo);
-                                this.Context.Load(newFile);
-                                this.Context.ExecuteQueryRetry();
 
-                                listitem = newFile.ListItemAllFields;
+                            if (string.IsNullOrEmpty(dir))
+                            {
+                                dir = this.List.RootFolder.ServerRelativeUrl;
                             }
+                            FileCreationInformation creationInfo = new FileCreationInformation()
+                            {
+                                Overwrite = true,
+                                ContentStream = template.Connector.GetFileStream(dataRow.FileSrc),
+                                Url = TokenParser.CombineUrl(dir, name)
+                            };
+                            var newFile = this.List.RootFolder.Files.Add(creationInfo);
+                            listitem = newFile.ListItemAllFields;
                         }
                             
                         break;
@@ -130,7 +125,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
             return listitem;
         }
 
-        public void CheckInIOfNeeded(ListItem listitem)
+        public void CheckInIfNeeded(ListItem listitem)
         {
             if ((listitem.FileSystemObjectType == FileSystemObjectType.File) &&
                         (null != listitem.File.ServerObjectIsNull) && (!(bool)listitem.File.ServerObjectIsNull) &&
@@ -146,22 +141,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
             fileSrc = null;
 
             string dir = item[FIELD_ItemDir] as string;
-            string dirWebRel = "";
+
+            var dirListRel = "";
             if (!string.IsNullOrEmpty(dir) &&
-                dir.StartsWith(this.Web.ServerRelativeUrl, StringComparison.OrdinalIgnoreCase))
+                dir.StartsWith(m_listServerRelativeUrl, StringComparison.OrdinalIgnoreCase))
             {
-                dirWebRel = dir.Substring(this.Web.ServerRelativeUrl.Length).TrimStart('/');
-            }
-            if (!string.IsNullOrEmpty(dirWebRel))
-            {
-                if (dirWebRel.StartsWith(m_listServerRelativeUrl, StringComparison.OrdinalIgnoreCase))
-                {
-                    var dirListRel = dirWebRel.Substring(m_listServerRelativeUrl.Length);
-                    if (!string.IsNullOrEmpty(dirListRel))
-                    {
-                        dataRowValues[FIELD_ItemDir] = dirListRel;
-                    }
-                }                
+                dirListRel = dir.Substring(m_listServerRelativeUrl.Length).TrimStart('/');
+                dataRowValues[FIELD_ItemDir] = dirListRel;
 
                 if (item.FileSystemObjectType == FileSystemObjectType.Folder)
                 {
@@ -173,7 +159,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
                     string fileName = item[FIELD_ItemName] as string;
                     if (!string.IsNullOrEmpty(fileName))
                     {
-                        string fileRelUrl = TokenParser.CombineUrl(dirWebRel, fileName);
+                        string fileRelUrl = TokenParser.CombineUrl(m_listServerRelativeUrl, TokenParser.CombineUrl(dirListRel, fileName));
                         fileSrc = DownloadFile(fileRelUrl, item, creationInfo);
                         if (!string.IsNullOrEmpty(fileSrc))
                         {
@@ -183,13 +169,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
                     }
                 }
             }
-        }        
+        }     
 
         #endregion //Methods
 
         #region Implementation
 
-        private string DownloadFile(string fileWebRelURL, ListItem item, ProvisioningTemplateCreationInformation creationInfo)
+        private string DownloadFile(string fileServerRelativeURL, ListItem item, ProvisioningTemplateCreationInformation creationInfo)
         {
             string src = "";
 
@@ -204,68 +190,16 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
                     this.Context.ExecuteQueryRetry();
                     using (Stream stream = streamResult.Value)
                     {
-                        creationInfo.FileConnector.SaveFileStream(fileWebRelURL, streamResult.Value);
+                        creationInfo.FileConnector.SaveFileStream(fileServerRelativeURL, streamResult.Value);
 
                         src = Path.Combine(creationInfo.FileConnector.GetConnectionString(),
-                            Path.GetDirectoryName(fileWebRelURL), Path.GetFileName(fileWebRelURL));
+                            Path.GetDirectoryName(fileServerRelativeURL), Path.GetFileName(fileServerRelativeURL));
                     }
                 }
             }
 
             return src;
         }
-
-        /*
-        private Folder EnsureFolder( string urlWebRelative  )
-        {
-            Folder currentFolder = m_list.RootFolder;
-            string rootUrl = currentFolder.ServerRelativeUrl;            
-
-            string targetFolderServerUrl = TokenParser.CombineUrl( this.m_web.ServerRelativeUrl, urlWebRelative );
-
-            // Get remaining parts of the path and split
-
-            var folderRootRelativeUrl = targetFolderServerUrl.Substring(currentFolder.ServerRelativeUrl.Length);
-            var childFolderNames = folderRootRelativeUrl.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            var currentCount = 0;
-
-            foreach (var folderName in childFolderNames)
-            {
-                currentCount++;
-
-                // Find next part of the path
-                var folderCollection = currentFolder.Folders;
-                folderCollection.Context.Load(folderCollection);
-                folderCollection.Context.ExecuteQueryRetry();
-                Folder nextFolder = null;
-                foreach (Folder existingFolder in folderCollection)
-                {
-                    if (string.Equals(existingFolder.Name, folderName, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        nextFolder = existingFolder;
-                        break;
-                    }
-                }
-
-                // Or create it
-                if (nextFolder == null)
-                {
-                    ListItem itemFolder = this.m_list.AddItem(new ListItemCreationInformation()
-                    {
-                        UnderlyingObjectType = FileSystemObjectType.Folder,
-                        LeafName = folderName,
-                        FolderUrl = currentFolder.ServerRelativeUrl
-                    });
-                    this.m_web.Context.Load(itemFolder, i => i.Folder);                    
-                    this.m_web.Context.ExecuteQueryRetry();
-                    nextFolder = itemFolder.Folder;
-                }
-
-                currentFolder = nextFolder;
-            }
-
-            return currentFolder;
-        }*/
 
         #endregion //Implementation
     }

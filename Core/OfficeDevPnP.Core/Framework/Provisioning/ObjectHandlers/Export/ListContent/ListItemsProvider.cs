@@ -119,7 +119,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
                     this.Context.Load(listitem.File);
                     this.Context.ExecuteQueryRetry(); // TODO: Run in batches?                    
 
-                    itemPathProvider.CheckInIOfNeeded(listitem);
+                    itemPathProvider.CheckInIfNeeded(listitem);
 
                     AddIDMappingEntry(listitem, dataRow);
 
