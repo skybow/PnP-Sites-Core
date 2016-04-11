@@ -440,7 +440,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     }
                 }
 
-                template.Files = files;
+                template.Files.AddRange(files);
 
                 // Impossible to return all files in the site currently
 
