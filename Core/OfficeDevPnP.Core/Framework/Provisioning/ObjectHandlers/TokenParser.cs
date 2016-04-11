@@ -305,7 +305,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         public string TokenizePrincipalLogin(string input)
         {
-            string result = "";
+            string result = input;
             if (!string.IsNullOrEmpty(input))
             {
                 var groupsTokens = GetTokensByType<AssociatedGroupToken>();

@@ -124,18 +124,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
 
             return listitem;
         }
-
-        public void CheckInIfNeeded(ListItem listitem)
-        {
-            if ((listitem.FileSystemObjectType == FileSystemObjectType.File) &&
-                        (null != listitem.File.ServerObjectIsNull) && (!(bool)listitem.File.ServerObjectIsNull) &&
-                        (listitem.File.CheckOutType != CheckOutType.None))
-            {
-                listitem.File.CheckIn("", CheckinType.MajorCheckIn);
-                this.Context.ExecuteQueryRetry();
-            }
-        }
-
+        
         public void ExtractItemPathValues(ListItem item, Dictionary<string, string> dataRowValues, ProvisioningTemplateCreationInformation creationInfo, out string fileSrc)
         {
             fileSrc = null;
@@ -146,8 +135,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
             if (!string.IsNullOrEmpty(dir) &&
                 dir.StartsWith(m_listServerRelativeUrl, StringComparison.OrdinalIgnoreCase))
             {
-                dirListRel = dir.Substring(m_listServerRelativeUrl.Length).TrimStart('/');
-                dataRowValues[FIELD_ItemDir] = dirListRel;
+                dirListRel = dir.Substring(m_listServerRelativeUrl.Length).Trim('/');
+                if (!string.IsNullOrEmpty(dirListRel))
+                {
+                    dataRowValues[FIELD_ItemDir] = dirListRel;
+                }
 
                 if (item.FileSystemObjectType == FileSystemObjectType.Folder)
                 {
@@ -157,9 +149,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
                 else if (item.FileSystemObjectType == FileSystemObjectType.File)
                 {
                     string fileName = item[FIELD_ItemName] as string;
-                    if (!string.IsNullOrEmpty(fileName))
+                    if (!string.IsNullOrEmpty(fileName) &&
+                        ( this.List.BaseType == BaseType.DocumentLibrary ))
                     {
-                        string fileRelUrl = TokenParser.CombineUrl(m_listServerRelativeUrl, TokenParser.CombineUrl(dirListRel, fileName));
+                        string fileRelUrl = TokenParser.CombineUrl(m_listServerRelativeUrl, TokenParser.CombineUrl(dirListRel, fileName)).TrimStart('/');
                         fileSrc = DownloadFile(fileRelUrl, item, creationInfo);
                         if (!string.IsNullOrEmpty(fileSrc))
                         {
@@ -181,20 +174,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
 
             if (null != creationInfo.FileConnector)
             {
-                this.Context.Load(item.File);
+                ClientResult<Stream> streamResult = item.File.OpenBinaryStream();
                 this.Context.ExecuteQueryRetry();
-                if ((null != item.File.ServerObjectIsNull) &&
-                    !(bool)item.File.ServerObjectIsNull)
+                using (Stream stream = streamResult.Value)
                 {
-                    ClientResult<Stream> streamResult = item.File.OpenBinaryStream();
-                    this.Context.ExecuteQueryRetry();
-                    using (Stream stream = streamResult.Value)
-                    {
-                        creationInfo.FileConnector.SaveFileStream(fileServerRelativeURL, streamResult.Value);
+                    creationInfo.FileConnector.SaveFileStream(fileServerRelativeURL, streamResult.Value);
 
-                        src = Path.Combine(creationInfo.FileConnector.GetConnectionString(),
-                            Path.GetDirectoryName(fileServerRelativeURL), Path.GetFileName(fileServerRelativeURL));
-                    }
+                    src = Path.Combine(creationInfo.FileConnector.GetConnectionString(),
+                        Path.GetDirectoryName(fileServerRelativeURL), Path.GetFileName(fileServerRelativeURL));
                 }
             }
 

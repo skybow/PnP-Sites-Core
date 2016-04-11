@@ -225,22 +225,25 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     {
                         foreach (var roleAssignment in siteSecurity.SiteSecurityPermissions.RoleAssignments)
                         {
-                            Principal principal = groups.FirstOrDefault(g => g.LoginName == parser.ParseString(roleAssignment.Principal));
-                            if (principal == null)
+                            if (!string.IsNullOrEmpty(roleAssignment.Principal))
                             {
-                                principal = web.EnsureUser(parser.ParseString(roleAssignment.Principal));
+                                Principal principal = groups.FirstOrDefault(g => g.LoginName == parser.ParseString(roleAssignment.Principal));
+                                if (principal == null)
+                                {
+                                    principal = web.EnsureUser(parser.ParseString(roleAssignment.Principal));
+                                }
+
+                                var roleDefinitionBindingCollection = new RoleDefinitionBindingCollection(web.Context);
+
+                                var roleDefinition = webRoleDefinitions.FirstOrDefault(r => r.Name == roleAssignment.RoleDefinition);
+
+                                if (roleDefinition != null)
+                                {
+                                    roleDefinitionBindingCollection.Add(roleDefinition);
+                                }
+                                web.RoleAssignments.Add(principal, roleDefinitionBindingCollection);
+                                web.Context.ExecuteQueryRetry();
                             }
-
-                            var roleDefinitionBindingCollection = new RoleDefinitionBindingCollection(web.Context);
-
-                            var roleDefinition = webRoleDefinitions.FirstOrDefault(r => r.Name == roleAssignment.RoleDefinition);
-
-                            if (roleDefinition != null)
-                            {
-                                roleDefinitionBindingCollection.Add(roleDefinition);
-                            }
-                            web.RoleAssignments.Add(principal, roleDefinitionBindingCollection);
-                            web.Context.ExecuteQueryRetry();
                         }
                     }
                 }

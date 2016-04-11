@@ -28,6 +28,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
 
         #endregion //Internal Classes
 
+        #region Constants
+
+        private const int BATCH_SIZE = 20;
+
+        #endregion //Constants
+
         #region Fields
 
         private Dictionary<string, FieldValueProvider> m_dictFieldValueProviders = null;
@@ -64,6 +70,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
 
         #region Methods
 
+        private class ListItemInfo
+        {
+            public DataRow Row { get; set; }
+            public ListItem Item { get; set; }
+        }
+
         public void AddListItems(DataRowCollection dataRows, ProvisioningTemplate template, TokenParser parser, PnPMonitoredScope scope)
         {
             Microsoft.SharePoint.Client.FieldCollection fields = this.List.Fields;
@@ -73,17 +85,16 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
 
             ItemPathProvider itemPathProvider = new ItemPathProvider(this.List, this.Web);
 
-            foreach (var dataRow in dataRows)
-            {
-                try
-                {
-                    scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ListInstancesDataRows_Creating_list_item__0_, dataRows.IndexOf(dataRow) + 1);
-                    var listitem = itemPathProvider.CreateListItem(dataRow, template);
-                    if (null == listitem)
-                    {
-                        continue;
-                    }
+            bool isDocLib = ( this.List.BaseType == BaseType.DocumentLibrary );
 
+            var items = new List<ListItemInfo>();
+            this.Context.ExecuteQueryBatch(dataRows.ToList(), (dataRow) =>
+            {
+                scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ListInstancesDataRows_Creating_list_item__0_, dataRows.IndexOf(dataRow) + 1);
+
+                var listitem = itemPathProvider.CreateListItem(dataRow, template);
+                if (null != listitem)
+                {
                     foreach (var dataValue in dataRow.Values)
                     {
                         Field dataField = fields.FirstOrDefault(
@@ -108,29 +119,73 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
                                         else
                                         {
                                             listitem[dataField.InternalName] = itemValue;
-                                        }                                        
-                                    }                                    
+                                        }
+                                    }
                                 }
-                            }                                                     
+                            }
                         }
-                    }                    
+                    }
+
                     listitem.Update();
+
                     this.Context.Load(listitem);
-                    this.Context.Load(listitem.File);
-                    this.Context.ExecuteQueryRetry(); // TODO: Run in batches?                    
-
-                    itemPathProvider.CheckInIfNeeded(listitem);
-
-                    AddIDMappingEntry(listitem, dataRow);
-
-                    if (dataRow.Security != null && dataRow.Security.RoleAssignments.Count != 0)
+                    if (isDocLib)
                     {
-                        listitem.SetSecurity(parser, dataRow.Security);
+                        this.Context.Load(listitem.File);
+                    }
+
+                    items.Add(new ListItemInfo()
+                    {
+                        Item = listitem,
+                        Row = dataRow
+                    });
+                }
+
+            }, (error, dataRow) =>
+            {
+                for (var i = items.Count - 1; i >= 0; i--)
+                {
+                    if (items[i].Row == dataRow)
+                    {
+                        items.RemoveAt(i);
+                    }
+                }
+                scope.LogError(CoreResources.Provisioning_ObjectHandlers_ListInstancesDataRows_Creating_listitem_failed___0_____1_, error, "");
+            }, isDocLib ? 1 : BATCH_SIZE);
+            
+            //Ensure files CheckIn
+            if (isDocLib)
+            {
+                this.Context.ExecuteQueryBatch(items, (itemInfo) =>
+                {
+                    Microsoft.SharePoint.Client.File file = itemInfo.Item.File;
+                    if ((null != file.ServerObjectIsNull) && (!(bool)file.ServerObjectIsNull) &&
+                            (file.CheckOutType != CheckOutType.None))
+                    {
+                        file.CheckIn("", CheckinType.MajorCheckIn);
+                    }
+                }, BATCH_SIZE);
+            }
+
+            foreach (ListItemInfo itemInfo in items)
+            {
+                try
+                {
+                    var listitem = itemInfo.Item;
+                    var dataRow = itemInfo.Row;
+                    if (0 < listitem.Id)
+                    {
+                        AddIDMappingEntry(listitem, dataRow);
+
+                        if (dataRow.Security != null && dataRow.Security.RoleAssignments.Count != 0)
+                        {
+                            //Should be optimized (run in batch)
+                            listitem.SetSecurity(parser, dataRow.Security);
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
-                    scope.LogError(CoreResources.Provisioning_ObjectHandlers_ListInstancesDataRows_Creating_listitem_failed___0_____1_, ex.Message, ex.StackTrace);
                 }
             }
         }
@@ -148,7 +203,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
             ListItemCollection items = this.List.GetItems(query);            
             this.Context.Load(items, col => col.IncludeWithDefaultProperties(i => i.HasUniqueRoleAssignments));
             this.Context.Load(this.List.Fields);
-            this.Context.Load(this.List, l=> l.RootFolder.ServerRelativeUrl);
+            this.Context.Load(this.List, l=> l.RootFolder.ServerRelativeUrl, l=> l.BaseType);
             this.Context.ExecuteQueryRetry();
 
             ItemPathProvider itemPathProvider = new ItemPathProvider(this.List, this.Web);
