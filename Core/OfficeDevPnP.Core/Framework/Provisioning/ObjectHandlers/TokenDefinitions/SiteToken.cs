@@ -5,7 +5,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitio
     internal class SiteToken : TokenDefinition
     {
         public SiteToken(Web web)
-            : base(web, "~site", "{site}")
+            : base(web, "~site/", "{site}/")
         {
         }
 
@@ -15,7 +15,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitio
             {
                 Web.Context.Load(Web, w => w.ServerRelativeUrl);
                 Web.Context.ExecuteQueryRetry();
-                CacheValue = Web.ServerRelativeUrl.TrimEnd('/');
+                CacheValue = TokenParser.CombineUrl(Web.ServerRelativeUrl, "/");
             }
             return CacheValue;
         }

@@ -14,7 +14,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 {
     internal abstract class ObjectContentHandlerBase : ObjectHandlerBase
     {
-        internal Model.File RetrieveFieldValues(Web web, Microsoft.SharePoint.Client.File file, Model.File modelFile)
+        internal Model.File RetrieveFieldValues(Web web, Microsoft.SharePoint.Client.File file, Model.File modelFile, TokenParser parser)
         {
             ListItem listItem = null;
             try
@@ -102,7 +102,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         switch (field.TypeAsString)
                         {
                             case "URL":
-                                value = Tokenize(fieldValuesAsText[fieldValue.Key], web.Url);
+                                value = TokenizeUrl(fieldValuesAsText[fieldValue.Key], parser);
                                 break;
                             case "User":
                                 var fieldUserValue = fieldValue.Value as Microsoft.SharePoint.Client.FieldUserValue;
@@ -121,12 +121,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 var internalFieldValue = fieldValue.Value as Microsoft.SharePoint.Client.FieldLookupValue[];
                                 if (internalFieldValue != null)
                                 {
-                                    value = Tokenize(JsonUtility.Serialize(internalFieldValue), web.Url);
+                                    value = JsonUtility.Serialize(internalFieldValue);
                                 }
                                 break;
                             case "ContentTypeIdFieldType":
                             default:
-                                value = Tokenize(fieldValue.Value.ToString(), web.Url);
+                                value = fieldValue.Value.ToString();
                                 break;
                         }
 

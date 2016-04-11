@@ -204,7 +204,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         {
                             foreach (var field in listInfo.TemplateList.Fields)
                             {
-                                var fieldElement = XElement.Parse(parser.ParseString(field.SchemaXml, "~sitecollection", "~site"));
+                                var fieldElement = XElement.Parse(parser.ParseString(field.SchemaXml, TokenParser.SPSiteTokenKeys));
                                 if (fieldElement.Attribute("ID") == null)
                                 {
                                     scope.LogError(CoreResources.Provisioning_ObjectHandlers_ListInstances_Field_schema_has_no_ID_attribute___0_, field.SchemaXml);
@@ -646,7 +646,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             fieldElement = PrepareField(fieldElement);
 
-            var fieldXml = parser.ParseString(fieldElement.ToString(), "~sitecollection", "~site");
+            var fieldXml = parser.ParseString(fieldElement.ToString(), TokenParser.SPSiteTokenKeys);
             var field = listInfo.SiteList.Fields.AddFieldAsXml(fieldXml, false, AddFieldOptions.AddFieldInternalNameHint);
             listInfo.SiteList.Context.Load(field);
             listInfo.SiteList.Context.ExecuteQueryRetry();
@@ -722,7 +722,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     {
                         existingFieldElement.Attributes("Version").Remove();
                     }
-                    existingField.SchemaXml = parser.ParseString(existingFieldElement.ToString(), "~sitecollection", "~site");
+                    existingField.SchemaXml = parser.ParseString(existingFieldElement.ToString(), TokenParser.SPSiteTokenKeys);
                     existingField.UpdateAndPushChanges(true);
                     web.Context.ExecuteQueryRetry();
                     bool isDirty = false;
@@ -1397,7 +1397,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         Title = siteList.Title,
                         Hidden = siteList.Hidden,
                         EnableFolderCreation = siteList.EnableFolderCreation,
-                        DocumentTemplate = Tokenize(siteList.DocumentTemplateUrl, web.Url),
+                        DocumentTemplate = TokenizeUrl(siteList.DocumentTemplateUrl, parser),
                         DocumentTemplateContent = documentTemplateContent,
                         ContentTypesEnabled = siteList.ContentTypesEnabled,
                         Url = siteList.RootFolder.ServerRelativeUrl.Substring(serverRelativeUrl.Length).TrimStart('/'),

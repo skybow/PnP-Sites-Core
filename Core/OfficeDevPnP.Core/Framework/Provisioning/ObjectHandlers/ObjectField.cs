@@ -40,7 +40,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                 foreach (var field in fields)
                 {
-                    XElement templateFieldElement = XElement.Parse(parser.ParseString(field.SchemaXml, "~sitecollection", "~site"));
+                    XElement templateFieldElement = XElement.Parse(parser.ParseString(field.SchemaXml, TokenParser.SPSiteTokenKeys));
                     var fieldId = templateFieldElement.Attribute("ID").Value;
 
                     if (!existingFieldIds.Contains(Guid.Parse(fieldId)))
@@ -118,7 +118,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     {
                         existingFieldElement.Attributes("Version").Remove();
                     }
-                    existingField.SchemaXml = parser.ParseString(existingFieldElement.ToString(), "~sitecollection", "~site");
+                    existingField.SchemaXml = parser.ParseString(existingFieldElement.ToString(), TokenParser.SPSiteTokenKeys);
                     existingField.UpdateAndPushChanges(true);
                     web.Context.Load(existingField, f => f.TypeAsString, f => f.DefaultValue);
                     web.Context.ExecuteQueryRetry();
@@ -183,7 +183,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 templateFieldElement.Attribute("List").Remove();
             }
 
-            var fieldXml = parser.ParseString(templateFieldElement.ToString(), "~sitecollection", "~site");
+            var fieldXml = parser.ParseString(templateFieldElement.ToString(), TokenParser.SPSiteTokenKeys);
 
             var field = web.Fields.AddFieldAsXml(fieldXml, false, AddFieldOptions.AddFieldInternalNameHint);
             web.Context.Load(field, f => f.TypeAsString, f => f.DefaultValue);

@@ -64,7 +64,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
             string dirValue;
             if (dataRow.Values.TryGetValue(FIELD_ItemDir, out dirValue) && !string.IsNullOrEmpty(dirValue))
             {
-                dir = TokenParser.CombineUrl(this.Web.ServerRelativeUrl, dirValue);
+                dir = TokenParser.CombineUrl(m_listServerRelativeUrl, dirValue);
             }
 
             string objType;
@@ -154,10 +154,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.ListCon
             }
             if (!string.IsNullOrEmpty(dirWebRel))
             {
-                if (!dir.Equals(m_listServerRelativeUrl, StringComparison.OrdinalIgnoreCase))
+                if (dirWebRel.StartsWith(m_listServerRelativeUrl, StringComparison.OrdinalIgnoreCase))
                 {
-                    dataRowValues[FIELD_ItemDir] = dirWebRel;
-                }
+                    var dirListRel = dirWebRel.Substring(m_listServerRelativeUrl.Length);
+                    if (!string.IsNullOrEmpty(dirListRel))
+                    {
+                        dataRowValues[FIELD_ItemDir] = dirListRel;
+                    }
+                }                
 
                 if (item.FileSystemObjectType == FileSystemObjectType.Folder)
                 {

@@ -14,6 +14,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 {
     public class TokenParser
     {
+        public static string[] SPSiteTokenKeys = new string[]
+        {
+            "~site/",
+            "~sitecollection/"
+        };
+
         public Web _web;
 
         private List<TokenDefinition> _tokens = new List<TokenDefinition>();
@@ -302,7 +308,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             string result = "";
             if (!string.IsNullOrEmpty(input))
             {
-                var groupsTokens = _tokensSortedByCacheValueLength.Where(t => t is AssociatedGroupToken);
+                var groupsTokens = GetTokensByType<AssociatedGroupToken>();
                 foreach (var token in groupsTokens)
                 {
                     string replaceValue = token.GetReplaceValue();
@@ -320,29 +326,56 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return result;
         }
 
-        public static string TokenizeUrl( Web web, string url)
+        public string TokenizeUrl(string url)
         {
-            url = url.Replace(web.Url.TrimEnd('/'), "{site}");
-            if (url.StartsWith(web.ServerRelativeUrl, System.StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrEmpty(url))
             {
-                url = CombineUrl("{site}", url.Substring(web.ServerRelativeUrl.Length));
+                url = "";
             }
             else
             {
-                var context = web.Context as ClientContext;
-                var site = context.Site;
-                site.EnsureProperties(s => s.Url, s => s.ServerRelativeUrl);
+                Web web = this._web;
 
-                url = url.Replace(site.Url.TrimEnd('/'), "{sitecollection}");
-
-                if (url.StartsWith(site.ServerRelativeUrl, System.StringComparison.OrdinalIgnoreCase))
+                string webAppUrl = GetWebApplicationUrl(web);
+                //Make url server relative
+                if (url.StartsWith(webAppUrl, StringComparison.OrdinalIgnoreCase))
                 {
-                    url = CombineUrl("{sitecollection}", url.Substring(site.ServerRelativeUrl.Length));
+                    url = CombineUrl("/", url.Substring(webAppUrl.Length));
+                }
+
+                string tokenizedUrl;
+                if (TokenizeUrlValue(GetTokenByType<MasterPageCatalogToken>(), url, out tokenizedUrl) ||
+                    TokenizeUrlValue(GetTokenByType<ThemeCatalogToken>(), url, out tokenizedUrl) ||
+                    TokenizeUrlValue(GetTokenByType<SiteToken>(), url, out tokenizedUrl) ||
+                    TokenizeUrlValue(GetTokenByType<SiteCollectionToken>(), url, out tokenizedUrl))
+                {
+                    url = tokenizedUrl;
+                }
+            }
+            return url;
+        }
+
+        public static string GetWebApplicationUrl(Web web)
+        {
+            String webAppUrl = "";
+
+            web.EnsureProperties(w => w.Url, w => w.ServerRelativeUrl);
+
+            if (web.ServerRelativeUrl == "/")
+            {
+                webAppUrl = web.Url;
+            }
+            else
+            {
+                int idx = web.Url.LastIndexOf(web.ServerRelativeUrl, StringComparison.OrdinalIgnoreCase);
+                if (-1 != idx)
+                {
+                    webAppUrl = web.Url.Substring(0, idx);
                 }
             }
 
-            return url;
-        }        
+            return webAppUrl;
+        }
 
         public static string CombineUrl(string baseUrlPath, string url)
         {
@@ -370,6 +403,45 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 result = baseUrlPath + url;
             }
             return result;
+        }
+
+        private IEnumerable<TokenDefinition> GetTokensByType<T>()
+            where T : TokenDefinition
+        {
+            IEnumerable<TokenDefinition> tokens = _tokensSortedByCacheValueLength.Where(t => t is T);
+            return tokens;
+        }
+
+        private T GetTokenByType<T>()
+            where T : TokenDefinition
+        {
+            TokenDefinition token = GetTokensByType<T>().FirstOrDefault();
+            return token as T;
+        }
+
+        private bool TokenizeUrlValue(TokenDefinition token, string value, out string tokenizedUrl)
+        {
+            bool changed = false;
+
+            tokenizedUrl = value;
+            if (!string.IsNullOrEmpty(value) &&( null != token ))
+            {
+                string repValue = token.GetReplaceValue();
+                if (!string.IsNullOrEmpty(repValue))
+                {
+                    if (value.StartsWith(repValue, StringComparison.OrdinalIgnoreCase))
+                    {
+                        string tokenKey = token.GetTokens().FirstOrDefault();
+                        if (!string.IsNullOrEmpty(tokenKey))
+                        {
+                            tokenizedUrl = CombineUrl(tokenKey, value.Substring(repValue.Length));
+                            changed = true;
+                        }
+                    }
+                }
+            }
+
+            return changed;
         }
     }
 }

@@ -40,12 +40,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 webSettings.NoCrawl = web.NoCrawl;
                 webSettings.RequestAccessEmail = web.RequestAccessEmail;
 #endif
-                webSettings.MasterPageUrl = Tokenize(web.MasterUrl, web.Url);
-                webSettings.CustomMasterPageUrl = Tokenize(web.CustomMasterUrl, web.Url);
-                webSettings.SiteLogo = Tokenize(web.SiteLogoUrl, web.Url);
+                webSettings.MasterPageUrl = TokenizeUrl(web.MasterUrl, parser);
+                webSettings.CustomMasterPageUrl = TokenizeUrl(web.CustomMasterUrl, parser);
+                webSettings.SiteLogo = TokenizeUrl(web.SiteLogoUrl, parser);
                 // Notice. No tokenization needed for the welcome page, it's always relative for the site
                 webSettings.WelcomePage = web.RootFolder.WelcomePage;
-                webSettings.AlternateCSS = Tokenize(web.AlternateCssUrl, web.Url);
+                webSettings.AlternateCSS = TokenizeUrl(web.AlternateCssUrl, parser);
                 webSettings.WebTemplate = web.WebTemplate;
                 template.WebSettings = webSettings;
 
@@ -59,7 +59,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                             if (PersistFile(web, creationInfo, scope, web.MasterUrl))
                             {
-                                template.Files.Add(GetTemplateFile(web, web.MasterUrl, template.Connector));
+                                template.Files.Add(GetTemplateFile(web, web.MasterUrl, template.Connector, parser));
                             }
                         }
                     }
@@ -70,7 +70,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         {
                             if (PersistFile(web, creationInfo, scope, web.CustomMasterUrl))
                             {
-                                template.Files.Add(GetTemplateFile(web, web.CustomMasterUrl, template.Connector));
+                                template.Files.Add(GetTemplateFile(web, web.CustomMasterUrl, template.Connector, parser));
                             }
                         }
                     }
@@ -78,14 +78,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     {
                         if (PersistFile(web, creationInfo, scope, web.SiteLogoUrl))
                         {
-                            template.Files.Add(GetTemplateFile(web, web.SiteLogoUrl, template.Connector));
+                            template.Files.Add(GetTemplateFile(web, web.SiteLogoUrl, template.Connector, parser));
                         }
                     }
                     if (!string.IsNullOrEmpty(web.AlternateCssUrl))
                     {
                         if (PersistFile(web, creationInfo, scope, web.AlternateCssUrl))
                         {
-                            template.Files.Add(GetTemplateFile(web, web.AlternateCssUrl, template.Connector));
+                            template.Files.Add(GetTemplateFile(web, web.AlternateCssUrl, template.Connector, parser));
                         }
                     }
                 }
@@ -98,9 +98,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         }
 
         //TODO: Candidate for cleanup
-        private Model.File GetTemplateFile(Web web, string serverRelativeUrl, FileConnectorBase connector)
+        private Model.File GetTemplateFile(Web web, string serverRelativeUrl, FileConnectorBase connector, TokenParser parser)
         {
-
             var webServerUrl = web.EnsureProperty(w => w.Url);
             var serverUri = new Uri(webServerUrl);
             var serverUrl = string.Format("{0}://{1}", serverUri.Scheme, serverUri.Authority);
@@ -111,7 +110,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             var templateFile = new Model.File()
             {
-                Folder = Tokenize(folderPath, web.Url),
+                Folder = TokenizeUrl(folderPath, parser),
                 Src = (null != connector) ? Path.Combine(connector.GetConnectionString(), fileName) : fileName,
                 Overwrite = true,
             };

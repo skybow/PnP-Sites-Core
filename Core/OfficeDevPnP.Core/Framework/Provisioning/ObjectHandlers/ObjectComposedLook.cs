@@ -121,9 +121,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                             throw new JsonSerializationException();
                         }
 
-                        composedLook.BackgroundFile = Tokenize(composedLook.BackgroundFile, web.Url);
-                        composedLook.FontFile = Tokenize(composedLook.FontFile, web.Url);
-                        composedLook.ColorFile = Tokenize(composedLook.ColorFile, web.Url);
+                        composedLook.BackgroundFile = TokenizeUrl(composedLook.BackgroundFile, parser);
+                        composedLook.FontFile = TokenizeUrl(composedLook.FontFile, parser);
+                        composedLook.ColorFile = TokenizeUrl(composedLook.ColorFile, parser);
                         template.ComposedLook = composedLook;
 
                         if (!web.IsSubSite() && creationInfo != null && 
@@ -139,19 +139,19 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         if (!string.IsNullOrEmpty(template.ComposedLook.BackgroundFile))
                         {
                             var f = GetComposedLookFile(template.ComposedLook.BackgroundFile, template.Connector);
-                            f.Folder = Tokenize(f.Folder, web.Url);
+                            f.Folder = TokenizeUrl(f.Folder, parser);
                             template.Files.Add(f);
                         }
                         if (!string.IsNullOrEmpty(template.ComposedLook.ColorFile))
                         {
                             var f = GetComposedLookFile(template.ComposedLook.ColorFile, template.Connector);
-                            f.Folder = Tokenize(f.Folder, web.Url);
+                            f.Folder = TokenizeUrl(f.Folder, parser);
                             template.Files.Add(f);
                         }
                         if (!string.IsNullOrEmpty(template.ComposedLook.FontFile))
                         {
                             var f = GetComposedLookFile(template.ComposedLook.FontFile, template.Connector);
-                            f.Folder = Tokenize(f.Folder, web.Url);
+                            f.Folder = TokenizeUrl(f.Folder, parser);
                             template.Files.Add(f);
                         }
 
@@ -159,13 +159,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     catch (JsonSerializationException)
                     {
                         // cannot deserialize the object, fall back to composed look detection
-                        template = DetectComposedLook(web, template, creationInfo, scope, spConnector, spConnectorRoot);
+                        template = DetectComposedLook(web, template, parser, creationInfo, scope, spConnector, spConnectorRoot);
                     }
 
                 }
                 else
                 {
-                    template = DetectComposedLook(web, template, creationInfo, scope, spConnector, spConnectorRoot);
+                    template = DetectComposedLook(web, template, parser, creationInfo, scope, spConnector, spConnectorRoot);
                 }
 
                 if (creationInfo != null && creationInfo.BaseTemplate != null)
@@ -176,7 +176,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return template;
         }
 
-        private ProvisioningTemplate DetectComposedLook(Web web, ProvisioningTemplate template, 
+        private ProvisioningTemplate DetectComposedLook(Web web, ProvisioningTemplate template, TokenParser parser,
                                                     ProvisioningTemplateCreationInformation creationInfo, 
                                                     PnPMonitoredScope scope, SharePointConnector spConnector, 
                                                     SharePointConnector spConnectorRoot)
@@ -197,9 +197,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 if (theme.IsCustomComposedLook)
                 {
                     // Set the URL pointers to files
-                    template.ComposedLook.BackgroundFile = FixFileUrl(Tokenize(theme.BackgroundImage, web.Url));
-                    template.ComposedLook.ColorFile = FixFileUrl(Tokenize(theme.Theme, web.Url));
-                    template.ComposedLook.FontFile = FixFileUrl(Tokenize(theme.Font, web.Url));
+                    template.ComposedLook.BackgroundFile = FixFileUrl(TokenizeUrl(theme.BackgroundImage, parser));
+                    template.ComposedLook.ColorFile = FixFileUrl(TokenizeUrl(theme.Theme, parser));
+                    template.ComposedLook.FontFile = FixFileUrl(TokenizeUrl(theme.Font, parser));
 
                     // Download files if this is root site, since theme files are only stored there
                     if (!web.IsSubSite() && creationInfo != null && 

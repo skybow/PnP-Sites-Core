@@ -108,7 +108,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             var homeFile = new Model.File()
             {
-                Folder = Tokenize(folderPath, web.Url),
+                Folder = TokenizeUrl(folderPath, parser),
                 Src = fileName,
                 Overwrite = true,
             };            

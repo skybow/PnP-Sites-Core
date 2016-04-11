@@ -5,7 +5,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitio
     internal class SiteCollectionToken : TokenDefinition
     {
         public SiteCollectionToken(Web web)
-            : base(web, "~sitecollection", "{sitecollection}")
+            : base(web, "~sitecollection/", "{sitecollection}/")
         {
         }
 
@@ -17,7 +17,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitio
                 var site = context.Site;
                 context.Load(site, s => s.RootWeb.ServerRelativeUrl);
                 context.ExecuteQueryRetry();
-                CacheValue = site.RootWeb.ServerRelativeUrl.TrimEnd('/');
+                CacheValue = TokenParser.CombineUrl( site.RootWeb.ServerRelativeUrl, "/" );
             }
             return CacheValue;
         }

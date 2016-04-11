@@ -24,13 +24,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 {
                     var rootWeb = (web.Context as ClientContext).Site.RootWeb;
 
-                    web.EnsureProperties(w => w.ServerRelativeUrl);
-                    
-                    web.Context.Load(web.Lists, lc => lc.IncludeWithDefaultProperties(l => l.RootFolder.ServerRelativeUrl));
-                    web.Context.ExecuteQueryRetry();
-                    var existingLists = web.Lists.AsEnumerable<List>().Select(existingList => existingList.RootFolder.ServerRelativeUrl).ToList();
-                    var serverRelativeUrl = web.ServerRelativeUrl;
-
                     #region DataRows
 
                     foreach (var listInstance in template.Lists)

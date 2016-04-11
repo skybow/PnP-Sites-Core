@@ -44,7 +44,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.Page
             string url = item.FieldValues["FileRef"].ToString();
             if (tokenize)
             {
-                url = TokenParser.TokenizeUrl(this.Web, url);
+                url = this.TokenParser.TokenizeUrl(url);
             }
             return url;
         }

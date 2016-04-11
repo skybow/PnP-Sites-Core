@@ -30,7 +30,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.Page
                 {
                     pageLayoutUrl = fieldValues["PublishingPageLayout"] == null ? "" : (fieldValues["PublishingPageLayout"] as FieldUrlValue).Url;
                 }
-                pageLayoutUrl = TokenParser.TokenizeUrl(this.Web, pageLayoutUrl);
+                pageLayoutUrl = this.TokenParser.TokenizeUrl(pageLayoutUrl);
 
                 string html = "";
                 if (fieldValues.ContainsKey("PublishingPageContent"))

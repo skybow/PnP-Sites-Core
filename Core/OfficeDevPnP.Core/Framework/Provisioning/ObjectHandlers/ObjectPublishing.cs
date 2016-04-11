@@ -47,15 +47,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     publishing.PageLayouts.AddRange(GetAvailablePageLayouts(web));
                     template.Publishing = publishing;
 
-                    ExtractMasterPagesAndPageLayouts(web, template, scope, creationInfo);
+                    ExtractMasterPagesAndPageLayouts(web, template, parser, scope, creationInfo);
                 }
             }
             return template;
         }
 
-        private void ExtractMasterPagesAndPageLayouts(Web web, ProvisioningTemplate template, PnPMonitoredScope scope, ProvisioningTemplateCreationInformation creationInfo)
+        private void ExtractMasterPagesAndPageLayouts(Web web, ProvisioningTemplate template, TokenParser parser, PnPMonitoredScope scope, ProvisioningTemplateCreationInformation creationInfo)
         {
-            String webApplicationUrl = GetWebApplicationUrl(web);
+            String webApplicationUrl = TokenParser.GetWebApplicationUrl(web);
 
             if (!String.IsNullOrEmpty(webApplicationUrl))
             {
@@ -117,13 +117,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                     Path.Combine(template.Connector.GetConnectionString(), fileName) : fileName;
                             var publishingFile = new Model.File()
                             {
-                                Folder = Tokenize(folderPath, web.Url),
+                                Folder = TokenizeUrl(folderPath, parser),
                                     Src = HttpUtility.UrlDecode(fileSrc),
                                 Overwrite = true,
                             };
 
                             // Add field values to file
-                            RetrieveFieldValues(web, file, publishingFile);
+                            RetrieveFieldValues(web, file, publishingFile, parser);
 
                             // Add the file to the template
                             template.Files.Add(publishingFile);
@@ -205,33 +205,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             }
 
             return (result);
-        }
-
-        /// <summary>
-        /// This method retrieves the Web Application URL of the provided site
-        /// </summary>
-        /// <param name="webUrl">The target web site URL</param>
-        /// <returns>The Web Application URL</returns>
-        private String GetWebApplicationUrl(Web web)
-        {
-            String webAppUrl = "";
-
-            web.EnsureProperties(w => w.Url, w => w.ServerRelativeUrl);
-
-            if (web.ServerRelativeUrl == "/")
-            {
-                webAppUrl = web.Url;
-            }
-            else
-            {
-                int idx = web.Url.LastIndexOf(web.ServerRelativeUrl, StringComparison.OrdinalIgnoreCase);
-                if (-1 != idx)
-            {
-                    webAppUrl = web.Url.Substring(0, idx);
-                }
-            }
-
-            return webAppUrl;
         }
 
         private IEnumerable<PageLayout> GetAvailablePageLayouts(Web web)
