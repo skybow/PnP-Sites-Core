@@ -415,7 +415,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             using (var scope = new PnPMonitoredScope(this.Name))
             {
                 var connector = template.Connector;
-                var providers = this.GetUrlProviders(template.Lists);
+
+                List<ListInstance> lists = new List<ListInstance>();
+                foreach (ListInstance list in template.Lists)
+                {
+                    if (creationInfo.ExecutePreProvisionEvent<ListInstance, List>(Handlers.Files, template, list, null))
+                    {
+                        lists.Add(list);
+                    }
+                }
+
+                var providers = this.GetUrlProviders(lists);
                 var files = new OfficeDevPnP.Core.Framework.Provisioning.Model.FileCollection(template);
                 var modelProvider = new FileModelProvider(web, connector);
                 foreach (var provider in providers)
@@ -453,7 +463,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return template;
         }
 
-        private System.Collections.Generic.List<IUrlProvider> GetUrlProviders(ListInstanceCollection templateLists)
+        private System.Collections.Generic.List<IUrlProvider> GetUrlProviders(IList<ListInstance> templateLists)
         {
             var result = new List<IUrlProvider>();
             var forms = templateLists.SelectMany(x => x.Forms);
