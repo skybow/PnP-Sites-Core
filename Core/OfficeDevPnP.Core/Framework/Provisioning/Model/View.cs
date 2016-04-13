@@ -9,6 +9,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
     {
         #region Private Members
         private string _schemaXml = string.Empty;
+        private XElement _node = null;
         #endregion
 
         #region Public Properties
@@ -17,12 +18,60 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// </summary>
         public string SchemaXml
         {
-            get { return this._schemaXml; }
-            set { this._schemaXml = value; }
+            get
+            {
+                return this._schemaXml;
+            }
+            set 
+            { 
+                if( value != this._schemaXml )
+                {
+                    this._schemaXml = value;
+                    EnsureInitNode(true);
+                }
+            }
+        }
+
+        public XElement XmlNode
+        {
+            get
+            {
+                EnsureInitNode(false);
+                return this._node;
+            }
+        }
+
+        private void EnsureInitNode(bool force)
+        {
+            if (force || (null == this._node))
+            {
+                if (string.IsNullOrEmpty(this._schemaXml))
+                {
+                    this._node = null;
+                }
+                else
+                {
+                    this._node = XElement.Parse(this.SchemaXml);
+                }
+            }
         }
 
         public string PageUrl { get; set; }
 
+        public string GetAttributeValue( string attrName )
+        {
+            string result = "";
+            var node = this.XmlNode;
+            if (null != node)
+            {
+                var attr = node.Attribute(attrName);
+                if( null != attr )
+                {
+                    result = attr.Value;
+                }
+            }
+            return result;
+        }
         
         #endregion
 
@@ -72,10 +121,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                     element.Attribute("Name").Remove();
                 }
             }
-            if (element.Attribute("Url") != null)
-            {
-                element.Attribute("Url").Remove();
-            }
+
+            //MobileView=\"TRUE\" MobileDefaultView=\"TRUE\" 
             if (element.Attribute("ImageUrl") != null)
             {
                 var index = element.Attribute("ImageUrl").Value.IndexOf("rev=", StringComparison.InvariantCultureIgnoreCase);
@@ -85,6 +132,35 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                     // Remove ?rev=23 in url
                     Regex regex = new Regex("\\?rev=([0-9])\\w+");
                     element.SetAttributeValue("ImageUrl", regex.Replace(element.Attribute("ImageUrl").Value, ""));
+                }
+            }
+
+            string[] attrToRemove = new string[]
+            {
+                "Url",
+                "MobileView",
+                "MobileDefaultView",
+                "Toolbar",
+                "XslLink"
+            };
+            string[] elementsToDelete = new string[]
+            {
+                "Aggregations"
+            };
+            foreach (string attrName in attrToRemove)
+            {
+                XAttribute attr = element.Attribute(attrName);
+                if (null != attr)
+                {
+                    attr.Remove();
+                }
+            }            
+            foreach (string elName in elementsToDelete)
+            {
+                var child = element.Elements("Aggregations");
+                if (null != child)
+                {
+                    child.Remove();
                 }
             }
 

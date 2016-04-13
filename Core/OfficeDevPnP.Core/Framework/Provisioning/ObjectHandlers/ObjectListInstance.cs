@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using Microsoft.SharePoint.Client;
+using SPClient = Microsoft.SharePoint.Client;
 using OfficeDevPnP.Core.Framework.Provisioning.Model;
 using ContentType = Microsoft.SharePoint.Client.ContentType;
 using Field = Microsoft.SharePoint.Client.Field;
@@ -292,11 +293,36 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         }
 
                         var existingViews = createdList.Views;
-                        web.Context.Load(existingViews, vs => vs.Include(v => v.Title, v => v.Id, v => v.ServerRelativeUrl));
+                        web.Context.Load(existingViews, vs => vs.IncludeWithDefaultProperties(v => v.ViewFields));
                         web.Context.ExecuteQueryRetry();
                         foreach (var view in list.Views)
                         {
-                            CreateView(web, view, existingViews, createdList, scope);
+                            SPClient.View existingView = null;
+
+                            string viewName = Path.GetFileNameWithoutExtension( view.GetAttributeValue("Url") );
+                            if( !string.IsNullOrEmpty( viewName ) )
+                            {
+                                existingView = existingViews.FirstOrDefault(v =>
+                                    string.Equals(Path.GetFileNameWithoutExtension(v.ServerRelativeUrl), viewName, StringComparison.OrdinalIgnoreCase));
+                            }
+                            else
+                            {
+                                string viewTitle = view.GetAttributeValue("DisplayName");
+                                existingView = existingViews.FirstOrDefault(v =>
+                                    v.Title == viewTitle);
+                            }
+
+                            if (null != existingView)
+                            {
+                                View tempView = ExtractView(existingView);
+                                if ((null != tempView) && tempView.Equals(view))
+                                {
+                                    //Not needed to update view if it is not modified
+                                    continue;
+                                }
+                            }
+
+                            CreateOrUpdateView(web, view, existingView, createdList, scope);
                         }
 
                         //// Removing existing views set the OnQuickLaunch option to false and need to be re-set.
@@ -414,27 +440,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             }
         }
 
-        private void CreateView(Web web, View view, Microsoft.SharePoint.Client.ViewCollection existingViews, List createdList, PnPMonitoredScope monitoredScope)
+        private void CreateOrUpdateView(Web web, View view, SPClient.View existingView, List createdList, PnPMonitoredScope monitoredScope)
         {
             try
             {
-                var viewElement = XElement.Parse(view.SchemaXml);
-                var displayNameElement = viewElement.Attribute("DisplayName");
-                if (displayNameElement == null)
+                var viewElement = view.XmlNode;                
+                var viewTitle = view.GetAttributeValue("DisplayName");
+                if (string.IsNullOrEmpty(viewTitle))
                 {
                     throw new ApplicationException("Invalid View element, missing a valid value for the attribute DisplayName.");
                 }
-
-                monitoredScope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ListInstances_Creating_view__0_, displayNameElement.Value);
-                var existingView = existingViews.FirstOrDefault(v => v.Title == displayNameElement.Value);
-
-                if (existingView != null)
-                {
-                    existingView.DeleteObject();
-                    web.Context.ExecuteQueryRetry();
-                }
-
-                var viewTitle = displayNameElement.Value;
+                monitoredScope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ListInstances_Creating_view__0_, viewTitle);
 
                 // Type
                 var viewTypeString = viewElement.Attribute("Type") != null ? viewElement.Attribute("Type").Value : "None";
@@ -494,15 +510,83 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     viewCI.Title = Path.GetFileNameWithoutExtension(urlAttribute.Value);
                 }
 
-                var createdView = createdList.Views.Add(viewCI);
-                web.Context.Load(createdView, v => v.Scope, v => v.JSLink, v => v.Title);
-                web.Context.ExecuteQueryRetry();
+                if (null != existingView)
+                {
+                    bool needToDelete = false;
+                    bool isDirty = false;
+                    if (!string.Equals(viewCI.ViewTypeKind.ToString(), existingView.ViewType, StringComparison.OrdinalIgnoreCase))
+                    {
+                        needToDelete = true;
+                    }
+                    else
+                    {
+                        if (string.Join(",", existingView.ViewFields.ToArray()) != string.Join(",", viewCI.ViewFields))
+                        {
+                            existingView.ViewFields.RemoveAll();
+                            foreach (string fieldName in viewCI.ViewFields)
+                            {
+                                existingView.ViewFields.Add(fieldName);                                 
+                            }
+                            isDirty = true;
+                        }
+                        if (existingView.RowLimit != viewCI.RowLimit)
+                        {
+                            existingView.RowLimit = viewCI.RowLimit;
+                            isDirty = true;
+                        }
+                        if (existingView.Paged != viewCI.Paged)
+                        {
+                            existingView.Paged = viewCI.Paged;
+                            isDirty = true;
+                        }
+                        if (existingView.Title != viewTitle)
+                        {
+                            existingView.Title = viewTitle;
+                            isDirty = true;
+                        }                        
+                        if (existingView.ViewQuery != viewCI.Query)
+                        {
+                            existingView.ViewQuery = viewCI.Query;
+                            isDirty = true;
+                        }
+                        if (existingView.DefaultView != viewCI.SetAsDefaultView)
+                        {
+                            existingView.DefaultView = viewCI.SetAsDefaultView;
+                            isDirty = true;
+                        }
+                    }
 
-                if (urlHasValue)
+                    if (needToDelete)
+                    {
+                        existingView.DeleteObject();
+                        web.Context.ExecuteQueryRetry();
+                        existingView = null;
+                    }
+                    else if (isDirty)
+                    {
+                        existingView.Update();
+                        web.Context.ExecuteQueryRetry();
+                    }
+                }
+
+                SPClient.View createdView = null;
+                if (null == existingView)
+                {
+                    createdView = createdList.Views.Add(viewCI);
+                    web.Context.Load(createdView);
+                    web.Context.ExecuteQueryRetry();
+                }
+                else
+                {
+                    createdView = existingView;
+                }
+
+                bool dirty = false;
+                if ( createdView.Title != viewTitle )
                 {
                     //restore original title 
                     createdView.Title = viewTitle;
-                    createdView.Update();
+                    dirty = true;
                 }
 
                 // ContentTypeID
@@ -521,9 +605,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     }
                     if (childContentTypeId != null)
                     {
-                        createdView.ContentTypeId = childContentTypeId;
-                        createdView.Update();
-                }
+                        if ((null == createdView.ContentTypeId) || (createdView.ContentTypeId.ToString() != childContentTypeId.ToString()))
+                        {
+                            createdView.ContentTypeId = childContentTypeId;
+                            dirty = true;
+                        }
+                    }
                 }
 
                 // Default for content type
@@ -531,8 +618,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 var defaultViewForContentType = viewElement.Attribute("DefaultViewForContentType") != null ? viewElement.Attribute("DefaultViewForContentType").Value : null;
                 if (!string.IsNullOrEmpty(defaultViewForContentType) && bool.TryParse(defaultViewForContentType, out parsedDefaultViewForContentType))
                 {
-                    createdView.DefaultViewForContentType = parsedDefaultViewForContentType;
-                    createdView.Update();
+                    if (createdView.DefaultViewForContentType != parsedDefaultViewForContentType)
+                    {
+                        createdView.DefaultViewForContentType = parsedDefaultViewForContentType;
+                        dirty = true;
+                    }
                 }
 
                 // Scope
@@ -540,8 +630,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 ViewScope parsedScope;
                 if (!string.IsNullOrEmpty(scope) && Enum.TryParse(scope, out parsedScope))
                 {
-                    createdView.Scope = parsedScope;
-                    createdView.Update();
+                    if (createdView.Scope != parsedScope)
+                    {
+                        createdView.Scope = parsedScope;
+                        dirty = true;
+                    }
                 }
 
                 // JSLink
@@ -552,10 +645,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     if (createdView.JSLink != jslink)
                     {
                         createdView.JSLink = jslink;
-                        createdView.Update();
+                        dirty = true;
                     }
                 }
-
+                if (dirty)
+                {
+                    createdView.Update();                    
+                }
                 createdList.Update();
                 web.Context.ExecuteQueryRetry();
             }
@@ -1244,10 +1340,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             {
                 try
                 {
-                    if (list.Security != null && list.Security.RoleAssignments.Count != 0)
-                    {
-                        createdList.SetSecurity(parser, list.Security);
-                    }
+                    createdList.SetSecurity(parser, list.Security);
                 }
                 catch (Exception ex)
                 {
@@ -1496,28 +1589,39 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         private static ListInstance ExtractViews(List siteList, ListInstance list)
         {
-            foreach (var view in siteList.Views.AsEnumerable().Where(view => !view.Hidden && view.ServerRelativeUrl.StartsWith(siteList.RootFolder.ServerRelativeUrl)))
+            foreach (var listView in siteList.Views.AsEnumerable().Where(view => !view.Hidden && view.ServerRelativeUrl.StartsWith(siteList.RootFolder.ServerRelativeUrl)))
             {
-                var schemaElement = XElement.Parse(view.ListViewXml);
-
-                // Toolbar is not supported
-
-                var toolbarElement = schemaElement.Descendants("Toolbar").FirstOrDefault();
-                if (toolbarElement != null)
+                View view = ExtractView(listView);
+                if (null != view)
                 {
-                    toolbarElement.Remove();
+                    list.Views.Add(view);
                 }
-
-                // XslLink is not supported
-                var xslLinkElement = schemaElement.Descendants("XslLink").FirstOrDefault();
-                if (xslLinkElement != null)
-                {
-                    xslLinkElement.Remove();
-                }
-                list.Views.Add(new View { SchemaXml = schemaElement.ToString(), PageUrl = view.ServerRelativeUrl });
             }
 
             return list;
+        }
+
+        public static View ExtractView(SPClient.View listView)
+        {
+            var schemaElement = XElement.Parse(listView.ListViewXml);
+
+            // Toolbar is not supported
+
+            var toolbarElement = schemaElement.Descendants("Toolbar").FirstOrDefault();
+            if (toolbarElement != null)
+            {
+                toolbarElement.Remove();
+            }
+
+            // XslLink is not supported
+            var xslLinkElement = schemaElement.Descendants("XslLink").FirstOrDefault();
+            if (xslLinkElement != null)
+            {
+                xslLinkElement.Remove();
+            }
+
+            View view = new View { SchemaXml = schemaElement.ToString(), PageUrl = listView.ServerRelativeUrl };
+            return view;
         }
 
         private static ListInstance ExtractContentTypes(Web web, List siteList, List<FieldRef> contentTypeFields, ListInstance list)
