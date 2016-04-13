@@ -1458,7 +1458,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 // var allowedLists = lists.Where(l => !l.Hidden || includeWorkflowSubscriptions && l.BaseTemplate == 140);
 
                 //Performance improvements: retrieve site columns for extract list fields
-                var siteColumns = web.Fields;
+                var siteColumns = web.AvailableFields;
                 web.Context.Load(siteColumns, scs => scs.Include(sc => sc.Id));
                 web.Context.ExecuteQueryRetry();
 
