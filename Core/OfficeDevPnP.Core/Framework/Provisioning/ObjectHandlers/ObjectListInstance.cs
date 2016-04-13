@@ -83,8 +83,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     {
                         // Check for the presence of the references content types and throw an exception if not present or in template
                         if (templateList.ContentTypesEnabled)
-                        {
                             foreach (var ct in templateList.ContentTypeBindings)
+                        {
                             {
                                 var found = template.ContentTypes.Any(t => t.Id.ToUpperInvariant() == ct.ContentTypeId.ToUpperInvariant());
                                 if (found == false)
@@ -110,8 +110,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 processedLists.Add(new ListInfo { SiteList = createdList, TemplateList = templateList });
 
                                 parser.AddToken(new ListIdToken(web, templateList.Title, createdList.Id));
-
-                                parser.AddToken(new ListUrlToken(web, templateList.Title, createdList.RootFolder.ServerRelativeUrl.Substring(web.ServerRelativeUrl.Length + 1)));
+                                parser.AddToken(new ListUrlToken(web, templateList.Title, createdList.RootFolder.ServerRelativeUrl.Substring(web.ServerRelativeUrl.Length + (web.ServerRelativeUrl == "/" ? 0 : 1))));
                             }
                             catch (Exception ex)
                             {
@@ -132,6 +131,16 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 {
                                     processedLists.Add(new ListInfo { SiteList = updatedList, TemplateList = templateList });
                                 }
+
+                                //add lists tokens if they was not added (happens for lists created by features)
+                                var listIdToken =  new ListIdToken(web, templateList.Title, existingList.Id);
+                                var listUrlToken = new ListUrlToken(web, templateList.Title, existingList.RootFolder.ServerRelativeUrl.Substring(web.ServerRelativeUrl.Length + (web.ServerRelativeUrl == "/" ? 0 : 1)));
+                                var isTokensExist = parser.Tokens.Any(t => t.GetTokens().Any(x => x.Equals(listIdToken.GetTokens().First())));
+                                if(!isTokensExist){
+                                    parser.AddToken(listIdToken);
+                                    parser.AddToken(listUrlToken);
+                                }
+
                             }
                             catch (Exception ex)
                             {
@@ -816,7 +825,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     if (!oldTitle.Equals(existingList.Title, StringComparison.OrdinalIgnoreCase))
                     {
                         parser.AddToken(new ListIdToken(web, existingList.Title, existingList.Id));
-                        parser.AddToken(new ListUrlToken(web, existingList.Title, existingList.RootFolder.ServerRelativeUrl.Substring(web.ServerRelativeUrl.Length + 1)));
+                        parser.AddToken(new ListUrlToken(web, existingList.Title, existingList.RootFolder.ServerRelativeUrl.Substring(web.ServerRelativeUrl.Length + (web.ServerRelativeUrl == "/" ? 0 : 1))));
                     }
                     isDirty = true;
                 }
