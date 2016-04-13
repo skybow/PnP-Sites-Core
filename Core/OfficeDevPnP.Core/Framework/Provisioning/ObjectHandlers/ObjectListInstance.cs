@@ -111,8 +111,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 processedLists.Add(new ListInfo { SiteList = createdList, TemplateList = templateList });
 
                                 parser.AddToken(new ListIdToken(web, templateList.Title, createdList.Id));
-
-                                parser.AddToken(new ListUrlToken(web, templateList.Title, createdList.RootFolder.ServerRelativeUrl.Substring(web.ServerRelativeUrl.Length + 1)));
+                                parser.AddToken(new ListUrlToken(web, templateList.Title, createdList.RootFolder.ServerRelativeUrl.Substring(web.ServerRelativeUrl.Length + (web.ServerRelativeUrl == "/" ? 0 : 1))));
                             }
                             catch (Exception ex)
                             {
@@ -132,6 +131,16 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 if (updatedList != null)
                                 {
                                     processedLists.Add(new ListInfo { SiteList = updatedList, TemplateList = templateList });
+                                }
+
+                                //add lists tokens if they was not added (happens for lists created by features)
+                                var listIdToken = new ListIdToken(web, templateList.Title, existingList.Id);
+                                var listUrlToken = new ListUrlToken(web, templateList.Title, existingList.RootFolder.ServerRelativeUrl.Substring(web.ServerRelativeUrl.Length + (web.ServerRelativeUrl == "/" ? 0 : 1)));
+                                var isTokensExist = parser.Tokens.Any(t => t.GetTokens().Any(x => x.Equals(listIdToken.GetTokens().First())));
+                                if (!isTokensExist)
+                                {
+                                    parser.AddToken(listIdToken);
+                                    parser.AddToken(listUrlToken);
                                 }
                             }
                             catch (Exception ex)
@@ -319,7 +328,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 {
                                     //Not needed to update view if it is not modified
                                     continue;
-                                }
+                        }
                             }
 
                             CreateOrUpdateView(web, view, existingView, createdList, scope);
@@ -559,7 +568,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     if (needToDelete)
                     {
                         existingView.DeleteObject();
-                        web.Context.ExecuteQueryRetry();
+                web.Context.ExecuteQueryRetry();
                         existingView = null;
                     }
                     else if (isDirty)
@@ -607,10 +616,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     {
                         if ((null == createdView.ContentTypeId) || (createdView.ContentTypeId.ToString() != childContentTypeId.ToString()))
                         {
-                            createdView.ContentTypeId = childContentTypeId;
+                        createdView.ContentTypeId = childContentTypeId;
                             dirty = true;
                         }
-                    }
+                }
                 }
 
                 // Default for content type
@@ -620,7 +629,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 {
                     if (createdView.DefaultViewForContentType != parsedDefaultViewForContentType)
                     {
-                        createdView.DefaultViewForContentType = parsedDefaultViewForContentType;
+                    createdView.DefaultViewForContentType = parsedDefaultViewForContentType;
                         dirty = true;
                     }
                 }
@@ -632,7 +641,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 {
                     if (createdView.Scope != parsedScope)
                     {
-                        createdView.Scope = parsedScope;
+                    createdView.Scope = parsedScope;
                         dirty = true;
                     }
                 }
@@ -650,8 +659,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 }
                 if (dirty)
                 {
-                    createdView.Update();                    
-                }
+                        createdView.Update();
+                    }
                 createdList.Update();
                 web.Context.ExecuteQueryRetry();
             }
@@ -912,7 +921,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     if (!oldTitle.Equals(existingList.Title, StringComparison.OrdinalIgnoreCase))
                     {
                         parser.AddToken(new ListIdToken(web, existingList.Title, existingList.Id));
-                        parser.AddToken(new ListUrlToken(web, existingList.Title, existingList.RootFolder.ServerRelativeUrl.Substring(web.ServerRelativeUrl.Length + 1)));
+                        parser.AddToken(new ListUrlToken(web, existingList.Title, existingList.RootFolder.ServerRelativeUrl.Substring(web.ServerRelativeUrl.Length + (web.ServerRelativeUrl == "/" ? 0 : 1))));
                     }
                     isDirty = true;
                 }
@@ -1340,8 +1349,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             {
                 try
                 {
-                    createdList.SetSecurity(parser, list.Security);
-                }
+                        createdList.SetSecurity(parser, list.Security);
+                    }
                 catch (Exception ex)
                 {
                     scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ListInstances_Updating_list__0__failed___1_____2_, list.Title, ex.Message, ex.StackTrace);
@@ -1602,23 +1611,23 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         }
 
         public static View ExtractView(SPClient.View listView)
-        {
+            {
             var schemaElement = XElement.Parse(listView.ListViewXml);
 
-            // Toolbar is not supported
+                // Toolbar is not supported
 
-            var toolbarElement = schemaElement.Descendants("Toolbar").FirstOrDefault();
-            if (toolbarElement != null)
-            {
-                toolbarElement.Remove();
-            }
+                var toolbarElement = schemaElement.Descendants("Toolbar").FirstOrDefault();
+                if (toolbarElement != null)
+                {
+                    toolbarElement.Remove();
+                }
 
-            // XslLink is not supported
-            var xslLinkElement = schemaElement.Descendants("XslLink").FirstOrDefault();
-            if (xslLinkElement != null)
-            {
-                xslLinkElement.Remove();
-            }
+                // XslLink is not supported
+                var xslLinkElement = schemaElement.Descendants("XslLink").FirstOrDefault();
+                if (xslLinkElement != null)
+                {
+                    xslLinkElement.Remove();
+                }
 
             View view = new View { SchemaXml = schemaElement.ToString(), PageUrl = listView.ServerRelativeUrl };
             return view;

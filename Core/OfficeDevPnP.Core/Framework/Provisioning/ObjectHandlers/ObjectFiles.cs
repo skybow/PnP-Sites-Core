@@ -13,6 +13,7 @@ using OfficeDevPnP.Core.Framework.Provisioning.Connectors;
 using OfficeDevPnP.Core.Framework.Provisioning.Model.Common;
 using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.File;
 using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Extensions;
+using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitions;
 using System;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
@@ -37,8 +38,27 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             using (var scope = new PnPMonitoredScope(this.Name))
             {
                 var context = web.Context as ClientContext;
+                context.Load(web, w => w.ServerRelativeUrl, w => w.Url);
+                context.Load(web.Lists, lc => lc.IncludeWithDefaultProperties(
+                       l => l.RootFolder.ServerRelativeUrl,
+                       l => l.Title,
+                       l => l.Id));
+                context.ExecuteQueryRetry();
+                //add lists tokens if they was not added before
+                foreach (var list in web.Lists)
+                {
+                    var listIdToken = new ListIdToken(web, list.Title, list.Id);
+                    var listUrlToken = new ListUrlToken(web, list.Title, list.RootFolder.ServerRelativeUrl.Substring(web.ServerRelativeUrl.Length + (web.ServerRelativeUrl == "/" ? 0 : 1)));
+                    var isTokensExist = parser.Tokens.Any(t => t.GetTokens().Any(x => x.Equals(listIdToken.GetTokens().First())));
+                    if (!isTokensExist)
+                    {
+                        parser.AddToken(listIdToken);
+                        parser.AddToken(listUrlToken);
+                    }
+                }
 
-                web.EnsureProperties(w => w.ServerRelativeUrl, w => w.Url);
+
+
                 List<string> filesList = new List<string>();
 
                 foreach (var file in template.Files)
@@ -161,7 +181,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     }
                     catch (System.Exception ex)
                     {
-                        
+
                     }
                 }
 
@@ -191,7 +211,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         : listFromTemplate.Views.FirstOrDefault(v => 
                             v.PageUrl != null && v.PageUrl.EndsWith(url.Substring(web.ServerRelativeUrl.Length))
                             );
-                    if (exist && viewFromTemplate != null && string.IsNullOrEmpty(view.Title)) { 
+                    if (exist && viewFromTemplate != null && string.IsNullOrEmpty(view.Title)) {
                         var viewElement = XElement.Parse(viewFromTemplate.SchemaXml);
                         var displayNameElement = viewElement.Attribute("DisplayName");
                         view.Title = displayNameElement == null ? Path.GetFileNameWithoutExtension(viewFromTemplate.PageUrl) : displayNameElement.Value;
