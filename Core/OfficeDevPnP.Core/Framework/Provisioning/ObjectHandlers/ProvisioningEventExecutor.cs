@@ -68,6 +68,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             RegisterEvent(Handlers.Lists, fn, eventType);
         }
 
+        public void AttachListFilesEvent(ProvisionEventType eventType, Action<ProvisioningEventArgs<ListInstance, List>> fn)
+        {
+            RegisterEvent(Handlers.Files, fn, eventType);
+        }
+
         public void AttachListContentEvent(ProvisionEventType eventType, Action<ProvisioningEventArgs<ListInstance, List>> fn)
         {
             RegisterEvent(Handlers.ListContents, fn, eventType);
