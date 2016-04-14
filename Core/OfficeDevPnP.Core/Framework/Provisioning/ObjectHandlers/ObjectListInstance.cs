@@ -1455,7 +1455,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                 // Retrieve all not hidden lists and the Workflow History Lists, just in case there are active workflow subscriptions
                 var includeWorkflowSubscriptions = workflowSubscriptions != null && workflowSubscriptions.Length > 0;
-                var allowedLists = lists.Where(l => !l.Hidden || includeWorkflowSubscriptions && l.BaseTemplate == 140);
+                var allowedLists = lists.AsEnumerable().Where(l => !l.Hidden || includeWorkflowSubscriptions && l.BaseTemplate == 140);
 
                 //Performance improvements: retrieve site columns for extract list fields
                 var siteColumns = web.AvailableFields;
