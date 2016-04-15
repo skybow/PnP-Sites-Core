@@ -453,15 +453,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     var pageUrl = provider.GetUrl();
                     try
                     {
-                        var file = modelProvider.GetFile(pageUrl, parser);
+                        var file = modelProvider.GetFile(pageUrl, parser, true);
                         if (null != file)
                         {
                             files.Add(file);
                             CreateLocalFile(web, pageUrl, connector);
-                        }
-                        else
-                        {
-                            scope.LogError("File does not exist. URL:{0}.", pageUrl);
                         }
                     }
                     catch (Exception exception)

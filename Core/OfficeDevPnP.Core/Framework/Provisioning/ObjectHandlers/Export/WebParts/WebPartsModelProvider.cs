@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using Microsoft.SharePoint.Client;
 using Microsoft.SharePoint.Client.WebParts;
 using ModelWebPart = OfficeDevPnP.Core.Framework.Provisioning.Model.WebPart;
+using OfficeDevPnP.Core.Framework.Provisioning.Model;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebParts
 {
@@ -140,6 +141,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.WebPart
         public static bool IsV3FormatXml(string xml)
         {
             return xml.IndexOf("http://schemas.microsoft.com/WebPart/v3", StringComparison.OrdinalIgnoreCase) != -1;
+        }
+
+        public static bool IsWebPartDefault(ModelWebPart wp)
+        {
+            var wpcomparer = WebPartSchemaComparer.CreateTypedComparer(wp);
+            bool result = (null != wpcomparer) && wpcomparer.IsDefaultWebPart(wp);
+
+            return result;
         }
     }
 }

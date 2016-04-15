@@ -25,7 +25,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.Page
         {
             var modelProvider = new FileModelProvider(this.Web, template.Connector);
             string pageUrl = GetUrl(item, false);
-            Model.File file = modelProvider.GetFile(pageUrl, this.TokenParser);
+            Model.File file = modelProvider.GetFile(pageUrl, this.TokenParser, false);
             if (null == template.Files.Find((f) => string.Equals(f.Src, file.Src, System.StringComparison.OrdinalIgnoreCase)))
             {
                 ObjectFiles.CreateLocalFile(this.Web, pageUrl, template.Connector);

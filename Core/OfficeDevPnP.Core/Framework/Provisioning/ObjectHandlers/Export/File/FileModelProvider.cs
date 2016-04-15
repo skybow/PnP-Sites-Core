@@ -19,7 +19,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.File
             Connector = connector;
         }
 
-        public Model.File GetFile(string pageUrl, TokenParser parser)
+        public Model.File GetFile(string pageUrl, TokenParser parser, bool ignoreDefault)
         {
             Model.File file = null;
             if (pageUrl.StartsWith(Web.ServerRelativeUrl, StringComparison.OrdinalIgnoreCase))
@@ -29,11 +29,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Export.File
 
                 var needToOverride = this.NeedToOverrideFile(Web, pageUrl);
 
-                var folderPath = this.GetFolderPath(pageUrl);
-
-                var localFilePath = this.GetFilePath(pageUrl);
-
-                file = new Model.File(localFilePath, folderPath, needToOverride, webPartsModels, null);
+                if ( !ignoreDefault || needToOverride || (1 != webPartsModels.Count) || !WebPartsModelProvider.IsWebPartDefault(webPartsModels[0]))
+                {
+                    var folderPath = this.GetFolderPath(pageUrl);
+                    var localFilePath = this.GetFilePath(pageUrl);
+                    file = new Model.File(localFilePath, folderPath, needToOverride, webPartsModels, null);
+                }
             }
             return file;
         }

@@ -559,8 +559,12 @@
     <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\IWebPartTokenizer.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\V2\V2DefaultWebPartTokenizer.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\V2\V2WebPartTokenizerManager.cs" />
+    <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\V2\V2WebPartPropertiesCleaner.cs" />
+    <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\V3\V3WebPartPropertiesCleaner.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\V3\V3WebPartTokenizerManager.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\V3\V3DefaultWebPartTokenizer.cs" />
+    <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\WebPartPropertiesCleanerBase.cs" />
+    <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\WebPartSchemaComparer.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\WebPartsModelProvider.cs" />
     <Compile Include="Framework\Provisioning\Model\WorkflowSubscriptionCollection.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Export\WebParts\WebPartTokenizeManager.cs" />
