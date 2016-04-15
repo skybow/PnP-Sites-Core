@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using OfficeDevPnP.Core;
 using OfficeDevPnP.Core.Diagnostics;
 using OfficeDevPnP.Core.Utilities;
+using OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers;
 
 namespace Microsoft.SharePoint.Client
 {
@@ -375,7 +376,7 @@ namespace Microsoft.SharePoint.Client
                 web.Context.Load(web, w => w.ServerRelativeUrl);
                 web.Context.ExecuteQueryRetry();
             }
-            var folderServerRelativeUrl = web.ServerRelativeUrl + (web.ServerRelativeUrl.EndsWith("/") ? "" : "/") + webRelativeUrl;
+            var folderServerRelativeUrl = TokenParser.CombineUrl(web.ServerRelativeUrl, webRelativeUrl);
 
             // Check if folder is inside a list
             var listCollection = web.Lists;

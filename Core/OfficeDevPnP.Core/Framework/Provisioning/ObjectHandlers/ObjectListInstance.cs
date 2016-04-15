@@ -1728,7 +1728,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                             field.InternalName == "FileLeafRef" ||
                             field.InternalName == "FileSizeDisplay" ||
                             field.InternalName == "Preview" ||
-                            field.InternalName == "ThumbnailOnForm")
+                            field.InternalName == "ThumbnailOnForm" ||
+
+                            field.InternalName == "CheckedOutUserId" ||
+                            field.InternalName == "IsCheckedoutToLocal" ||
+                            field.InternalName == "SyncClientId" ||
+                            field.InternalName == "CheckedOutTitle" ||
+                            field.InternalName == "LinkCheckedOutTitle" ||
+                            field.InternalName == "LinkFilename2" ||
+                            field.InternalName == "DocConcurrencyNumber" )
                         {
                             addField = false;
                         }
